@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Studentgithub 고양이 학생">
+  <defs><clipPath id="sq"><rect width="512" height="512" rx="116"/></clipPath></defs>
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="#0066cc"/>
+    <!-- 몸: 초록 후드티와 가방끈 -->
+    <path d="M86 512V470Q86 396 170 380H342Q426 396 426 470V512Z" fill="#34c759"/>
+    <path d="M176 382L152 512M336 382L360 512" stroke="#ffcc00" stroke-width="26" stroke-linecap="round"/>
+    <path d="M226 380Q256 404 286 380" fill="none" stroke="#1d1d1f" stroke-width="8" stroke-linecap="round"/>
+    <!-- 귀 -->
+    <path d="M122 214L146 86L236 150ZM390 214L366 86L276 150Z" fill="#fff" stroke="#fff" stroke-width="28" stroke-linejoin="round"/>
+    <path d="M152 188L163 126L208 158ZM360 188L349 126L304 158Z" fill="#0066cc" fill-opacity=".16" stroke="#0066cc" stroke-opacity=".16" stroke-width="10" stroke-linejoin="round"/>
+    <!-- 얼굴 -->
+    <ellipse cx="256" cy="250" rx="164" ry="128" fill="#fff"/>
+    <circle cx="198" cy="250" r="22" fill="#1d1d1f"/><circle cx="314" cy="250" r="22" fill="#1d1d1f"/>
+    <circle cx="206" cy="242" r="7" fill="#fff"/><circle cx="322" cy="242" r="7" fill="#fff"/>
+    <ellipse cx="170" cy="292" rx="20" ry="11" fill="#ff9aa2" fill-opacity=".55"/><ellipse cx="342" cy="292" rx="20" ry="11" fill="#ff9aa2" fill-opacity=".55"/>
+    <g fill="none" stroke="#1d1d1f" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M256 300Q256 318 240 318Q228 318 224 308M256 300Q256 318 272 318Q284 318 288 308" stroke-width="8"/>
+      <path d="M150 276L106 268M152 294L114 302M362 276L406 268M360 294L398 302" stroke-width="6" stroke-opacity=".85"/>
+    </g>
+    <path d="M244 286Q256 281 268 286Q263 298 256 301Q249 298 244 286Z" fill="#1d1d1f"/>
+    <!-- 머리 위 작은 공기 알갱이 셋 -->
+    <circle cx="256" cy="70" r="14" fill="#fff" fill-opacity=".9"/><circle cx="214" cy="50" r="9" fill="#fff" fill-opacity=".7"/><circle cx="300" cy="46" r="10" fill="#fff" fill-opacity=".75"/>
+  </g>
+</svg>

@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Studentgithub · 우리가 만든 과학 앱</title>
+<meta name="description" content="학생들이 바이브코딩으로 만든 과학 시뮬레이터를 모아 서로 돌려 보고 평가하는 전시관입니다.">
+<meta property="og:title" content="Studentgithub · 우리가 만든 과학 앱">
+<meta property="og:description" content="학생들이 바이브코딩으로 만든 과학 시뮬레이터를 모아 서로 돌려 보고 평가합니다.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --blue:#0066cc;--blue-h:#0071e3;--blue-dark:#2997ff;--tint:rgba(0,102,204,.07);
+  --ink:#1d1d1f;--ink2:#333336;--muted:#6e6e73;--muted2:#86868b;
+  --line:#e0e0e0;--soft:#f5f5f7;--pearl:#fafafc;
+  --ok:#1d8a4e;--warn:#9a6b00;--bad:#b3261e;--green:#34c759;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:64px}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Pretendard Variable',Pretendard,system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;font-size:17px;line-height:1.47;letter-spacing:-.022em;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--blue)}
+button{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.pad{padding-top:28px;padding-bottom:40px}
+.narrow{max-width:760px}
+[hidden]{display:none!important}
+
+/* 상단 바 */
+.nav{position:sticky;top:0;z-index:50;height:52px;background:rgba(255,255,255,.84);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,.08)}
+.nav .in{max-width:1180px;margin:0 auto;height:100%;display:flex;align-items:center;gap:14px;padding:0 22px}
+.logo{display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;font-weight:600;font-size:19px;letter-spacing:-.025em}
+.logo img{width:28px;height:28px;display:block}
+.logo .t{color:var(--blue)}
+.nav .sp{flex:1}
+.nav .nl{color:var(--ink);text-decoration:none;font-size:14px;opacity:.8}
+.nav .nl:hover{opacity:1}
+.who{display:flex;align-items:center;gap:8px;font-size:14px}
+.who .me{color:var(--muted);white-space:nowrap}
+.localbar{background:#fff8e1;color:#6b4e00;text-align:center;font-size:14px;padding:7px 12px;border-bottom:1px solid #f0dca0}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 22px;border-radius:980px;font-size:16px;font-weight:500;cursor:pointer;border:1px solid transparent;text-decoration:none;white-space:nowrap;background:transparent;color:var(--blue)}
+.btn:hover{text-decoration:underline}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:var(--blue-h);text-decoration:none}
+.btn.line{border-color:var(--line);color:var(--ink);background:#fff}
+.btn.line:hover{border-color:#c7c7cc;text-decoration:none}
+.btn.sm{min-height:34px;padding:0 14px;font-size:14px}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:default;text-decoration:none}
+
+/* 글자 */
+.eyebrow{font-size:14px;font-weight:600;color:var(--muted);margin:0 0 8px;letter-spacing:-.01em}
+h1{font-size:clamp(30px,5vw,48px);line-height:1.08;font-weight:600;letter-spacing:-.03em;margin:0}
+h2{font-size:clamp(22px,3vw,28px);line-height:1.15;font-weight:600;letter-spacing:-.025em;margin:0 0 14px}
+h3{font-size:19px;font-weight:600;letter-spacing:-.02em;margin:0 0 10px}
+.lead{font-size:clamp(17px,2.2vw,21px);color:var(--muted);margin:14px 0 0;line-height:1.4}
+.lead2{font-size:16px;color:var(--muted);margin:0 0 18px;line-height:1.5}
+.hint{font-size:13px;color:var(--muted);line-height:1.5}
+.empty{color:var(--muted);text-align:center;padding:36px 0}
+.back{display:inline-block;color:var(--blue);text-decoration:none;font-size:15px;margin:0 0 18px}
+.back:hover{text-decoration:underline}
+
+/* 첫 화면 */
+.hero{background:var(--soft);text-align:center;padding:74px 22px 62px}
+.hero h1{font-size:clamp(34px,6vw,56px);line-height:1.07}
+.hero .lead{max-width:640px;margin:18px auto 0}
+.hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:28px 0 0}
+.hero .stat{margin:22px 0 0;font-size:14px;color:var(--muted)}
+.hero .stat b{color:var(--ink);font-weight:600}
+
+/* 칩 */
+.browse{padding:36px 0 64px}
+.filters{padding:4px 0 18px;border-bottom:1px solid var(--line)}
+.frow{display:flex;align-items:center;gap:12px;margin:0 0 10px;min-width:0}
+.frow .fl{flex:none;width:46px;font-size:13px;font-weight:600;color:var(--muted)}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:2px 1px;min-width:0}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:34px;padding:0 14px;border-radius:980px;border:1px solid var(--line);background:#fff;font-size:14px;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:#c7c7cc}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip .n{color:var(--muted2);margin-left:5px;font-size:12px}
+.chip[aria-pressed="true"] .n{color:rgba(255,255,255,.82)}
+
+/* 카드 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px;margin:26px 0 0}
+.card{display:flex;flex-direction:column;background:var(--soft);border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .2s ease}
+.card:hover{transform:translateY(-3px)}
+.card:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.thumb{aspect-ratio:16/10;background:#fff;display:grid;place-items:center;overflow:hidden;border-bottom:1px solid var(--line)}
+.thumb img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
+.tile{width:84px;height:84px;border-radius:20px;background:var(--soft);display:grid;place-items:center;font-size:38px;font-weight:600;color:var(--ink);letter-spacing:0}
+.card .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{font-size:18px;line-height:1.3;margin:0}
+.card .sum{font-size:15px;color:var(--muted);margin:0;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0;font-size:12.5px}
+.meta span{padding:3px 10px;border-radius:980px;background:#fff;color:var(--ink2)}
+.card .by{margin:auto 0 0;padding-top:10px;font-size:13px;color:var(--muted2);display:flex;justify-content:space-between;gap:8px}
+.notice{background:var(--soft);border-radius:18px;padding:34px 24px;text-align:center;margin:30px 0 0}
+.notice b{font-size:19px}
+.notice p{color:var(--muted);margin:8px 0 18px}
+
+/* 검은 띠 */
+.dark{background:#000;color:#f5f5f7;text-align:center;padding:72px 0}
+.dark h2{font-size:clamp(28px,4vw,40px);margin:0 0 30px}
+.dark .eyebrow{color:#a1a1a6}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:920px;margin:0 auto 26px;text-align:left}
+.steps3 div{background:#1d1d1f;border-radius:18px;padding:24px}
+.steps3 b{display:block;font-size:13px;color:var(--blue-dark);margin:0 0 8px}
+.steps3 p{margin:0;font-size:16px;line-height:1.5;color:#f5f5f7}
+
+/* 상세·무대 */
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.seg{display:inline-flex;background:var(--soft);border-radius:980px;padding:3px}
+.seg button{min-height:32px;padding:0 16px;border:0;background:transparent;border-radius:980px;font-size:14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;font-weight:600}
+.stage{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#fff}
+.stage iframe{display:block;width:100%;height:72vh;min-height:480px;border:0;background:#fff}
+.stage.phone{border:0;background:var(--soft);display:flex;justify-content:center;padding:26px 0}
+.stage.phone iframe{width:390px;max-width:calc(100% - 20px);height:760px;min-height:0;border:10px solid #1d1d1f;border-radius:46px}
+.stage.small iframe{height:460px;min-height:0}
+.stage .empty{padding:80px 0}
+.note{font-size:14px;color:var(--muted);margin:12px 0 0}
+
+/* 평가 목록 */
+.rlist{list-style:none;margin:0 0 22px;padding:0}
+.rlist li{padding:16px 0;border-bottom:1px solid var(--line)}
+.rh{display:flex;gap:10px;align-items:baseline;margin:0 0 6px;font-size:14px;flex-wrap:wrap}
+.rh span{color:var(--muted2);font-size:13px}
+.rb{margin:4px 0 0;white-space:pre-wrap;font-size:16px}
+.rb b{font-weight:600}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{display:inline-block;font-size:12px;padding:2px 9px;border-radius:980px;border:1px solid currentColor;white-space:nowrap}
+.badge.ok{color:var(--ok)}.badge.warn{color:var(--warn)}.badge.mute{color:var(--muted2)}.badge.bad{color:var(--bad)}
+
+/* 입력 */
+input[type=text],input[type=password],input[type=search],input[type=url],select,textarea{font:inherit;font-size:16px;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);width:100%;letter-spacing:-.01em}
+textarea{resize:vertical;min-height:64px;line-height:1.5}
+textarea.code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13px;letter-spacing:0;min-height:170px}
+input:focus,select:focus,textarea:focus,.drop:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+.field{display:flex;flex-direction:column;gap:7px;margin:0 0 16px}
+.field>label,.field>.lb{font-size:15px;font-weight:600}
+.field small,.lb small{font-weight:400;color:var(--muted)}
+.lb{font-size:15px;font-weight:600;margin:0 0 7px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:15px;margin:4px 0 18px;cursor:pointer}
+.check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--blue);flex:none}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;border:1.5px dashed #c7c7cc;border-radius:18px;padding:18px;text-align:center;cursor:pointer;background:var(--pearl)}
+.drop.ok{border-style:solid;border-color:var(--line);background:#fff}
+.drop img{max-width:100%;max-height:200px;border-radius:11px;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1.1fr .9fr 1.6fr;gap:10px}
+.ticks,.radios{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.tick,.radios label{display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 14px;border:1px solid var(--line);border-radius:980px;font-size:15px;cursor:pointer;background:#fff}
+.tick input,.radios input{accent-color:var(--blue);width:17px;height:17px;margin:0}
+.tick:has(input:checked),.radios label:has(input:checked){border-color:var(--blue);background:var(--tint)}
+
+/* 작업실 */
+.ws{display:grid;grid-template-columns:250px 1fr;gap:34px;align-items:start;padding-top:26px;padding-bottom:50px}
+.side{position:sticky;top:72px}
+.hello{font-size:15px;color:var(--muted);margin:0 0 4px}
+.hello b{color:var(--ink);font-size:20px;font-weight:600;display:block;letter-spacing:-.02em}
+.prog{height:6px;background:var(--soft);border-radius:9px;overflow:hidden;margin:12px 0 4px}
+.prog i{display:block;height:100%;background:var(--blue);width:0;transition:width .3s}
+.progt{font-size:13px;color:var(--muted);margin:0 0 16px}
+.stepnav{list-style:none;padding:0;margin:0 0 16px;display:flex;flex-direction:column;gap:2px}
+.stepnav a{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:12px;text-decoration:none;color:var(--ink);font-size:15.5px}
+.stepnav a:hover{background:var(--soft)}
+.stepnav a.on{background:var(--soft);font-weight:600}
+.stepnav .dot{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;border:1.5px solid var(--line);color:var(--muted)}
+.stepnav a.started .dot{border-color:var(--blue);color:var(--blue)}
+.stepnav a.done .dot{background:var(--blue);border-color:var(--blue);color:#fff}
+.stepnav small{display:block;color:var(--muted2);font-size:12.5px;font-weight:400}
+.savest{font-size:13px;color:var(--muted);min-height:18px}
+.savest.bad{color:var(--bad)}
+.box{background:var(--soft);border-radius:18px;padding:22px 22px 8px;margin:0 0 18px}
+.box h3{margin:0 0 14px}
+.box .field textarea,.box .field input,.box .field select{background:#fff}
+.stephead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:0 0 6px}
+.stephead h2{margin:0}
+.donebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:22px 0 0;padding:18px 0 0;border-top:1px solid var(--line)}
+.donebar .hint{flex:1;min-width:200px}
+.tabs2{display:inline-flex;background:var(--soft);border-radius:980px;padding:3px;margin:0 0 18px;flex-wrap:wrap}
+.tabs2 button{min-height:36px;padding:0 16px;border:0;background:transparent;border-radius:980px;font-size:15px;cursor:pointer}
+.tabs2 button[aria-pressed="true"]{background:#fff;font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sw{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.sw label{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 6px;border:1px solid var(--line);border-radius:980px;background:#fff;cursor:pointer;font-size:14.5px}
+.sw label:has(input:checked){border-color:var(--blue);background:var(--tint)}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw i{width:24px;height:24px;border-radius:50%;display:block}
+.qbox{background:#fff;border-radius:14px;padding:14px 14px 2px;margin:0 0 12px}
+.qbox .choices{display:grid;grid-template-columns:auto 1fr;gap:8px 10px;align-items:center;margin:0 0 12px}
+.qbox .choices input[type=radio]{width:18px;height:18px;accent-color:var(--ok)}
+.piece{background:#fff;border:1px solid var(--line);border-radius:14px;margin:0 0 12px;overflow:hidden}
+.piece .ph{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--pearl)}
+.piece .ph b{font-size:15px}
+.piece .ph .sp{flex:1}
+.piece pre{margin:0;padding:12px 14px;white-space:pre-wrap;font:inherit;font-size:15px;line-height:1.55}
+.piece .after{margin:0;padding:8px 14px 12px;font-size:13.5px;color:var(--ok)}
+.piece.sent{border-color:#b9e2c6}
+.piece.sent .ph{background:#f0faf3}
+.logl{list-style:none;padding:0;margin:0 0 12px}
+.logl li{background:#fff;border-radius:12px;padding:10px 12px;margin:0 0 8px;font-size:14.5px}
+.logl li pre{margin:4px 0 6px;white-space:pre-wrap;font:inherit;font-size:14px;color:var(--ink2);max-height:7.5em;overflow:auto}
+.logl .lh{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:13px}
+.crow{background:#fff;border-radius:14px;padding:14px 16px;margin:0 0 10px}
+.crow .ct{margin:0 0 10px;font-size:15.5px}
+.crow .ct b{color:var(--blue);margin-right:4px}
+.crow .radios{margin:0 0 10px}
+.crow.ok{box-shadow:inset 4px 0 0 var(--ok)}
+.crow.no{box-shadow:inset 4px 0 0 var(--bad)}
+.crow.unk{box-shadow:inset 4px 0 0 var(--muted2)}
+.cgroup{font-size:13px;font-weight:600;color:var(--muted);margin:18px 0 8px}
+.rub{background:#fff;border-radius:14px;padding:14px 16px;margin:0 0 10px}
+.rub h4{margin:0 0 10px;font-size:16px}
+.rub .lvs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 10px}
+.rub .lvs label{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;cursor:pointer;line-height:1.4}
+.rub .lvs label:has(input:checked){border-color:var(--blue);background:var(--tint)}
+.rub .lvs input{accent-color:var(--blue);margin:2px 0 0;flex:none}
+.rub .lvs b{display:block;font-size:13px;margin:0 0 2px}
+.vlist{list-style:none;padding:0;margin:0}
+.vlist li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.vlist li .vi{flex:1 1 260px;min-width:0}
+.vlist li .vi b{font-size:16px}
+.vlist li .vi span{display:block;font-size:13px;color:var(--muted)}
+.rform{background:var(--soft);border-radius:18px;padding:20px 20px 6px;margin:18px 0 0}
+.rform .rq{background:#fff;border-radius:12px;padding:12px 14px;margin:0 0 10px}
+.rform .rq p{margin:0 0 8px;font-size:15px}
+.rform .rq .radios{margin:0 0 8px}
+
+/* 관리 */
+.ah{display:flex;justify-content:space-between;align-items:center;margin:0 0 18px;gap:12px;flex-wrap:wrap}
+.atabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:0 0 12px;margin:0 0 18px}
+.atabs button{min-height:34px;padding:0 14px;border-radius:980px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px}
+.atabs button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.ptable{width:100%;border-collapse:collapse;font-size:14px}
+.ptable th,.ptable td{padding:9px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.ptable th{font-size:12.5px;color:var(--muted);font-weight:600}
+.ptable td.c{text-align:center}
+.ptable tr.row{cursor:pointer}
+.ptable tr.row:hover td{background:var(--pearl)}
+.ok1{color:var(--ok);font-weight:700}.st1{color:var(--blue)}
+.tscroll{overflow-x:auto}
+.alist{list-style:none;padding:0;margin:0}
+.alist li{display:flex;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.alist .ai{flex:1 1 320px;min-width:0}
+.alist .ai b{font-size:16px}
+.alist .ai span{display:block;font-size:13px;color:var(--muted);margin:3px 0 0}
+.alist .ai p{margin:6px 0 0;font-size:15px}
+.alist .ab{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:6px 14px;font-size:14.5px;margin:0 0 12px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;white-space:pre-wrap}
+.sform{background:var(--soft);border-radius:18px;padding:20px;margin:0 0 20px;max-width:720px}
+
+/* 모달·알림 */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:90;padding:16px}
+.modal .box2{position:relative;background:#fff;border-radius:18px;max-width:560px;width:100%;max-height:92vh;overflow:auto;padding:28px 24px 24px}
+.modal .box2.wide{max-width:1100px}
+.modal .box2 h3{font-size:22px;margin:0 0 8px}
+.modal .x{position:absolute;top:10px;right:12px;width:36px;height:36px;border:0;background:var(--soft);border-radius:50%;font-size:20px;cursor:pointer;line-height:1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:12px;font-size:15px;z-index:100;max-width:calc(100% - 32px);text-align:center}
+.toast.bad{background:var(--bad)}
+
+@media (max-width:860px){
+  .ws{grid-template-columns:1fr;gap:18px}
+  .side{position:static}
+  .stepnav{flex-direction:row;overflow-x:auto;gap:4px}
+  .stepnav a{flex-direction:column;gap:4px;padding:8px 10px;font-size:13px;text-align:center;min-width:76px}
+  .stepnav small{display:none}
+  .rub .lvs{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .steps3{grid-template-columns:1fr}
+  .hero{padding:52px 18px 44px}
+  .wrap{padding:0 16px}
+  .nav .in{padding:0 16px;gap:10px}
+  .nav .nl,.who .me{display:none}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .stage iframe{height:64vh}
+  .kv{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){ .card{transition:none} .card:hover{transform:none} }
+</style>
+</head>
+<body>
+<header class="nav"><div class="in">
+  <a class="logo" href="#/" aria-label="Studentgithub 처음으로"><img src="icon.svg" alt=""><span><span class="t">Student</span>github</span></a>
+  <span class="sp"></span>
+  <a class="nl" href="#/">전시관</a>
+  <span class="who" id="who"></span>
+</div></header>
+<div class="localbar" id="localbar" hidden>체험 모드 — 이 기기에만 저장됩니다(서버에 올라가지 않음) · 관리 비밀번호 <b>1234</b> · <a href="./">체험 끝내기</a></div>
+
+<main id="view" tabindex="-1"></main>
+
+<footer id="app-credit" style="width:100%;box-sizing:border-box;margin:2.5rem 0 0;padding:14px 12px;text-align:center;font-size:12.5px;line-height:1.6;color:#8a8f98;font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;border-top:1px solid rgba(128,128,128,.25);">© 2026 조승재(과학이조선생) · 해누리중학교 · All rights reserved<br><span style="font-size:11px;opacity:.85;">최종 업데이트: 2026-10-01 · <a href="#/admin" style="color:inherit">관리</a></span></footer>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+'use strict';
+/* ════════ 설정 ════════ */
+const SB = { url: 'https://hmzklbrksfdhzsgwzfyg.supabase.co',
+  key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtemtsYnJrc2ZkaHpzZ3d6ZnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MTY4NDcsImV4cCI6MjA5NTA5Mjg0N30.LuTEeJyu-mtkNzUTNaA8IigmdtWPWXS2ucVgXDeevPA' };   // Supabase C 공개 키
+const QS = new URLSearchParams(location.search);
+const LOCAL = QS.has('local');
+const TASK = (QS.get('t') || 'gas').toLowerCase();
+const MAX_HTML = 2 * 1024 * 1024;
+const CIRC = '①②③④⑤⑥⑦⑧⑨';
+
+/* ════════ 과제 내용 (기체의 성질 · 나만의 공기 시뮬레이터) ════════ */
+const DEF = {
+  gas: {
+    title: '나만의 공기 시뮬레이터', unit: '기체의 성질', starter: 'starter/gas.html',
+    missions: [
+      { id: 'm1', name: '미션 1 · 압력', n: 5 },
+      { id: 'm2', name: '미션 2 · 압력과 부피', n: 3 },
+      { id: 'm3', name: '미션 3 · 온도와 부피', n: 3 }
+    ],
+    limits: [
+      '화면이 2차원이다 (실제 공기는 3차원 공간에서 움직인다)',
+      '알갱이 수가 실제보다 훨씬 적다',
+      '모든 알갱이가 같은 빠르기로 움직인다 (실제는 제각각이다)',
+      '알갱이끼리 부딪히지 않는다 (실제는 서로 부딪힌다)',
+      '알갱이를 실제보다 훨씬 크게 그렸다',
+      "압력을 '부딪힌 횟수'로만 나타낸다 (실제는 얼마나 세게 부딪히는지도 중요하다)"
+    ],
+    kinds: ['압력', '기체의 압력', '압력과 부피', '온도와 부피'],
+    checklist: [
+      { id: 'c1', g: '과학', t: '알갱이가 사방으로 움직이고, 20초 넘게 두어도 바닥에 쌓이지 않는다', how: '20초 두고 본 모습을 적어요' },
+      { id: 'c2', g: '과학', t: '알갱이가 작고, 알갱이 사이가 대부분 비어 있다', how: '알갱이 크기와 사이 간격을 본 대로' },
+      { id: 'c3', g: '과학', t: '압력(또는 충돌 수)이 알갱이가 벽에 부딪힌 횟수에서 나온다', how: '멈춤을 눌렀을 때 충돌 수와 압력이 어떻게 되었나' },
+      { id: 'c4', g: '과학', t: '압력이 모든 방향으로 작용한다 (화살표가 있다면 네 벽 모두)', how: '화살표나 설명에서 확인한 것' },
+      { id: 'c5', g: '과학', t: '알갱이 수를 2배로 하면 충돌 수도 약 2배가 된다', how: '예: 20개일 때 10회, 40개일 때 20회' },
+      { id: 'c6', g: '과학', t: '온도가 일정할 때 부피를 절반으로 줄이면 손잡이 충돌 수가 약 2배가 되고, 평균 빠르기는 그대로다', how: '예: 100%일 때 ○회·빠르기 ○ / 50%일 때 ○회·빠르기 ○' },
+      { id: 'c7', g: '과학', t: '온도를 올리면 빠르기가 커지고 부피가 커진다. 알갱이 수와 크기는 그대로다', how: '0℃와 100℃에서 부피·알갱이 수·크기를 견준 결과' },
+      { id: 'c8', g: '내용', t: '생활 속 예시가 2개 이상 있고, 까닭이 단원 내용과 맞다', how: '예시마다 어느 개념과 맞는지' },
+      { id: 'c9', g: '내용', t: '내가 낸 퀴즈가 3문제 이상이고, 고르면 정답과 풀이가 나온다', how: '직접 풀어 본 결과' },
+      { id: 'c10', g: '내용', t: '설명에 비례·반비례·공식이나 K(켈빈)처럼 배우지 않은 표현이 없다', how: '앱의 글을 다 읽어 본 결과' },
+      { id: 'c11', g: '모형·작동', t: '이 시뮬레이터의 한계를 앱 안에 밝혔다', how: '적어 둔 한계' },
+      { id: 'c12', g: '모형·작동', t: '오류 없이 돌아가고(콘솔에 빨간 글씨 없음), 조작 방법이 안내되어 있다', how: '확인한 방법' }
+    ],
+    rubric: [
+      { id: 'r1', t: '관찰과 발견', lv: ['힌트 없이 잘못을 대부분 찾고, 어떻게 알아냈는지 말할 수 있다', '힌트를 보고 잘못을 찾았다', '확인하기를 보고서야 알았다'] },
+      { id: 'r2', t: '과학적 판단', lv: ['왜 틀렸는지 기체 알갱이의 성질로 설명할 수 있다', '틀린 건 알지만 까닭을 말로 옮기기 어려웠다', '이상해 보인다고만 느꼈다'] },
+      { id: 'r3', t: '지시와 검증', lv: ['보이는 것·까닭·고칠 곳을 갖춰 말하고, 고친 뒤 직접 조작해 확인했다', '고쳤지만 확인을 건너뛴 적이 있다', 'AI가 준 것을 그대로 받아들였다'] },
+      { id: 'r4', t: '만들기와 점검', lv: ['단원 내용을 담은 앱을 만들고, 점검표마다 확인한 방법과 까닭을 썼다', '앱은 만들었지만 점검의 까닭이 짧다', '만든 앱을 점검하지 않았다'] }
+    ],
+    reflect: [
+      { id: 'q1', t: 'AI(또는 모형)가 틀렸던 순간은 언제였고, 나는 그것을 어떻게 알아챘나요?' },
+      { id: 'q2', t: '가장 어려웠던 점은 무엇이고, 어떻게 해결했나요?' },
+      { id: 'q3', t: '내 시뮬레이터의 가장 아쉬운 한계는 무엇이고, 다음 판에서 무엇을 고치고 싶나요?' },
+      { id: 'q4', t: '친구들의 평가와 내 점검·자기평가가 다른 곳은 어디인가요? 왜 그럴까요?', after: true }
+    ],
+    model: [
+      { id: 'a1', t: '내가 고친(또는 만든) 시뮬레이터가 실제 공기와 닮은 점 한 가지' },
+      { id: 'a2', t: '실제 공기와 다른 점(한계) 한 가지' },
+      { id: 'a3', t: '미션에서 내가 한 일은 과학자가 모형을 고치는 과정과 어떻게 닮았나요?' }
+    ],
+    reviewQs: [
+      { id: 'science', k: '과학', t: '과학이 맞나요? 알갱이가 사방으로 움직이고, 부피·온도에 따른 변화가 배운 내용과 맞나요?' },
+      { id: 'run', k: '작동', t: '잘 돌아가나요? 오류 없이 조작할 수 있고, 조작 방법을 알 수 있나요?' },
+      { id: 'life', k: '예시·퀴즈', t: '생활 속 예시와 퀴즈가 단원 내용과 맞나요?' }
+    ],
+    themes: [['sky', '하늘', '#2f7fc1', '밝은 하늘색'], ['mint', '민트', '#1f8a6a', '민트색'], ['sunset', '노을', '#d0643a', '노을빛 주황색'], ['night', '밤하늘', '#172230', '어두운 밤하늘색']]
+  }
+};
+const D = DEF[TASK] || DEF.gas;
+const STEPS = [
+  { id: 'fix', t: '고치기 기록', s: '미션에서 찾은 잘못', k: '고치기' },
+  { id: 'model', t: '모형 생각', s: '시뮬레이터도 모형이다', k: '모형' },
+  { id: 'make', t: '만들기', s: '템플릿 · 자유 · 시작 앱', k: '만들기' },
+  { id: 'check', t: '점검표', s: '체크하고 까닭 쓰기', k: '점검' },
+  { id: 'reflect', t: '자기평가·성찰', s: '돌아보기', k: '성찰' },
+  { id: 'submit', t: '제출', s: '판이 쌓입니다', k: '제출' },
+  { id: 'review', t: '서로 평가', s: '친구 앱 평가하기', k: '서로 평가' }
+];
+
+/* ════════ 작은 도구 ════════ */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const view = $('#view');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const range = n => Array.from({ length: n }, (_, i) => i);
+function store(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function load(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+function sget(k) { try { return sessionStorage.getItem(k) || ''; } catch (e) { return ''; } }
+function sset(k, v) { try { v ? sessionStorage.setItem(k, v) : sessionStorage.removeItem(k); } catch (e) {} }
+function ago(t) {
+  if (!t) return '';
+  const s = (Date.now() - new Date(t).getTime()) / 1000;
+  if (s < 60) return '방금'; if (s < 3600) return Math.floor(s / 60) + '분 전';
+  if (s < 86400) return Math.floor(s / 3600) + '시간 전'; if (s < 604800) return Math.floor(s / 86400) + '일 전';
+  const d = new Date(t); return (d.getMonth() + 1) + '월 ' + d.getDate() + '일';
+}
+const bytes = s => new Blob([s]).size;
+const firstChar = s => { const m = String(s || '').trim().match(/[\p{L}\p{N}]/u); return m ? m[0].toUpperCase() : '앱'; };
+const clsName = c => c ? c.replace('-', '학년 ') + '반' : '';
+const cls = sid => /^[0-9]{5}$/.test(sid) ? sid[0] + '-' + parseInt(sid.slice(1, 3), 10) : '';
+const nickKey = s => String(s || '').replace(/\s+/g, '').toLowerCase();
+let toastT;
+function toast(msg, bad) { const t = $('#toast'); t.textContent = msg; t.className = 'toast' + (bad ? ' bad' : ''); t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 3400); }
+function modal(html, wide) {
+  const m = document.createElement('div'); m.className = 'modal';
+  m.innerHTML = `<div class="box2${wide ? ' wide' : ''}" role="dialog" aria-modal="true"><button class="x" aria-label="닫기">×</button>${html}</div>`;
+  const close = () => { m.remove(); removeEventListener('keydown', onKey); };
+  const onKey = e => { if (e.key === 'Escape') close(); };
+  m.addEventListener('click', e => { if (e.target === m || e.target.closest('.x')) close(); });
+  addEventListener('keydown', onKey); document.body.appendChild(m);
+  return { box: m.querySelector('.box2'), close };
+}
+async function copyText(t, msg) {
+  try { await navigator.clipboard.writeText(t); toast(msg || '복사했습니다.'); }
+  catch (e) {
+    const ta = document.createElement('textarea'); ta.value = t; ta.style.cssText = 'position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); toast(msg || '복사했습니다.'); } catch (e2) { prompt('아래 글을 복사하세요', t); }
+    ta.remove();
+  }
+}
+function download(name, text, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([text], { type: type || 'text/html;charset=utf-8' }));
+  a.download = String(name).replace(/[\\/:*?"<>|]+/g, ' ').trim() || 'app.html';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function setPath(o, path, val) {
+  const ks = path.split('.'); let cur = o;
+  for (let i = 0; i < ks.length - 1; i++) { const k = ks[i]; if (cur[k] == null || typeof cur[k] !== 'object') cur[k] = /^\d+$/.test(ks[i + 1]) ? [] : {}; cur = cur[k]; }
+  cur[ks[ks.length - 1]] = val;
+}
+const getPath = (o, path) => path.split('.').reduce((c, k) => (c == null ? undefined : c[k]), o);
+const filled = (v, n = 1) => String(v == null ? '' : v).trim().length >= n;
+
+/* 남의 HTML 을 안전하게 돌리기 (GiteacherHub 와 같은 방식)
+   sandbox 에 allow-same-origin 을 주지 않아 이 사이트·기록에 손을 못 댄다. localStorage 는 메모리로 대신한다. */
+const SHIM = '<script>(function(){function M(){var d={};return{getItem:function(k){k=String(k);return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},setItem:function(k,v){d[String(k)]=String(v)},removeItem:function(k){delete d[String(k)]},clear:function(){d={}},key:function(i){var a=Object.keys(d);return i<a.length?a[i]:null},get length(){return Object.keys(d).length}}}["localStorage","sessionStorage"].forEach(function(n){try{window[n].getItem("__t")}catch(e){try{Object.defineProperty(window,n,{value:M(),configurable:true})}catch(e2){}}});try{document.cookie}catch(e){try{Object.defineProperty(document,"cookie",{get:function(){return""},set:function(){},configurable:true})}catch(e2){}}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href^=\'#\']");if(!a)return;e.preventDefault();var id=decodeURIComponent(a.getAttribute("href").slice(1));if(!id)return;try{location.hash=id}catch(e3){}var t=document.getElementById(id)||document.getElementsByName(id)[0];if(t&&t.scrollIntoView)t.scrollIntoView({behavior:"smooth"});},true);})();<\/script>';
+function withShim(html) { const m = /^\s*<!doctype[^>]*>/i.exec(html); return m ? m[0] + SHIM + html.slice(m[0].length) : SHIM + html; }
+function runIn(stage, html, title) {
+  stage.innerHTML = '';
+  const f = document.createElement('iframe');
+  f.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads');
+  f.setAttribute('allow', 'fullscreen; clipboard-write'); f.setAttribute('referrerpolicy', 'no-referrer');
+  f.title = title || '앱 미리보기'; f.srcdoc = withShim(html); stage.appendChild(f);
+}
+function extractHtml(raw) {
+  if (!raw) return null;
+  raw = raw.replace(/^```[a-z]*\s*$/gim, '');
+  let s = raw.search(/<!doctype/i); if (s < 0) s = raw.search(/<html[\s>]/i);
+  const e = raw.toLowerCase().lastIndexOf('</html>');
+  if (s >= 0 && e > s) return raw.slice(s, e + 7);
+  if (/<[a-z!][\s\S]*>/i.test(raw)) return raw.trim();
+  return null;
+}
+async function imageToThumb(blob) {
+  const url = URL.createObjectURL(blob);
+  try {
+    const img = new Image(); img.src = url; await img.decode();
+    const sc = Math.min(1, 640 / img.naturalWidth), c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(img.naturalWidth * sc)); c.height = Math.max(1, Math.round(img.naturalHeight * sc));
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    let d = c.toDataURL('image/webp', .8);
+    if (!d.startsWith('data:image/webp')) d = c.toDataURL('image/jpeg', .82);
+    if (d.length > 380000) d = c.toDataURL('image/jpeg', .6);
+    return d.length > 390000 ? null : d;
+  } finally { URL.revokeObjectURL(url); }
+}
+
+/* ════════ 서버(Supabase) ════════ */
+async function rpc(fn, args) {
+  const r = await fetch(SB.url + '/rest/v1/rpc/' + fn, { method: 'POST', body: JSON.stringify(args || {}),
+    headers: { apikey: SB.key, Authorization: 'Bearer ' + SB.key, 'Content-Type': 'application/json' } });
+  if (!r.ok) {
+    let m = '', code = '', hint = '';
+    try { const j = await r.json(); m = j.message || ''; code = j.code || ''; hint = j.hint || ''; } catch (e) {}
+    const err = new Error(m || ('서버 응답 ' + r.status)); err.status = r.status; err.code = code; err.hint = hint; throw err;
+  }
+  const t = await r.text(); return t ? JSON.parse(t) : null;
+}
+const Remote = {
+  enter: (sid, nick) => rpc('sgh_enter', { p_sid: sid, p_nick: nick }),
+  task: code => rpc('sgh_task', { p_code: code }),
+  me: (tok, task) => rpc('sgh_me', { p_token: tok, p_task: task }),
+  noteSave: (tok, task, step, data) => rpc('sgh_note_save', { p_token: tok, p_task: task, p_step: step, p_data: data }),
+  submit: (tok, task, a) => rpc('sgh_submit', { p_token: tok, p_task: task, p_title: a.title, p_summary: a.summary, p_html: a.html, p_thumb: a.thumb || null }),
+  myHtml: (tok, id) => rpc('sgh_my_html', { p_token: tok, p_id: id }),
+  gallery: task => rpc('sgh_gallery', { p_task: task }),
+  thumb: id => rpc('sgh_thumb', { p_id: id }),
+  work: id => rpc('sgh_work', { p_id: id }),
+  reviewsOf: id => rpc('sgh_reviews_of', { p_work: id }),
+  assign: (tok, task) => rpc('sgh_review_assign', { p_token: tok, p_task: task }),
+  reviewSave: (tok, work, checks, praise, suggest) => rpc('sgh_review_save', { p_token: tok, p_work: work, p_checks: checks, p_praise: praise, p_suggest: suggest }),
+  isAdmin: p => rpc('sgh_is_admin', { p_pass: p }),
+  aTasks: p => rpc('sgh_admin_tasks', { p_pass: p }),
+  aTaskSave: (p, t) => rpc('sgh_admin_task_save', { p_pass: p, p_code: t.code, p_title: t.title, p_lesson_url: t.lesson_url || '', p_submit: t.submit_open, p_review: t.review_open, p_auto: t.auto_public }),
+  aProgress: (p, task) => rpc('sgh_admin_progress', { p_pass: p, p_task: task }),
+  aStudent: (p, id, task) => rpc('sgh_admin_student', { p_pass: p, p_student: id, p_task: task }),
+  aWorks: (p, task) => rpc('sgh_admin_works', { p_pass: p, p_task: task }),
+  aWork: (p, id) => rpc('sgh_admin_work', { p_pass: p, p_id: id }),
+  aStatus: (p, ids, st) => rpc('sgh_admin_set_status', { p_pass: p, p_ids: ids, p_status: st }),
+  aReviews: (p, task) => rpc('sgh_admin_reviews', { p_pass: p, p_task: task }),
+  aReviewHide: (p, id, h) => rpc('sgh_admin_review_hide', { p_pass: p, p_id: id, p_hidden: h }),
+  aRename: (p, id, nick) => rpc('sgh_admin_rename', { p_pass: p, p_student: id, p_nick: nick }),
+  aDelete: (p, id) => rpc('sgh_admin_delete_student', { p_pass: p, p_student: id }),
+  aExport: (p, task) => rpc('sgh_admin_export', { p_pass: p, p_task: task }),
+  setPass: (o, n) => rpc('sgh_setpass', { p_old: o, p_new: n })
+};
+
+/* ════════ 체험 모드: 같은 약속을 이 기기 저장소로 흉내 ════════ */
+const Local = (() => {
+  const K = 'sgh-local';
+  const fresh = () => ({ students: [], tokens: {}, notes: [], works: [], reviews: [], seq: 1, admin: '1234',
+    tasks: { gas: { code: 'gas', title: '나만의 공기 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true } } });
+  const db = () => load(K, null) || fresh();
+  const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); } catch (e) { throw fail('이 기기 저장 공간이 가득 찼습니다. 체험 자료를 지워 주세요'); } };
+  const now = () => new Date().toISOString();
+  const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x' + Math.random().toString(16).slice(2) + Date.now());
+  function fail(m, hint) { const e = new Error(m); e.hint = hint || ''; return e; }
+  const who = (d, tok) => { const id = d.tokens[tok]; if (!id) throw fail('다시 들어와 주세요(학번과 별명)', 'login'); return id; };
+  const stu = (d, id) => d.students.find(s => s.id === id);
+  const need = (d, p) => { if (p !== d.admin) throw fail('관리자 비밀번호가 맞지 않습니다'); };
+  const pub = d => { const best = {}; d.works.filter(w => w.status === 'public').forEach(w => { const k = w.student_id + '|' + w.task; if (!best[k] || best[k].v < w.v) best[k] = w; }); return Object.values(best); };
+  const rcount = (d, wid) => d.reviews.filter(r => r.work_id === wid && !r.hidden).length;
+  const latestNotes = (d, sid, task) => {
+    const out = {};
+    d.notes.filter(n => n.student_id === sid && n.task === task).forEach(n => {
+      const c = out[n.step]; const cnt = (c ? c.n : 0) + 1;
+      if (!c || c._id < n.id) out[n.step] = { data: n.data, ts: n.updated_at, n: cnt, _id: n.id }; else c.n = cnt;
+    });
+    Object.values(out).forEach(o => delete o._id); return out;
+  };
+  const A = {
+    async enter(sid, nick) {
+      const d = db(); sid = String(sid || ''); const k = nickKey(nick), n = String(nick || '').replace(/\s+/g, ' ').trim();
+      if (!/^[0-9]{4,6}$/.test(sid)) throw fail('학번은 숫자 4~6자리로 넣어 주세요');
+      if (!k || n.length > 12) throw fail('별명은 1~12자로 정해 주세요');
+      let s = d.students.find(x => x.sid === sid), isNew = false;
+      if (s) { if (s.nick_key !== k) throw fail('이 학번은 다른 별명으로 등록되어 있어요. 처음에 쓴 별명을 넣어 주세요. 기억나지 않으면 선생님께 말씀드리세요', 'nick'); }
+      else {
+        if (d.students.some(x => x.nick_key === k)) throw fail('다른 친구가 쓰고 있는 별명이에요. 다른 별명을 정해 주세요', 'taken');
+        s = { id: uid(), sid, nick: n, nick_key: k, created_at: now(), last_seen: now() }; d.students.push(s); isNew = true;
+      }
+      const tok = uid(); d.tokens[tok] = s.id; s.last_seen = now(); save(d);
+      return { token: tok, nick: s.nick, sid: s.sid, cls: cls(s.sid), is_new: isNew };
+    },
+    async task(code) { const t = db().tasks[code]; return t ? { code: t.code, title: t.title, lesson_url: t.lesson_url, submit_open: t.submit_open, review_open: t.review_open } : null; },
+    async me(tok, task) {
+      const d = db(), me = who(d, tok), s = stu(d, me);
+      const mine = d.works.filter(w => w.student_id === me && w.task === task).sort((a, b) => b.v - a.v);
+      return {
+        student: { nick: s.nick, sid: s.sid, cls: cls(s.sid) },
+        notes: latestNotes(d, me, task),
+        works: mine.map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, has_thumb: !!w.thumb })),
+        got: d.reviews.filter(r => !r.hidden && mine.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })),
+        gave: d.reviews.filter(r => r.reviewer_id === me).map(r => { const w = d.works.find(x => x.id === r.work_id); return { work: r.work_id, title: w.title, nick: stu(d, w.student_id).nick, ts: r.updated_at }; })
+      };
+    },
+    async noteSave(tok, task, step, data) {
+      const d = db(), me = who(d, tok);
+      if (!['fix', 'model', 'make', 'check', 'reflect'].includes(step)) throw fail('없는 단계입니다');
+      const last = d.notes.filter(n => n.student_id === me && n.task === task && n.step === step).sort((a, b) => b.id - a.id)[0];
+      if (last && Date.now() - new Date(last.updated_at).getTime() < 120000) { last.data = data; last.updated_at = now(); }
+      else d.notes.push({ id: d.seq++, student_id: me, task, step, data, created_at: now(), updated_at: now() });
+      save(d); return { ok: true, ts: now() };
+    },
+    async submit(tok, task, a) {
+      const d = db(), me = who(d, tok), t = d.tasks[task];
+      if (!t) throw fail('없는 과제입니다'); if (!t.submit_open) throw fail('지금은 제출 기간이 아닙니다');
+      const v = Math.max(0, ...d.works.filter(w => w.student_id === me && w.task === task).map(w => w.v)) + 1;
+      const w = { id: uid(), student_id: me, task, v, title: a.title, summary: a.summary || '', html: a.html, thumb: a.thumb || null, status: t.auto_public ? 'public' : 'pending', created_at: now() };
+      d.works.push(w); save(d); return { id: w.id, v, status: w.status };
+    },
+    async myHtml(tok, id) { const d = db(), me = who(d, tok); const w = d.works.find(x => x.id === id && x.student_id === me); return w ? w.html : null; },
+    async gallery(task) {
+      const d = db();
+      return pub(d).filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1))
+        .map(w => { const s = stu(d, w.student_id); return { id: w.id, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, has_thumb: !!w.thumb, ts: w.created_at, reviews: rcount(d, w.id) }; });
+    },
+    async thumb(id) { const w = db().works.find(x => x.id === id && x.status === 'public'); return w ? w.thumb : null; },
+    async work(id) {
+      const d = db(), w = d.works.find(x => x.id === id && x.status === 'public'); if (!w) return null; const s = stu(d, w.student_id);
+      return { id: w.id, task: w.task, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, ts: w.created_at, html: w.html,
+        latest: Math.max(...d.works.filter(x => x.student_id === w.student_id && x.task === w.task && x.status === 'public').map(x => x.v)) };
+    },
+    async reviewsOf(id) { const d = db(); return d.reviews.filter(r => r.work_id === id && !r.hidden).map(r => ({ id: r.id, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })); },
+    async assign(tok, task) {
+      const d = db(), me = who(d, tok), myc = cls(stu(d, me).sid);
+      const done = new Set(d.reviews.filter(r => r.reviewer_id === me).map(r => d.works.find(w => w.id === r.work_id).student_id));
+      return (await A.gallery(task)).filter(g => { const w = d.works.find(x => x.id === g.id); return w.student_id !== me && !done.has(w.student_id); })
+        .sort((a, b) => ((b.cls === myc) - (a.cls === myc)) || (a.reviews - b.reviews) || (Math.random() - .5)).slice(0, 2);
+    },
+    async reviewSave(tok, work, checks, praise, suggest) {
+      const d = db(), me = who(d, tok), w = d.works.find(x => x.id === work && x.status === 'public');
+      if (!w) throw fail('공개된 작품이 아닙니다'); if (!d.tasks[w.task].review_open) throw fail('지금은 서로 평가 기간이 아닙니다');
+      if (w.student_id === me) throw fail('내 작품은 평가할 수 없어요'); if (!filled(praise, 2)) throw fail('칭찬을 한 가지 써 주세요');
+      let r = d.reviews.find(x => x.work_id === work && x.reviewer_id === me);
+      if (r) Object.assign(r, { checks, praise: praise.trim(), suggest: (suggest || '').trim(), updated_at: now() });
+      else d.reviews.push({ id: d.seq++, work_id: work, reviewer_id: me, checks, praise: praise.trim(), suggest: (suggest || '').trim(), hidden: false, created_at: now(), updated_at: now() });
+      save(d); return { ok: true };
+    },
+    async isAdmin(p) { return p === db().admin; },
+    async aTasks(p) { const d = db(); need(d, p); return Object.values(d.tasks); },
+    async aTaskSave(p, t) { const d = db(); need(d, p); d.tasks[t.code] = { ...(d.tasks[t.code] || {}), ...t }; save(d); },
+    async aProgress(p, task) {
+      const d = db(); need(d, p);
+      return d.students.map(s => {
+        const ln = latestNotes(d, s.id, task), steps = {};
+        Object.entries(ln).forEach(([k, v]) => { steps[k] = { ts: v.ts, done: !!(v.data && v.data.done), n: v.n }; });
+        const ws = d.works.filter(w => w.student_id === s.id && w.task === task).sort((a, b) => b.v - a.v);
+        return { student_id: s.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), last_seen: s.last_seen, steps, works: ws.length, latest_status: ws[0] ? ws[0].status : null,
+          gave: d.reviews.filter(r => r.reviewer_id === s.id).length, got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).length };
+      }).sort((a, b) => (a.sid > b.sid ? 1 : -1));
+    },
+    async aStudent(p, id, task) {
+      const d = db(); need(d, p); const s = stu(d, id); const ws = d.works.filter(w => w.student_id === id && w.task === task);
+      return { student: { id: s.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), created: s.created_at, last_seen: s.last_seen },
+        notes: d.notes.filter(n => n.student_id === id && n.task === task).sort((a, b) => b.id - a.id).map(n => ({ id: n.id, step: n.step, data: n.data, created: n.created_at, ts: n.updated_at })),
+        works: ws.sort((a, b) => b.v - a.v).map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at })),
+        got: d.reviews.filter(r => ws.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at })),
+        gave: d.reviews.filter(r => r.reviewer_id === id).map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, to: stu(d, w.student_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }) };
+    },
+    async aWorks(p, task) { const d = db(); need(d, p); return d.works.filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1)).map(w => { const s = stu(d, w.student_id); return { id: w.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, status: w.status, ts: w.created_at, has_thumb: !!w.thumb }; }); },
+    async aWork(p, id) { const d = db(); need(d, p); const w = d.works.find(x => x.id === id); const s = stu(d, w.student_id); return { id: w.id, title: w.title, summary: w.summary, v: w.v, status: w.status, html: w.html, thumb: w.thumb, nick: s.nick, sid: s.sid }; },
+    async aStatus(p, ids, st) { const d = db(); need(d, p); let n = 0; d.works.forEach(w => { if (ids.includes(w.id)) { w.status = st; n++; } }); save(d); return n; },
+    async aReviews(p, task) { const d = db(); need(d, p); return d.reviews.map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, work_id: r.work_id, author: stu(d, w.student_id).nick, reviewer: stu(d, r.reviewer_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }).reverse(); },
+    async aReviewHide(p, id, h) { const d = db(); need(d, p); const r = d.reviews.find(x => x.id === id); if (r) r.hidden = h; save(d); },
+    async aRename(p, id, nick) {
+      const d = db(); need(d, p); const k = nickKey(nick);
+      if (!k || nick.trim().length > 12) throw fail('별명은 1~12자로 정해 주세요');
+      if (d.students.some(s => s.nick_key === k && s.id !== id)) throw fail('다른 학생이 쓰는 별명입니다');
+      const s = stu(d, id); s.nick = nick.trim(); s.nick_key = k; Object.keys(d.tokens).forEach(t => { if (d.tokens[t] === id) delete d.tokens[t]; }); save(d);
+    },
+    async aDelete(p, id) {
+      const d = db(); need(d, p); const wids = d.works.filter(w => w.student_id === id).map(w => w.id);
+      d.students = d.students.filter(s => s.id !== id); d.notes = d.notes.filter(n => n.student_id !== id);
+      d.works = d.works.filter(w => w.student_id !== id); d.reviews = d.reviews.filter(r => r.reviewer_id !== id && !wids.includes(r.work_id));
+      Object.keys(d.tokens).forEach(t => { if (d.tokens[t] === id) delete d.tokens[t]; }); save(d);
+    },
+    async aExport(p, task) {
+      const d = db(); need(d, p);
+      return d.students.map(s => { const ln = latestNotes(d, s.id, task), notes = {}; Object.entries(ln).forEach(([k, v]) => { notes[k] = v.data; });
+        const ws = d.works.filter(w => w.student_id === s.id && w.task === task);
+        return { sid: s.sid, nick: s.nick, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, status: w.status })),
+          got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).map(r => ({ from: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest })) }; });
+    },
+    async setPass(o, n) { const d = db(); need(d, o); if (String(n || '').length < 6) throw fail('새 비밀번호는 6자 이상으로 정해 주세요'); d.admin = n; save(d); return true; }
+  };
+  return A;
+})();
+const API = LOCAL ? Local : Remote;
+
+/* ════════ 상태 ════════ */
+const TOKK = LOCAL ? 'sgh:ltok' : 'sgh:tok';
+const S = { tok: load(TOKK, ''), me: null, task: null, notReady: false, gallery: null, page: '', f: { cls: '', sort: 'new' }, listY: 0, draft: {}, dirty: new Set(), tab: 'progress' };
+function signOut() { S.tok = ''; S.me = null; store(TOKK, ''); drawWho(); }
+function relogin(msg) { signOut(); toast(msg || '다시 들어와 주세요.', true); location.hash = '#/in'; }
+function drawWho() {
+  const w = $('#who');
+  if (S.me) w.innerHTML = `<span class="me">${esc(S.me.student.nick)}${S.me.student.cls ? ' · ' + esc(clsName(S.me.student.cls)) : ''}</span><a class="btn primary sm" href="#/me">내 작업실</a><button class="btn sm" data-act="out">나가기</button>`;
+  else w.innerHTML = `<a class="btn primary sm" href="#/in">들어가기</a>`;
+}
+$('#who').addEventListener('click', e => { if (e.target.closest('[data-act="out"]')) { flushNow().finally(() => { signOut(); toast('나갔습니다. 다음에 같은 학번·별명으로 들어오면 이어집니다.'); location.hash = '#/'; }); } });
+async function loadTask() {
+  if (S.task) return S.task;
+  try { S.task = await API.task(TASK); if (!S.task) S.task = { code: TASK, title: D.title, lesson_url: '', submit_open: false, review_open: false }; }
+  catch (e) { if (e.status === 404 || e.code === 'PGRST202' || /schema cache|function/i.test(e.message)) { S.notReady = true; S.task = null; } else throw e; }
+  return S.task;
+}
+async function loadMe() {
+  if (!S.tok) { S.me = null; return null; }
+  try {
+    S.me = await API.me(S.tok, TASK);
+    const keep = {}; S.dirty.forEach(st => { keep[st] = S.draft[st]; });          // 아직 저장 안 된 칸은 지키기
+    S.draft = {}; Object.entries(S.me.notes || {}).forEach(([k, v]) => { S.draft[k] = v.data || {}; });
+    Object.assign(S.draft, keep);
+  }
+  catch (e) { if (e.hint === 'login') { signOut(); } else throw e; }
+  drawWho(); return S.me;
+}
+
+/* ════════ 길 찾기 ════════ */
+function route() {
+  const h = location.hash.replace(/^#\/?/, '');
+  const [page, arg] = h.split('/');
+  const next = ['w', 'in', 'me', 'admin'].includes(page) ? page : 'list';
+  if (S.page === 'list' && next !== 'list') S.listY = scrollY;
+  const back = S.page && S.page !== 'list' && next === 'list';
+  S.page = next; view.onclick = null; view.oninput = null; view.onchange = null; view.onpaste = null;
+  if (next === 'w') return viewWork(arg);
+  if (next === 'in') return viewEnter();
+  if (next === 'me') return viewMe(arg);
+  if (next === 'admin') return viewAdmin();
+  return viewList(back);
+}
+addEventListener('hashchange', () => { flushNow(); route(); if (S.page !== 'list') scrollTo(0, 0); });
+
+/* ════════ 1. 전시관 ════════ */
+function notReadyBox() {
+  return `<div class="notice"><b>선생님이 전시관을 준비하고 있습니다.</b><p>서버가 준비되면 이곳에 친구들의 앱이 모입니다. 그전에는 이 기기에서 체험해 볼 수 있습니다.</p><a class="btn line" href="?local=1${QS.get('t') ? '&t=' + encodeURIComponent(TASK) : ''}">이 기기에서 체험하기</a></div>`;
+}
+function viewList(back) {
+  document.title = 'Studentgithub · 우리가 만든 과학 앱';
+  view.innerHTML = `
+  <section class="hero"><div class="wrap">
+    <p class="eyebrow">${esc(D.unit)} · ${esc(D.title)}</p>
+    <h1>우리가 만든<br>과학 앱</h1>
+    <p class="lead">AI가 만든 시뮬레이터의 잘못을 찾아 고치고, 그 경험으로 나만의 시뮬레이터를 만들었습니다. 눌러서 돌려 보고, 서로 평가해 주세요.</p>
+    <div class="cta"><a class="btn primary" href="#/me">내 작업실</a><button class="btn" data-act="browse">둘러보기 ›</button></div>
+    <p class="stat" id="stat"></p>
+  </div></section>
+  <section class="browse" id="browse"><div class="wrap">
+    <div class="filters" id="filters"></div>
+    <div id="results"><p class="empty">불러오는 중입니다…</p></div>
+  </div></section>
+  <section class="dark"><div class="wrap">
+    <p class="eyebrow">이렇게 만듭니다</p>
+    <h2>고치고, 만들고, 서로 평가합니다</h2>
+    <div class="steps3">
+      <div><b>1 고치기</b><p>불량 시뮬레이터에 숨은 잘못을 찾아 교과서로 판단하고 고칩니다.</p></div>
+      <div><b>2 만들기</b><p>템플릿이나 내 말로 AI에게 부탁해 나만의 공기 시뮬레이터를 만들고 점검합니다.</p></div>
+      <div><b>3 서로 평가</b><p>친구 앱을 돌려 보고 과학이 맞는지, 잘 돌아가는지 까닭을 들어 평가합니다.</p></div>
+    </div>
+    <a class="btn primary" href="#/me">내 작업실로</a>
+  </div></section>`;
+  view.onclick = e => {
+    if (e.target.closest('[data-act="browse"]')) { $('#browse').scrollIntoView({ behavior: 'smooth' }); return; }
+    const c = e.target.closest('.chip[data-f]'); if (!c) return;
+    S.f[c.dataset.f] = c.dataset.v; renderResults();
+  };
+  (async () => {
+    await loadTask();
+    if (S.notReady) { $('#results').innerHTML = notReadyBox(); return; }
+    try { S.gallery = await API.gallery(TASK); } catch (e) { $('#results').innerHTML = `<p class="empty">목록을 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요. (${esc(e.message)})</p>`; return; }
+    const n = S.gallery.length, rv = S.gallery.reduce((a, g) => a + g.reviews, 0);
+    $('#stat').innerHTML = n ? `앱 <b>${n}</b>개 · 서로 평가 <b>${rv}</b>개` : '';
+    renderResults(); if (back) scrollTo(0, S.listY);
+  })();
+}
+function renderResults() {
+  const box = $('#results'), fb = $('#filters'); if (!box) return;
+  const g = S.gallery || [];
+  if (!g.length) { fb.innerHTML = ''; box.innerHTML = `<div class="notice"><b>아직 공개된 앱이 없습니다.</b><p>제출한 앱은 선생님 확인을 거쳐 이곳에 보입니다.</p><a class="btn primary" href="#/me">내 작업실</a></div>`; return; }
+  const by = {}; g.forEach(x => { if (x.cls) by[x.cls] = (by[x.cls] || 0) + 1; });
+  const cl = Object.keys(by).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
+  fb.innerHTML = (cl.length > 1 ? `<div class="frow"><span class="fl">반</span><div class="chips"><button class="chip" data-f="cls" data-v="" aria-pressed="${!S.f.cls}">전체</button>${cl.map(c => `<button class="chip" data-f="cls" data-v="${esc(c)}" aria-pressed="${S.f.cls === c}">${esc(clsName(c))}<span class="n">${by[c]}</span></button>`).join('')}</div></div>` : '') +
+    `<div class="frow"><span class="fl">순서</span><div class="chips"><button class="chip" data-f="sort" data-v="new" aria-pressed="${S.f.sort === 'new'}">새로 올라온 순</button><button class="chip" data-f="sort" data-v="few" aria-pressed="${S.f.sort === 'few'}">평가가 적은 순</button></div></div>`;
+  let list = g.filter(x => !S.f.cls || x.cls === S.f.cls);
+  if (S.f.sort === 'few') list = [...list].sort((a, b) => a.reviews - b.reviews);
+  box.innerHTML = `<div class="grid">${list.map(cardHtml).join('')}</div>`;
+  $$('.thumb[data-has="1"]', box).forEach(el => thumbIO ? thumbIO.observe(el) : 0);
+}
+function cardHtml(a) {
+  return `<a class="card" href="#/w/${a.id}">
+    <div class="thumb" data-id="${a.id}" data-has="${a.has_thumb ? 1 : 0}"><span class="tile" aria-hidden="true">${esc(firstChar(a.title))}</span></div>
+    <div class="body"><h3>${esc(a.title)}</h3>${a.summary ? `<p class="sum">${esc(a.summary)}</p>` : ''}
+      <p class="meta"><span>${esc(a.nick)}</span>${a.cls ? `<span>${esc(clsName(a.cls))}</span>` : ''}<span>${a.v}판</span></p>
+      <p class="by"><span>${ago(a.ts)}</span><span>평가 ${a.reviews}</span></p></div></a>`;
+}
+const thumbCache = new Map();
+const thumbIO = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(async en => {
+  if (!en.isIntersecting) return; thumbIO.unobserve(en.target);
+  const id = en.target.dataset.id;
+  try {
+    let t = thumbCache.get(id); if (t === undefined) { t = await API.thumb(id); thumbCache.set(id, t || null); }
+    if (t && /^data:image\//.test(t)) { const img = new Image(); img.alt = ''; img.src = t; en.target.replaceChildren(img); }
+  } catch (e) {}
+}), { rootMargin: '300px' }) : null;
+
+/* ════════ 2. 작품 보기 ════════ */
+function stageBar(id, html, title) {
+  return `<div class="bar"><div class="seg" role="group" aria-label="보기 크기"><button data-size="wide" aria-pressed="true">넓게</button><button data-size="phone" aria-pressed="false">휴대폰</button></div>
+    <div class="acts">${id ? `<a class="btn line sm" href="view.html?id=${id}${LOCAL ? '&local=1' : ''}" target="_blank" rel="noopener">새 창에서 크게</a>` : ''}<button class="btn line sm" data-act="dl">내려받기</button></div></div>`;
+}
+function wireStage(root, html, title) {
+  root.addEventListener('click', e => {
+    const s = e.target.closest('[data-size]');
+    if (s) { $$('[data-size]', root).forEach(b => b.setAttribute('aria-pressed', b === s)); root.querySelector('.stage').classList.toggle('phone', s.dataset.size === 'phone'); }
+    if (e.target.closest('[data-act="dl"]')) download(title + '.html', html);
+  });
+}
+async function viewWork(id) {
+  view.innerHTML = `<div class="wrap pad"><a class="back" href="#/">‹ 전시관</a><div id="wbody"><p class="empty">불러오는 중입니다…</p></div></div>`;
+  let w;
+  try { await loadTask(); w = await API.work(id); } catch (e) { $('#wbody').innerHTML = `<p class="empty">불러오지 못했습니다. (${esc(e.message)})</p>`; return; }
+  if (!w) { $('#wbody').innerHTML = `<p class="empty">이 앱은 지금 볼 수 없습니다. 확인을 기다리고 있거나 내려간 앱입니다.</p>`; return; }
+  document.title = w.title + ' · Studentgithub';
+  const newer = w.latest > w.v && S.gallery ? S.gallery.find(g => g.nick === w.nick) : null;
+  $('#wbody').innerHTML = `
+    <p class="eyebrow">${esc(w.nick)}${w.cls ? ' · ' + esc(clsName(w.cls)) : ''} · ${w.v}판 · ${ago(w.ts)}</p>
+    <h1 style="margin:0 0 10px">${esc(w.title)}</h1>
+    ${w.summary ? `<p class="lead" style="margin:0 0 20px">${esc(w.summary)}</p>` : ''}
+    ${w.latest > w.v ? `<p class="note" style="margin:0 0 14px">이 친구가 고친 새 판(${w.latest}판)이 있습니다.${newer ? ` <a href="#/w/${newer.id}">새 판 보기 ›</a>` : ''}</p>` : ''}
+    <div id="stg">${stageBar(id, w.html, w.title)}<div class="stage" id="stage"></div></div>
+    <section style="margin:44px 0 0;padding:28px 0 0;border-top:1px solid var(--line)">
+      <h2>서로 평가 <span style="color:var(--muted);font-weight:500" id="rn"></span></h2>
+      <ul class="rlist" id="rlist"><li class="empty" style="text-align:left">불러오는 중입니다…</li></ul>
+      <div id="rform"></div>
+    </section>`;
+  runIn($('#stage'), w.html, w.title); wireStage($('#stg'), w.html, w.title);
+  drawReviews(id);
+  const box = $('#rform');
+  if (!S.me) box.innerHTML = `<p class="note">평가하려면 <a href="#/in">학번과 별명으로 들어가</a> 주세요.</p>`;
+  else if (!S.task || !S.task.review_open) box.innerHTML = `<p class="note">선생님이 서로 평가를 열면 여기서 평가할 수 있습니다.</p>`;
+  else if (w.nick === S.me.student.nick) box.innerHTML = `<p class="note">내 앱입니다. 친구들의 평가는 내 작업실 「서로 평가」에서도 볼 수 있습니다.</p>`;
+  else reviewForm(box, id, () => drawReviews(id));
+}
+async function drawReviews(id) {
+  const ul = $('#rlist'); if (!ul) return;
+  try {
+    const rs = await API.reviewsOf(id); $('#rn').textContent = rs.length || '';
+    ul.innerHTML = rs.length ? rs.map(reviewLi).join('') : `<li class="empty" style="text-align:left">아직 평가가 없습니다. 첫 평가를 남겨 주세요.</li>`;
+  } catch (e) { ul.innerHTML = `<li class="empty">평가를 불러오지 못했습니다.</li>`; }
+}
+function checkBadges(c) {
+  return `<span class="badges">${D.reviewQs.map(q => { const v = c && c[q.id]; return v ? `<span class="badge ${v === 'ok' ? 'ok' : 'warn'}">${esc(q.k)} ${v === 'ok' ? '👍' : '🤔'}</span>` : ''; }).join('')}</span>`;
+}
+function reviewLi(r) {
+  const why = D.reviewQs.map(q => r.checks && r.checks[q.id + '_why'] ? `<br><span class="hint">${esc(q.k)}: ${esc(r.checks[q.id + '_why'])}</span>` : '').join('');
+  return `<li><div class="rh"><b>${esc(r.nick)}</b><span>${ago(r.ts)}</span>${checkBadges(r.checks)}</div>
+    <p class="rb"><b>칭찬</b> ${esc(r.praise)}${r.suggest ? `<br><b>제안</b> ${esc(r.suggest)}` : ''}${why}</p></li>`;
+}
+function reviewForm(box, workId, after) {
+  box.innerHTML = `<form class="rform" autocomplete="off">
+    <h3>이 앱 평가하기</h3>
+    ${D.reviewQs.map(q => `<div class="rq"><p>${esc(q.t)}</p>
+      <div class="radios"><label><input type="radio" name="${q.id}" value="ok" required> 👍 그렇다</label><label><input type="radio" name="${q.id}" value="no"> 🤔 고칠 곳이 있다</label></div>
+      <input type="text" name="${q.id}_why" maxlength="150" placeholder="그렇게 판단한 까닭 (무엇을 조작해 보았나)"></div>`).join('')}
+    <div class="field"><label>칭찬 한 가지 <em style="color:var(--bad);font-style:normal">*</em></label><textarea name="praise" maxlength="300" rows="2" required></textarea></div>
+    <div class="field"><label>고치면 더 좋을 한 가지</label><textarea name="suggest" maxlength="300" rows="2"></textarea></div>
+    <p class="hint" style="margin:0 0 12px">평가한 사람의 별명이 함께 보입니다. 친구가 기분 좋게 고칠 수 있게, 까닭을 들어 써 주세요.</p>
+    <p style="margin:0 0 14px"><button class="btn primary" type="submit">평가 보내기</button></p></form>`;
+  const f = box.querySelector('form');
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const fd = new FormData(f), checks = {};
+    for (const q of D.reviewQs) { const v = fd.get(q.id); if (!v) { toast('세 질문에 모두 답해 주세요.', true); return; } checks[q.id] = v; checks[q.id + '_why'] = String(fd.get(q.id + '_why') || '').trim(); }
+    const b = f.querySelector('button[type=submit]'); b.disabled = true;
+    try { await API.reviewSave(S.tok, workId, checks, String(fd.get('praise') || ''), String(fd.get('suggest') || '')); toast('평가를 보냈습니다. 고마워요!'); f.reset(); if (after) after(); await loadMe(); }
+    catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
+    finally { b.disabled = false; }
+  };
+}
+
+/* ════════ 3. 들어가기 ════════ */
+function viewEnter() {
+  document.title = '들어가기 · Studentgithub';
+  view.innerHTML = `<div class="wrap pad narrow">
+    <p class="eyebrow">${esc(D.unit)} · ${esc(D.title)}</p><h1 style="margin:0 0 10px">들어가기</h1>
+    <p class="lead" style="margin:0 0 26px">처음이면 새로 만들어지고, 전에 쓴 학번·별명이면 하던 곳부터 이어집니다.</p>
+    <div id="enterBox"></div></div>`;
+  (async () => {
+    await loadTask();
+    if (S.notReady) { $('#enterBox').innerHTML = notReadyBox(); return; }
+    if (S.me) { $('#enterBox').innerHTML = `<div class="notice" style="margin:0"><b>${esc(S.me.student.nick)}(으)로 들어와 있습니다.</b><p>다른 학번으로 들어가려면 먼저 나가기를 누르세요.</p><a class="btn primary" href="#/me">내 작업실</a></div>`; return; }
+    $('#enterBox').innerHTML = `<form id="ef" autocomplete="off">
+      <div class="field"><label for="sid">학번</label><input type="text" id="sid" inputmode="numeric" maxlength="6" placeholder="예: 10312 (1학년 3반 12번)" required></div>
+      <div class="field"><label for="nick">별명 <small>(1~12자, 전시관에 보입니다 — 실명은 쓰지 마세요)</small></label><input type="text" id="nick" maxlength="12" placeholder="예: 민트초코" required></div>
+      <p class="hint" style="margin:-4px 0 18px">학번과 별명은 다음에 이어서 할 때 똑같이 넣어야 합니다. 별명을 잊지 마세요.</p>
+      <button class="btn primary" type="submit">들어가기</button>
+      <p class="hint" id="eerr" style="color:var(--bad);margin:14px 0 0"></p></form>`;
+    $('#ef').onsubmit = async e => {
+      e.preventDefault();
+      const sid = $('#sid').value.replace(/\D/g, ''), nick = $('#nick').value.trim();
+      $('#eerr').textContent = '';
+      const b = $('#ef button'); b.disabled = true;
+      try {
+        const r = await API.enter(sid, nick);
+        S.tok = r.token; store(TOKK, r.token);
+        await loadMe();
+        toast(r.is_new ? `반가워요, ${r.nick}! 작업실이 만들어졌습니다.` : `돌아온 걸 환영해요, ${r.nick}! 하던 곳부터 이어 갑니다.`);
+        location.hash = '#/me';
+      } catch (err) { $('#eerr').textContent = err.message; }
+      finally { b.disabled = false; }
+    };
+  })();
+}
+
+/* ════════ 4. 내 작업실 ════════ */
+function stepDone(id) {
+  if (!S.me) return false;
+  if (id === 'submit') return (S.me.works || []).length > 0;
+  if (id === 'review') return (S.me.gave || []).length >= 2;
+  return !!(S.draft[id] && S.draft[id].done);
+}
+function stepStarted(id) {
+  if (id === 'submit') return false;
+  if (id === 'review') return (S.me.gave || []).length > 0;
+  return !!(S.draft[id] && Object.keys(S.draft[id]).length);
+}
+function setSave(t, bad) { const e = $('#savest'); if (e) { e.textContent = t; e.className = 'savest' + (bad ? ' bad' : ''); } }
+let saveT = null;
+function touch(step) { S.dirty.add(step); setSave('저장 중…'); clearTimeout(saveT); saveT = setTimeout(flushNow, 1600); }
+async function flushNow() {
+  clearTimeout(saveT);
+  if (!S.tok || !S.dirty.size) return;
+  const list = [...S.dirty]; S.dirty.clear();
+  for (const st of list) {
+    try { await API.noteSave(S.tok, TASK, st, S.draft[st] || {}); if (S.me) S.me.notes[st] = { data: S.draft[st], ts: new Date().toISOString(), n: ((S.me.notes[st] || {}).n || 0) }; setSave('저장됨 · ' + new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })); }
+    catch (e) { S.dirty.add(st); if (e.hint === 'login') return relogin(); setSave('저장하지 못했습니다 — ' + e.message, true); }
+  }
+  drawStepNav();
+}
+addEventListener('beforeunload', e => { if (S.dirty.size) { flushNow(); e.preventDefault(); e.returnValue = ''; } });
+
+function drawStepNav() {
+  const ul = $('#stepnav'); if (!ul || !S.me) return;
+  const cur = S.page === 'me' ? S.step : '';
+  ul.innerHTML = STEPS.map((s, i) => { const dn = stepDone(s.id), st = stepStarted(s.id);
+    return `<li><a href="#/me/${s.id}" class="${cur === s.id ? 'on' : ''} ${dn ? 'done' : st ? 'started' : ''}"><span class="dot">${dn ? '✓' : i + 1}</span><span>${s.t}<small>${s.s}</small></span></a></li>`; }).join('');
+  const n = STEPS.filter(s => stepDone(s.id)).length;
+  $('#progi').style.width = Math.round(n / STEPS.length * 100) + '%';
+  $('#progt').textContent = `${STEPS.length}단계 중 ${n}단계 마침`;
+}
+async function viewMe(step) {
+  document.title = '내 작업실 · Studentgithub';
+  view.innerHTML = `<div class="wrap"><p class="empty">불러오는 중입니다…</p></div>`;
+  await loadTask();
+  if (S.notReady) { view.innerHTML = `<div class="wrap pad narrow">${notReadyBox()}</div>`; return; }
+  if (!S.tok) { location.hash = '#/in'; return; }
+  if (!S.me) { try { await loadMe(); } catch (e) { view.innerHTML = `<div class="wrap pad"><p class="empty">불러오지 못했습니다. (${esc(e.message)})</p></div>`; return; } }
+  if (!S.me) { location.hash = '#/in'; return; }
+  if (!STEPS.some(s => s.id === step)) { const first = STEPS.find(s => !stepDone(s.id)); location.replace('#/me/' + (first ? first.id : 'review')); return; }
+  S.step = step;
+  const me = S.me.student, lesson = S.task && S.task.lesson_url;
+  view.innerHTML = `<div class="wrap ws">
+    <aside class="side">
+      <p class="hello">안녕하세요<b>${esc(me.nick)}</b></p>
+      <p class="hint" style="margin:0">${esc(clsName(me.cls))}${me.cls ? ' · ' : ''}${esc(D.title)}</p>
+      <div class="prog"><i id="progi"></i></div><p class="progt" id="progt"></p>
+      <ul class="stepnav" id="stepnav"></ul>
+      ${lesson ? `<a class="btn line sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 열기 ↗</a>` : ''}
+      <p class="savest" id="savest"></p>
+    </aside>
+    <section id="panel"></section></div>`;
+  drawStepNav();
+  const P = { fix: panelFix, model: panelModel, make: panelMake, check: panelCheck, reflect: panelReflect, submit: panelSubmit, review: panelReview }[step];
+  const idx = STEPS.findIndex(s => s.id === step);
+  $('#panel').innerHTML = `<div class="stephead"><div><p class="eyebrow" style="margin:0 0 4px">${idx + 1}단계</p><h2>${STEPS[idx].t}</h2></div></div>`;
+  const body = document.createElement('div'); $('#panel').appendChild(body);
+  await P(body);
+}
+/* 칸 ↔ 기록 잇기: data-k 가 붙은 칸은 S.draft[단계] 의 그 자리에 저장된다 */
+function bindFields(root, step, onChange) {
+  const d = S.draft[step] = S.draft[step] || {};
+  $$('[data-k]', root).forEach(el => {
+    const v = getPath(d, el.dataset.k);
+    if (el.type === 'checkbox') el.checked = !!v;
+    else if (el.type === 'radio') el.checked = v != null && String(v) === el.value;
+    else if (v != null) el.value = v;
+  });
+  const h = e => {
+    const el = e.target.closest('[data-k]'); if (!el || !root.contains(el)) return;
+    const val = el.type === 'checkbox' ? el.checked : el.value;
+    if (el.type === 'radio' && !el.checked) return;
+    setPath(d, el.dataset.k, val); touch(step); if (onChange) onChange(el);
+  };
+  root.addEventListener('input', h); root.addEventListener('change', h);
+}
+function doneBar(root, step, check, msgOk) {
+  const box = document.createElement('div'); box.className = 'donebar';
+  const done = S.draft[step] && S.draft[step].done;
+  box.innerHTML = `<p class="hint" id="dmsg">${done ? '마친 단계입니다. 고쳐 써도 됩니다(판이 새로 쌓입니다).' : '다 썼으면 이 단계를 마치세요. 쓰는 동안 저절로 저장됩니다.'}</p><button class="btn primary">${done ? '다시 저장하고 다음으로' : '이 단계 마치기'}</button>`;
+  root.appendChild(box);
+  box.querySelector('button').onclick = async () => {
+    const miss = check(S.draft[step] || {});
+    if (miss) { toast(miss, true); return; }
+    S.draft[step].done = true; S.dirty.add(step); await flushNow();
+    toast(msgOk || '이 단계를 마쳤습니다!');
+    const i = STEPS.findIndex(s => s.id === step); location.hash = '#/me/' + STEPS[Math.min(i + 1, STEPS.length - 1)].id;
+  };
+}
+
+/* ── ① 고치기 기록 ── */
+function panelFix(root) {
+  root.innerHTML = `<p class="lead2">수업 페이지의 미션을 하며 찾은 잘못과 고친 방법을 적습니다. 한 미션만 해도 그 미션부터 적어 두세요.</p>` +
+    D.missions.map(m => `<div class="box"><h3>${esc(m.name)}</h3>
+      <div class="lb">찾은 잘못</div>
+      <div class="ticks">${range(m.n).map(i => `<label class="tick"><input type="checkbox" data-k="${m.id}.found.${i}"><span>잘못 ${CIRC[i]}</span></label>`).join('')}</div>
+      <div class="lb">고친 방법</div>
+      <div class="radios">${[['ai', 'AI에게 말해서'], ['self', '직접 코드를 고쳐서'], ['both', '둘 다']].map(([v, t]) => `<label><input type="radio" name="${m.id}-how" data-k="${m.id}.how" value="${v}"> ${t}</label>`).join('')}</div>
+      <div class="field"><label>가장 기억에 남는 잘못</label><select data-k="${m.id}.pick"><option value="">고르기</option>${range(m.n).map(i => `<option value="${i}">잘못 ${CIRC[i]}</option>`).join('')}</select></div>
+      <div class="field"><label>무엇이 보였나요? <small>내 눈으로 본 것</small></label><textarea data-k="${m.id}.see" rows="2" maxlength="600"></textarea></div>
+      <div class="field"><label>왜 틀렸나요? <small>교과서의 어떤 내용과 어긋나나</small></label><textarea data-k="${m.id}.why" rows="2" maxlength="600"></textarea></div>
+      <div class="field"><label>어떻게 고쳤나요? <small>AI에게 한 말, 또는 직접 바꾼 줄</small></label><textarea data-k="${m.id}.fix" rows="2" maxlength="800"></textarea></div>
+    </div>`).join('') +
+    `<div class="box"><div class="field"><label>AI가 엉뚱하게 고치거나 거절한 적이 있다면 <small>없으면 비워 둡니다</small></label><textarea data-k="aiWrong" rows="2" maxlength="600"></textarea></div></div>`;
+  bindFields(root, 'fix');
+  doneBar(root, 'fix', d => {
+    const okM = D.missions.some(m => { const x = d[m.id] || {}; return (x.found || []).some(Boolean) && filled(x.see, 5) && filled(x.why, 5) && filled(x.fix, 3); });
+    return okM ? '' : '미션 하나 이상에서 찾은 잘못을 표시하고, 무엇이 보였는지·왜 틀렸는지·어떻게 고쳤는지 써 주세요.';
+  }, '고치기 기록을 마쳤습니다. 다음은 모형 생각!');
+}
+
+/* ── ② 모형 생각 ── */
+function panelModel(root) {
+  root.innerHTML = `<p class="lead2">수업 페이지 「모형 이야기」를 읽고 답합니다.</p>` +
+    `<div class="box">${D.model.map(q => `<div class="field"><label>${esc(q.t)}</label><textarea data-k="${q.id}" rows="3" maxlength="600"></textarea></div>`).join('')}</div>
+    <div class="box"><h3>내 시뮬레이터의 한계 고르기</h3><p class="hint" style="margin:-6px 0 12px">고른 것은 「만들기」에서 내 앱의 한계 칸에 한 번에 넣을 수 있습니다.</p>
+      <div class="ticks" style="flex-direction:column;align-items:stretch">${D.limits.map((l, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="lim.${i}"><span>${esc(l)}</span></label>`).join('')}</div></div>`;
+  bindFields(root, 'model');
+  doneBar(root, 'model', d => D.model.every(q => filled(d[q.id], 5)) ? '' : '세 질문에 모두 답해 주세요(한 줄 이상).', '모형 생각을 마쳤습니다. 이제 만들 차례!');
+}
+
+/* ── ③ 만들기 ── */
+function themeWord(v) { const t = D.themes.find(x => x[0] === v); return t ? t[3] : '밝은 하늘색'; }
+function mkData() { const d = S.draft.make = S.draft.make || {}; d.examples = d.examples || [{}, {}, {}]; d.quiz = d.quiz || [{}, {}, {}]; d.log = d.log || []; d.sent = d.sent || {}; return d; }
+function goodExamples(d) { return (d.examples || []).filter(e => e && filled(e.name, 2) && filled(e.text, 8) && filled(e.kind)); }
+function goodQuiz(d) { return (d.quiz || []).filter(q => q && filled(q.q, 4) && (q.choices || []).filter(c => filled(c)).length === 4 && q.answer != null && q.answer !== '' && filled(q.why, 2)); }
+function pieces(d) {
+  const name = (d.appName || '').trim() || '나만의 공기 시뮬레이터';
+  const ex = goodExamples(d), qz = goodQuiz(d);
+  return [
+    { t: '시작', text: `작은 공기 알갱이들이 상자 안에서 사방으로 움직이며 벽에 부딪히는 간단한 웹앱을 만들어 줘. 앱 이름은 「${name}」이고, ${themeWord(d.theme)} 느낌으로 해 줘.`,
+      after: '알갱이가 사방으로 움직이나요? 바닥에 쌓이지 않나요?' },
+    { t: '알갱이와 충돌', text: '알갱이 수를 조절하는 손잡이(5개~80개)와, 1초 동안 벽에 부딪힌 횟수를 보여 주는 칸을 넣어 줘. 충돌은 벽에 튕겨 나오는 순간 한 번만 세 줘. 알갱이에 중력은 없고, 알갱이는 작게 그려 줘. 다른 부분은 그대로 둬.',
+      after: '알갱이를 2배로 하면 충돌 수도 약 2배가 되나요?' },
+    { t: '압력', text: '압력은 공식으로 정하지 말고 1초 동안 벽에 부딪힌 횟수로 나타내 줘. 압력 화살표를 그린다면 네 벽 모두에 그려 줘. 다른 부분은 그대로 둬.',
+      after: '멈추면 충돌 수와 압력이 함께 0이 되나요(또는 함께 멈추나요)?' },
+    { t: '압력과 부피', text: "탭을 하나 더 만들어 '압력과 부피'라고 해 줘. 오른쪽 벽(손잡이)을 밀어 부피를 100%에서 35%까지 줄일 수 있게 하고, 1초에 손잡이에 부딪힌 횟수와 알갱이의 평균 빠르기를 보여 줘. 온도는 일정하니까 부피를 줄여도 빠르기는 그대로여야 하고, 벽이 움직일 때 알갱이를 밀고 가게 해 줘. 다른 탭은 그대로 둬.",
+      after: '부피를 절반으로 줄이면 손잡이 충돌이 약 2배, 빠르기는 그대로인가요?' },
+    { t: '온도와 부피', text: "탭을 하나 더 만들어 '온도와 부피'라고 해 줘. 위에 뚜껑이 얹힌 상자와 0~100℃ 온도 손잡이를 넣어 줘. 온도를 올리면 알갱이의 빠르기만 커지고, 알갱이의 수와 크기는 그대로여야 해. 뚜껑 위에서 바깥 공기가 누르는 힘이 있어서, 뚜껑은 안에서 미는 힘과 같아지는 높이에서 멈춰야 해. 온도는 ℃로만 써 줘. 다른 탭은 그대로 둬.",
+      after: '온도를 올리면 뚜껑이 올라가다 멈추나요? 알갱이 수와 크기는 그대로인가요?' },
+    { t: '생활 속 공기', text: "탭을 하나 더 만들어 '생활 속 공기'라고 해 줘. 아래 예시를 카드로 보여 줘. 내 설명의 과학 내용은 바꾸지 말고 문장만 다듬어 줘. 과학적으로 틀린 곳이 있어 보이면 고치지 말고 맨 끝에 따로 알려 줘.\n" +
+        (ex.length ? ex.map((e, i) => `${i + 1}. ${e.name.trim()} (${e.kind}): ${e.text.trim()}`).join('\n') : '(아래 「내 앱 설계」에 예시를 먼저 써 주세요)'),
+      after: '내 예시가 그대로 들어갔나요? AI가 따로 알려 준 곳이 있다면 교과서로 확인했나요?' },
+    { t: '내가 낸 퀴즈', text: "탭을 하나 더 만들어 '내가 낸 퀴즈'라고 해 줘. 아래 문제를 그대로 넣고, 답을 고르면 맞았는지와 풀이를 보여 줘. 문제와 정답은 바꾸지 마.\n" +
+        (qz.length ? qz.map((q, i) => `${i + 1}. ${q.q.trim()}\n   ① ${q.choices[0]} ② ${q.choices[1]} ③ ${q.choices[2]} ④ ${q.choices[3]}\n   정답: ${CIRC[+q.answer]} / 풀이: ${q.why.trim()}`).join('\n') : '(아래 「내 앱 설계」에 퀴즈를 먼저 써 주세요)'),
+      after: '직접 풀어 보세요. 정답과 풀이가 맞게 나오나요?' },
+    { t: '한계와 설명', text: `화면 맨 아래에 '이 시뮬레이터의 한계' 칸을 만들어 이렇게 써 줘: ${(d.limits || '').trim() || '(아래 「내 앱 설계」에 한계를 먼저 써 주세요)'}\n그리고 설명 글에는 비례·반비례·공식을 쓰지 말고, K(켈빈) 대신 ℃를 쓰고, 중학교 1학년이 읽을 수 있는 쉬운 말로 써 줘.`,
+      after: '앱의 글을 다 읽어 보세요. 배우지 않은 표현이 남아 있지 않나요?' }
+  ];
+}
+function panelMake(root) {
+  const d = mkData(); d.route = d.route || 'template';
+  root.innerHTML = `
+    <p class="lead2">최종 목표: <b>공기의 압력 · 압력과 부피 · 온도와 부피 · 생활 속 공기 · 내가 낸 퀴즈</b>에 <b>이 시뮬레이터의 한계</b>까지 담은 앱.</p>
+    <div class="box"><h3>내 앱 설계</h3>
+      <div class="grid2"><div class="field"><label>앱 이름</label><input type="text" data-k="appName" maxlength="40" placeholder="예: 공기 탐험대"></div>
+        <div class="field"><label>한 줄 소개</label><input type="text" data-k="about" maxlength="80" placeholder="예: 공기 알갱이로 압력·부피·온도를 알아봐요"></div></div>
+      <div class="lb">분위기</div>
+      <div class="sw">${D.themes.map(t => `<label><input type="radio" name="theme" data-k="theme" value="${t[0]}"><i style="background:${t[2]}"></i>${t[1]}</label>`).join('')}</div>
+      <div class="lb">생활 속 예시 <small>(2개 이상 — 내 말로, 까닭까지)</small></div>
+      ${range(3).map(i => `<div class="qbox"><div class="grid3">
+          <div class="field"><label>예시 ${i + 1}</label><input type="text" data-k="examples.${i}.name" maxlength="40" placeholder="예: 산 위에서 부푼 과자 봉지"></div>
+          <div class="field"><label>관련 개념</label><select data-k="examples.${i}.kind"><option value="">고르기</option>${D.kinds.map(k => `<option>${k}</option>`).join('')}</select></div>
+          <div class="field"><label>까닭</label><input type="text" data-k="examples.${i}.text" maxlength="200" placeholder="알갱이의 움직임으로 설명해요"></div></div></div>`).join('')}
+      <div class="lb">내가 낸 퀴즈 <small>(3문제 — 보기 4개, 정답에 표시, 풀이까지)</small></div>
+      ${range(3).map(i => `<div class="qbox">
+          <div class="field"><label>문제 ${i + 1}</label><input type="text" data-k="quiz.${i}.q" maxlength="120"></div>
+          <div class="choices">${range(4).map(j => `<input type="radio" name="ans${i}" data-k="quiz.${i}.answer" value="${j}" title="정답"><input type="text" data-k="quiz.${i}.choices.${j}" maxlength="60" placeholder="보기 ${CIRC[j]}">`).join('')}</div>
+          <p class="hint" style="margin:-4px 0 10px">왼쪽 동그라미로 정답을 고르세요.</p>
+          <div class="field"><label>풀이</label><input type="text" data-k="quiz.${i}.why" maxlength="160"></div></div>`).join('')}
+      <div class="field"><label>이 시뮬레이터의 한계 <button type="button" class="btn sm" data-act="lim">모형 생각에서 고른 것 가져오기</button></label><textarea data-k="limits" rows="3" maxlength="500"></textarea></div>
+    </div>
+    <div class="tabs2" role="group" aria-label="만드는 방법">
+      <button data-route="template">ⓐ 템플릿 채우기</button><button data-route="free">ⓑ 자유롭게 쓰기</button><button data-route="starter">ⓒ 시작 앱으로 만들기</button></div>
+    <div id="routeBox"></div>
+    <div class="box"><h3>내가 보낸 프롬프트 기록</h3>
+      <p class="hint" style="margin:-6px 0 12px">AI에게 보낸 말은 꼭 기록하세요. 조각의 「보냈어요」를 누르면 저절로 들어갑니다. AI가 어떻게 답했는지 한 줄 메모도 남겨요.</p>
+      <ul class="logl" id="logl"></ul>
+      <div class="field"><label>직접 더하기</label><textarea id="logAdd" rows="2" maxlength="1500" placeholder="보낸 프롬프트를 붙여넣으세요"></textarea></div>
+      <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="logadd">기록에 더하기</button></p></div>`;
+  bindFields(root, 'make', () => { if (d.route === 'template') drawPieces(); });
+  const setRoute = r => { d.route = r; $$('[data-route]', root).forEach(b => b.setAttribute('aria-pressed', b.dataset.route === r)); drawRoute(); };
+  function drawLog() {
+    $('#logl').innerHTML = d.log.length ? d.log.map((l, i) => `<li><div class="lh"><span>${esc(l.route === 'template' ? '템플릿' : l.route === 'free' ? '자유' : '직접')}${l.piece != null ? ' · 조각 ' + (l.piece + 1) : ''} · ${ago(l.ts)}</span><button type="button" class="btn sm danger" data-del="${i}">지우기</button></div><pre>${esc(l.text)}</pre><input type="text" data-memo="${i}" maxlength="160" placeholder="AI의 답 메모 (예: 거절함 / 중력을 넣어 버림 / 잘 됨)" value="${esc(l.memo || '')}"></li>`).join('') : '<li class="hint">아직 기록이 없습니다.</li>';
+  }
+  function drawPieces() {
+    const box = $('#pieces'); if (!box) return;
+    const ps = pieces(d);
+    box.innerHTML = ps.map((p, i) => `<div class="piece${d.sent[i] ? ' sent' : ''}"><div class="ph"><b>조각 ${i + 1} · ${esc(p.t)}</b><span class="sp"></span><button type="button" class="btn line sm" data-copy="${i}">복사</button><label class="check" style="margin:0"><input type="checkbox" data-sent="${i}"${d.sent[i] ? ' checked' : ''}> 보냈어요</label></div><pre>${esc(p.text)}</pre><p class="after">보낸 뒤 확인 — ${esc(p.after)}</p></div>`).join('');
+  }
+  function drawRoute() {
+    const box = $('#routeBox');
+    if (d.route === 'template') {
+      box.innerHTML = `<div class="box"><h3>ⓐ 템플릿 — 조각을 하나씩 보내세요</h3>
+        <p class="hint" style="margin:-6px 0 12px">규칙이 긴 글을 한 번에 보내면 AI가 거절하는 일이 많습니다. 조각 하나를 보내고 → 미리보기로 확인하고 → 다음 조각. 위 「내 앱 설계」를 바꾸면 조각도 바로 바뀝니다.</p>
+        <div id="pieces"></div>
+        <details style="margin:0 0 14px"><summary class="hint" style="cursor:pointer">한 번에 보내는 글(길어서 거절될 수 있음)</summary><p style="margin:8px 0"><button type="button" class="btn line sm" data-act="all">전체 복사</button></p></details></div>`;
+      drawPieces();
+    } else if (d.route === 'free') {
+      box.innerHTML = `<div class="box"><h3>ⓑ 자유롭게 쓰기</h3>
+        <div class="field"><label>내가 쓴 프롬프트</label><textarea data-k="free" rows="6" maxlength="3000" placeholder="예: 작은 공기 알갱이들이 상자 안에서 움직이는 앱을 만들어 줘. 알갱이 수를 바꾸는 손잡이도…"></textarea></div>
+        <div class="lb">좋은 프롬프트 점검</div>
+        <div class="ticks" style="flex-direction:column;align-items:stretch">${['무엇을 보여 줄지(어떤 관계인지) 말했다', '조절할 것(손잡이)과 화면에 보일 것(숫자)을 말했다', '과학 규칙(중력 없음·충돌로 압력·빠르기는 온도만·수와 크기 그대로)을 넣었다', '비례·반비례·공식·K를 쓰지 말라고 했다', '한 번에 하나씩, 나머지는 그대로 두라고 했다'].map((t, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="freeCheck.${i}"><span>${t}</span></label>`).join('')}</div>
+        <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="freecopy">복사</button> <button type="button" class="btn line sm" data-act="freelog">보냈어요 — 기록에 넣기</button></p></div>`;
+      bindFields(box, 'make');
+    } else {
+      box.innerHTML = `<div class="box"><h3>ⓒ 시작 앱으로 만들기</h3>
+        <p class="hint" style="margin:-6px 0 12px">AI가 거절할 때의 길입니다. 선생님이 과학적으로 검증한 시작 앱에 위 「내 앱 설계」(이름·분위기·예시·퀴즈·한계)를 넣어 앱을 만듭니다. 만든 뒤 꾸미기나 기능 더하기는 AI나 직접 고치기로 해 보세요.</p>
+        <p style="margin:0 0 14px"><button type="button" class="btn primary sm" data-act="build">시작 앱 만들기</button></p>
+        <div id="sbox"></div></div>`;
+    }
+  }
+  root.addEventListener('click', async e => {
+    const r = e.target.closest('[data-route]'); if (r) { setRoute(r.dataset.route); touch('make'); return; }
+    const c = e.target.closest('[data-copy]'); if (c) { copyText(pieces(d)[+c.dataset.copy].text, `조각 ${+c.dataset.copy + 1}을 복사했습니다. AI에게 붙여넣으세요.`); return; }
+    const del = e.target.closest('[data-del]'); if (del) { d.log.splice(+del.dataset.del, 1); touch('make'); drawLog(); return; }
+    const a = e.target.closest('[data-act]'); if (!a) return;
+    const act = a.dataset.act;
+    if (act === 'lim') {
+      const lim = ((S.draft.model || {}).lim || []);
+      const picked = D.limits.filter((_, i) => lim[i]);
+      if (!picked.length) { toast('「모형 생각」에서 고른 한계가 없습니다.', true); return; }
+      const ta = $('[data-k="limits"]', root); ta.value = picked.join(' '); d.limits = ta.value; touch('make'); if (d.route === 'template') drawPieces();
+    }
+    if (act === 'all') copyText(pieces(d).map((p, i) => `【${i + 1}. ${p.t}】\n${p.text}`).join('\n\n'), '전체를 복사했습니다.');
+    if (act === 'freecopy') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); copyText(d.free, '복사했습니다.'); }
+    if (act === 'freelog') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); d.log.push({ ts: new Date().toISOString(), route: 'free', text: d.free.trim(), memo: '' }); touch('make'); drawLog(); toast('기록에 넣었습니다.'); }
+    if (act === 'logadd') { const t = $('#logAdd').value.trim(); if (!t) return; d.log.push({ ts: new Date().toISOString(), route: 'self', text: t, memo: '' }); $('#logAdd').value = ''; touch('make'); drawLog(); }
+    if (act === 'build') {
+      const miss = starterMissing(d); if (miss) { toast(miss, true); return; }
+      a.disabled = true;
+      try {
+        const html = await starterHtml(d); d.starterMade = new Date().toISOString(); touch('make');
+        store('sgh:draft:' + TASK, { html, title: d.appName, summary: d.about, from: 'starter' });
+        $('#sbox').innerHTML = `${stageBar('', html, d.appName)}<div class="stage small" id="sstage"></div>
+          <p style="margin:14px 0"><a class="btn primary sm" href="#/me/submit">이 앱을 제출하러 가기 ›</a></p>`;
+        runIn($('#sstage'), html, d.appName); wireStage($('#sbox'), html, d.appName || '나의 공기 시뮬레이터');
+        toast('시작 앱을 만들었습니다. 돌려 보고 점검해 보세요!');
+      } catch (err) { toast('시작 앱을 불러오지 못했습니다. (' + err.message + ')', true); }
+      finally { a.disabled = false; }
+    }
+  });
+  root.addEventListener('change', e => {
+    const s = e.target.closest('[data-sent]'); if (!s) return;
+    const i = +s.dataset.sent; d.sent[i] = s.checked;
+    if (s.checked && !d.log.some(l => l.piece === i && l.route === 'template')) d.log.push({ ts: new Date().toISOString(), route: 'template', piece: i, text: pieces(d)[i].text, memo: '' });
+    touch('make'); drawPieces(); drawLog();
+  });
+  root.addEventListener('input', e => { const m = e.target.closest('[data-memo]'); if (m) { d.log[+m.dataset.memo].memo = m.value; touch('make'); } });
+  setRoute(d.route); drawLog();
+  doneBar(root, 'make', dd => {
+    if (!filled(dd.appName, 2)) return '앱 이름을 정해 주세요.';
+    if (goodExamples(dd).length < 2) return '생활 속 예시를 2개 이상, 관련 개념과 까닭까지 써 주세요.';
+    if (goodQuiz(dd).length < 3) return '퀴즈 3문제를 보기 4개·정답·풀이까지 채워 주세요.';
+    if (!filled(dd.limits, 5)) return '이 시뮬레이터의 한계를 써 주세요.';
+    if (!(dd.log || []).length && !dd.starterMade) return 'AI에게 보낸 프롬프트를 기록하거나, 시작 앱을 만들어 주세요.';
+    return '';
+  }, '만들기를 마쳤습니다. 이제 점검할 차례!');
+}
+function starterMissing(d) {
+  if (!filled(d.appName, 2)) return '앱 이름을 먼저 정해 주세요.';
+  if (goodExamples(d).length < 1) return '생활 속 예시를 하나 이상 써 주세요.';
+  if (goodQuiz(d).length < 1) return '퀴즈를 하나 이상 완성해 주세요.';
+  return '';
+}
+async function starterHtml(d) {
+  const r = await fetch(D.starter, { cache: 'no-cache' }); if (!r.ok) throw new Error('시작 앱 ' + r.status);
+  const src = await r.text();
+  const MY = { title: d.appName.trim(), about: (d.about || '').trim(), maker: S.me ? S.me.student.nick : '', theme: d.theme || 'sky',
+    examples: goodExamples(d).map(e => ({ name: e.name.trim(), kind: e.kind, text: e.text.trim() })),
+    quiz: goodQuiz(d).map(q => ({ q: q.q.trim(), choices: q.choices.map(c => String(c).trim()), answer: +q.answer, why: q.why.trim() })),
+    limits: (d.limits || '').trim() };
+  const json = JSON.stringify(MY, null, 2).replace(/</g, '\\u003c');
+  const re = /(\/\* ▼ 내 앱 설정[^\n]*\n)[\s\S]*?(\/\* ▲ 내 앱 설정 끝 ▲ \*\/)/;
+  if (!re.test(src)) throw new Error('시작 앱의 설정 자리를 찾지 못했습니다');
+  return src.replace(re, (m, a, b) => a + 'const MY = ' + json + ';\n' + b);
+}
+
+/* ── ④ 점검표 ── */
+function panelCheck(root) {
+  let g = '';
+  root.innerHTML = `<p class="lead2">내 앱을 직접 조작해 보며 점검합니다. <b>됨·안 됨</b>을 고르면 까닭(어떻게 확인했나)을 꼭 씁니다. 안 된 것은 고친 뒤 새 판으로 내면 됩니다.</p>
+    <p class="hint" id="csum" style="margin:-8px 0 14px"></p>` +
+    D.checklist.map((c, i) => { const head = c.g !== g ? `<p class="cgroup">${esc(c.g)}</p>` : ''; g = c.g;
+      return head + `<div class="crow" id="row-${c.id}"><p class="ct"><b>${i + 1}</b>${esc(c.t)}</p>
+        <div class="radios">${[['ok', '됨'], ['no', '안 됨'], ['unk', '모르겠음']].map(([v, t]) => `<label><input type="radio" name="${c.id}" data-k="${c.id}.st" value="${v}"> ${t}</label>`).join('')}</div>
+        <textarea data-k="${c.id}.why" rows="2" maxlength="400" placeholder="${esc(c.how)}"></textarea></div>`; }).join('');
+  const paint = () => {
+    const d = S.draft.check || {}; let ok = 0, no = 0, unk = 0;
+    D.checklist.forEach(c => { const st = (d[c.id] || {}).st; const row = $('#row-' + c.id, root); row.classList.toggle('ok', st === 'ok'); row.classList.toggle('no', st === 'no'); row.classList.toggle('unk', st === 'unk'); if (st === 'ok') ok++; if (st === 'no') no++; if (st === 'unk') unk++; });
+    $('#csum', root).textContent = `됨 ${ok} · 안 됨 ${no} · 모르겠음 ${unk} · 남음 ${D.checklist.length - ok - no - unk}`;
+  };
+  bindFields(root, 'check', paint); paint();
+  doneBar(root, 'check', d => {
+    const left = D.checklist.filter(c => !(d[c.id] || {}).st); if (left.length) return `아직 고르지 않은 항목이 ${left.length}개 있습니다.`;
+    const noWhy = D.checklist.filter(c => ['ok', 'no'].includes(d[c.id].st) && !filled(d[c.id].why, 4));
+    return noWhy.length ? `「됨」「안 됨」을 고른 항목에는 까닭을 써 주세요 (${noWhy.map(c => D.checklist.indexOf(c) + 1).join(', ')}번).` : '';
+  }, '점검을 마쳤습니다. 이제 돌아볼 차례!');
+}
+
+/* ── ⑤ 자기평가·성찰 ── */
+function panelReflect(root) {
+  const got = (S.me.got || []).length;
+  root.innerHTML = `<p class="lead2">이번 활동을 돌아봅니다. 솔직하게 쓸수록 다음 판이 좋아집니다.</p>
+    <div class="box"><h3>자기평가</h3>${D.rubric.map(r => `<div class="rub"><h4>${esc(r.t)}</h4>
+      <div class="lvs">${r.lv.map((t, i) => `<label><input type="radio" name="${r.id}" data-k="rub.${r.id}.lv" value="${3 - i}"><span><b>${['잘함', '보통', '노력 필요'][i]}</b>${esc(t)}</span></label>`).join('')}</div>
+      <input type="text" data-k="rub.${r.id}.why" maxlength="200" placeholder="그렇게 고른 까닭 한 줄"></div>`).join('')}</div>
+    <div class="box"><h3>돌아보기</h3>${D.reflect.map(q => `<div class="field"><label>${esc(q.t)}${q.after ? ` <small>${got ? '' : '— 친구 평가를 받은 뒤에 씁니다'}</small>` : ''}</label><textarea data-k="${q.id}" rows="3" maxlength="800"${q.after && !got ? ' disabled' : ''}></textarea></div>`).join('')}</div>`;
+  bindFields(root, 'reflect');
+  doneBar(root, 'reflect', d => {
+    const r = D.rubric.filter(x => !((d.rub || {})[x.id] || {}).lv); if (r.length) return '자기평가 네 가지를 모두 골라 주세요.';
+    const q = D.reflect.filter(x => !x.after && !filled(d[x.id], 5)); return q.length ? '돌아보기 질문 1~3에 답해 주세요.' : '';
+  }, '돌아보기를 마쳤습니다. 이제 제출!');
+}
+
+/* ── ⑥ 제출 ── */
+async function panelSubmit(root) {
+  const t = S.task || {}, dr = load('sgh:draft:' + TASK, {}) || {}, mk = S.draft.make || {};
+  const works = S.me.works || [];
+  root.innerHTML = `
+    ${t.submit_open ? '' : `<div class="notice" style="margin:0 0 20px"><b>지금은 제출 기간이 아닙니다.</b><p>선생님이 제출을 열면 올릴 수 있습니다. 그동안 준비해 두세요.</p></div>`}
+    <p class="lead2">앱 코드를 올립니다. 고쳐서 다시 올리면 <b>새 판</b>이 쌓이고, 전시관에는 가장 새 판이 보입니다. 올린 앱은 선생님 확인 뒤 전시관에 나옵니다.</p>
+    <form id="sf" class="box" autocomplete="off">
+      <div class="grid2"><div class="field"><label>제목</label><input type="text" id="ftitle" maxlength="60" required></div>
+        <div class="field"><label>한 줄 소개</label><input type="text" id="fsum" maxlength="200"></div></div>
+      <div class="lb">앱 코드</div>
+      <p style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn line sm" data-act="file">HTML 파일 열기</button><button type="button" class="btn line sm" data-act="starter">시작 앱에서 가져오기</button><input type="file" id="ffile" accept=".html,.htm,.txt,text/html,text/plain" hidden></p>
+      <div class="field"><textarea id="fsrc" class="code" placeholder="제미나이 캔버스의 공유 → 콘텐츠 복사로 복사한 코드를 붙여넣으세요 (설명 글이 섞여도 코드만 골라 냅니다)"></textarea></div>
+      <p style="margin:0 0 12px"><button type="button" class="btn line sm" data-act="prev">미리보기</button> <span class="hint" id="fsize"></span></p>
+      <div class="stage small" id="fstage" hidden></div>
+      <div class="lb" style="margin-top:14px">대표 화면 <small>(없어도 됩니다 — 캡처해서 여기 누르고 Ctrl+V)</small></div>
+      <div class="drop" id="fthumb" tabindex="0"><span class="hint">눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
+      <label class="check" style="margin-top:16px"><input type="checkbox" id="fpriv"> 앱 안에 내 실명·사진·연락처가 없습니다.</label>
+      <p style="margin:0 0 16px"><button class="btn primary" type="submit"${t.submit_open ? '' : ' disabled'}>올리기</button></p>
+    </form>
+    <h3>내가 올린 판</h3>
+    <ul class="vlist">${works.length ? works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}${w.summary ? ' · ' + esc(w.summary) : ''}</span></div>
+      <div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-see="${w.id}">돌려 보기</button>${w.status === 'public' ? `<a class="btn sm" href="#/w/${w.id}">전시관에서 ›</a>` : ''}</div></li>`).join('') : '<li class="hint">아직 올린 판이 없습니다.</li>'}</ul>`;
+  $('#ftitle').value = dr.title || mk.appName || ''; $('#fsum').value = dr.summary || mk.about || ''; if (dr.html) $('#fsrc').value = dr.html;
+  let thumb = null;
+  const size = () => { const h = extractHtml($('#fsrc').value); $('#fsize').textContent = h ? `${Math.round(bytes(h) / 1024)}KB` : ''; };
+  size();
+  const keep = () => store('sgh:draft:' + TASK, { html: $('#fsrc').value, title: $('#ftitle').value, summary: $('#fsum').value });
+  root.addEventListener('input', e => { if (['fsrc', 'ftitle', 'fsum'].includes(e.target.id)) { keep(); size(); } });
+  const setThumb = async blob => { thumb = await imageToThumb(blob); if (!thumb) return toast('그림이 너무 큽니다.', true); $('#fthumb').className = 'drop ok'; $('#fthumb').innerHTML = `<img src="${thumb}" alt="대표 화면">`; };
+  $('#fthumb').onclick = () => $('#fimg').click();
+  $('#fimg').onchange = e => { const f = e.target.files[0]; if (f) setThumb(f); };
+  root.addEventListener('paste', e => { const it = [...(e.clipboardData || {}).items || []].find(i => i.type.startsWith('image/')); if (it && (document.activeElement === $('#fthumb') || e.target.closest('#fthumb'))) { e.preventDefault(); setThumb(it.getAsFile()); } });
+  $('#ffile').onchange = async e => { const f = e.target.files[0]; if (!f) return; if (f.size > MAX_HTML) return toast('파일이 2MB보다 큽니다.', true); $('#fsrc').value = await f.text(); keep(); size(); toast('파일을 불러왔습니다.'); };
+  root.addEventListener('click', async e => {
+    const see = e.target.closest('[data-see]');
+    if (see) { try { const h = await API.myHtml(S.tok, see.dataset.see); const m = modal(`<h3>내가 올린 판</h3><div class="stage" id="mstage"></div>`, true); runIn($('#mstage', m.box), h || '<p>없음</p>', '내 앱'); } catch (err) { toast(err.message, true); } return; }
+    const a = e.target.closest('[data-act]'); if (!a) return;
+    if (a.dataset.act === 'file') $('#ffile').click();
+    if (a.dataset.act === 'starter') {
+      const miss = starterMissing(mk); if (miss) return toast('「만들기」의 내 앱 설계를 먼저 채워 주세요 — ' + miss, true);
+      try { $('#fsrc').value = await starterHtml(mk); if (!$('#ftitle').value) $('#ftitle').value = mk.appName; keep(); size(); toast('시작 앱을 가져왔습니다.'); } catch (err) { toast(err.message, true); }
+    }
+    if (a.dataset.act === 'prev') { const h = extractHtml($('#fsrc').value); if (!h) return toast('HTML 코드가 보이지 않습니다.', true); $('#fstage').hidden = false; runIn($('#fstage'), h, '미리보기'); }
+  });
+  $('#sf').onsubmit = async e => {
+    e.preventDefault();
+    const html = extractHtml($('#fsrc').value);
+    if (!html) return toast('앱 코드를 붙여넣어 주세요(<!DOCTYPE html> 부터 </html> 까지).', true);
+    if (bytes(html) > MAX_HTML) return toast('코드가 2MB보다 큽니다. 넣은 그림을 줄여 주세요.', true);
+    if (!$('#fpriv').checked) return toast('실명·사진·연락처가 없는지 확인하고 체크해 주세요.', true);
+    const b = $('#sf button[type=submit]'); b.disabled = true;
+    try {
+      const r = await API.submit(S.tok, TASK, { title: $('#ftitle').value.trim(), summary: $('#fsum').value.trim(), html, thumb });
+      toast(r.status === 'public' ? `${r.v}판을 올렸습니다. 전시관에 바로 나옵니다.` : `${r.v}판을 올렸습니다. 선생님 확인 뒤 전시관에 나옵니다.`);
+      await loadMe(); route();
+    } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
+    finally { b.disabled = false; }
+  };
+}
+function statusBadge(s) { return s === 'public' ? '<span class="badge ok">공개</span>' : s === 'hidden' ? '<span class="badge mute">내려감</span>' : '<span class="badge warn">확인 대기</span>'; }
+
+/* ── ⑦ 서로 평가 ── */
+async function panelReview(root) {
+  const t = S.task || {}, got = S.me.got || [], gave = S.me.gave || [];
+  root.innerHTML = `
+    ${t.review_open ? `<p class="lead2">친구 앱 <b>2개 이상</b>을 돌려 보고 평가합니다. 같은 반 친구 중 평가를 덜 받은 앱부터 나옵니다.</p>
+      <p style="margin:0 0 18px"><button class="btn primary" data-act="assign">평가할 앱 받기</button> <a class="btn" href="#/">전시관에서 골라 평가하기 ›</a></p>
+      <div id="asg"></div>` : `<div class="notice" style="margin:0 0 22px"><b>선생님이 서로 평가를 열면 할 수 있습니다.</b><p>그동안 받은 평가와 한 평가를 여기서 볼 수 있습니다.</p></div>`}
+    <h3 style="margin-top:26px">내가 한 평가 (${gave.length})</h3>
+    <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>${esc(g.nick)} · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
+    <h3 style="margin-top:26px">내가 받은 평가 (${got.length})</h3>
+    <ul class="rlist">${got.length ? got.map(r => reviewLi({ ...r, nick: r.nick + ` · ${r.v}판` })).join('') : '<li class="hint">아직 없습니다. 받은 평가는 「자기평가·성찰」의 4번 질문에 씁니다.</li>'}</ul>`;
+  root.addEventListener('click', async e => {
+    const a = e.target.closest('[data-act="assign"]'); if (a) {
+      a.disabled = true;
+      try {
+        const list = await API.assign(S.tok, TASK);
+        $('#asg').innerHTML = list.length ? `<div class="grid" style="margin:0 0 10px">${list.map(cardHtml).join('')}</div><p class="hint">앱을 눌러 돌려 보고, 아래에 평가를 남기세요.</p>` : `<p class="empty">지금 평가할 새 앱이 없습니다. 친구들이 더 올리면 다시 눌러 보세요.</p>`;
+        $$('.thumb[data-has="1"]', $('#asg')).forEach(el => thumbIO && thumbIO.observe(el));
+      } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
+      finally { a.disabled = false; }
+    }
+  });
+}
+
+/* ════════ 5. 관리 ════════ */
+const AP = () => sget('sgh:ap');
+function viewAdmin() {
+  document.title = '관리 · Studentgithub';
+  if (!AP()) {
+    view.innerHTML = `<div class="wrap pad narrow"><h1 style="margin:0 0 18px">관리</h1><form id="af" class="sform" autocomplete="off"><div class="field"><label for="apw">관리자 비밀번호</label><input type="password" id="apw" required></div><button class="btn primary" type="submit">들어가기</button></form></div>`;
+    $('#af').onsubmit = async e => { e.preventDefault(); const p = $('#apw').value;
+      try { if (await API.isAdmin(p)) { sset('sgh:ap', p); viewAdmin(); } else toast('비밀번호가 맞지 않습니다.', true); }
+      catch (err) { toast(/function|schema/i.test(err.message) ? '서버에 SETUP SQL 을 먼저 실행해 주세요.' : err.message, true); } };
+    return;
+  }
+  const tabs = [['progress', '진행 현황'], ['works', '제출 확인'], ['reviews', '서로 평가'], ['task', '과제 설정'], ['pass', '비밀번호']];
+  view.innerHTML = `<div class="wrap pad"><div class="ah"><h1 style="margin:0">관리</h1><button class="btn sm" data-act="aout">관리 나가기</button></div>
+    <div class="atabs">${tabs.map(([k, t]) => `<button data-tab="${k}" aria-pressed="${S.tab === k}">${t}</button>`).join('')}</div><div id="apanel"></div></div>`;
+  view.onclick = e => {
+    const tb = e.target.closest('[data-tab]'); if (tb) { S.tab = tb.dataset.tab; viewAdmin(); return; }
+    if (e.target.closest('[data-act="aout"]')) { sset('sgh:ap', ''); viewAdmin(); }
+  };
+  ({ progress: aProgress, works: aWorks, reviews: aReviews, task: aTask, pass: aPass })[S.tab]($('#apanel'));
+}
+const aFail = err => { if (/관리자 비밀번호/.test(err.message)) { sset('sgh:ap', ''); viewAdmin(); } toast(err.message, true); };
+async function aProgress(box) {
+  box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
+  let rows; try { rows = await API.aProgress(AP(), TASK); } catch (e) { return aFail(e); }
+  const cl = [...new Set(rows.map(r => r.cls).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
+  let cur = '';
+  const draw = () => {
+    const list = rows.filter(r => !cur || r.cls === cur);
+    const cell = (r, id) => { if (id === 'submit') return r.works ? `<span class="ok1">${r.works}</span>` : ''; if (id === 'review') return r.gave ? (r.gave >= 2 ? `<span class="ok1">${r.gave}</span>` : `<span class="st1">${r.gave}</span>`) : '';
+      const s = r.steps[id]; return s ? (s.done ? '<span class="ok1">✓</span>' : '<span class="st1">•</span>') : ''; };
+    box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px">
+        <div class="chips">${['', ...cl].map(c => `<button class="chip" data-cls="${c}" aria-pressed="${cur === c}">${c ? clsName(c) : '전체'}<span class="n">${rows.filter(r => !c || r.cls === c).length}</span></button>`).join('')}</div>
+        <button class="btn line sm" data-act="csv">CSV 내려받기(세특 근거)</button></div>
+      <p class="hint" style="margin:0 0 10px">✓ 마침 · • 쓰는 중 · 제출은 판 수 · 서로 평가는 한 개수(2개 이상 초록). 줄을 누르면 그 학생의 모든 기록이 열립니다.</p>
+      <div class="tscroll"><table class="ptable"><tr><th>학번</th><th>별명</th>${STEPS.map((s, i) => `<th class="c">${i + 1} ${s.k}</th>`).join('')}<th>상태</th><th class="c">받은 평가</th><th>마지막 접속</th></tr>
+      ${list.length ? list.map(r => `<tr class="row" data-sid="${r.student_id}"><td>${esc(r.sid)}</td><td>${esc(r.nick)}</td>${STEPS.map(s => `<td class="c">${cell(r, s.id)}</td>`).join('')}<td>${r.latest_status ? statusBadge(r.latest_status) : ''}</td><td class="c">${r.got || ''}</td><td class="hint">${ago(r.last_seen)}</td></tr>`).join('') : `<tr><td colspan="12" class="empty">아직 들어온 학생이 없습니다.</td></tr>`}</table></div>`;
+  };
+  box.onclick = async e => {
+    const c = e.target.closest('[data-cls]'); if (c) { cur = c.dataset.cls; draw(); return; }
+    if (e.target.closest('[data-act="csv"]')) return exportCsv();
+    const tr = e.target.closest('tr.row'); if (tr) studentModal(tr.dataset.sid, () => aProgress(box));
+  };
+  draw();
+}
+const STEPLBL = { fix: '① 고치기 기록', model: '② 모형 생각', make: '③ 만들기', check: '④ 점검표', reflect: '⑤ 자기평가·성찰' };
+function noteView(step, d) {
+  if (!d) return '<p class="hint">없음</p>';
+  const row = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
+  let h = '';
+  if (step === 'fix') h = D.missions.map(m => { const x = d[m.id] || {}; const f = (x.found || []).map((v, i) => v ? CIRC[i] : '').join('');
+    return row(m.name + ' 찾음', f) + row('고친 방법', { ai: 'AI', self: '직접', both: '둘 다' }[x.how] || '') + row('기억에 남는 잘못', x.pick !== undefined && x.pick !== '' ? '잘못 ' + CIRC[+x.pick] : '') + row('보인 것', x.see) + row('왜 틀렸나', x.why) + row('어떻게 고쳤나', x.fix); }).join('') + row('AI가 엉뚱하게', d.aiWrong);
+  if (step === 'model') h = D.model.map(q => row(q.t, d[q.id])).join('') + row('고른 한계', D.limits.filter((_, i) => (d.lim || [])[i]).join(' / '));
+  if (step === 'make') h = row('길', { template: 'ⓐ 템플릿', free: 'ⓑ 자유', starter: 'ⓒ 시작 앱' }[d.route]) + row('앱 이름', d.appName) + row('소개', d.about) +
+    goodExamples(d).map((e, i) => row('예시 ' + (i + 1), `${e.name} (${e.kind}) — ${e.text}`)).join('') + goodQuiz(d).map((q, i) => row('퀴즈 ' + (i + 1), `${q.q} / 정답 ${CIRC[+q.answer]} ${q.choices[+q.answer]} / ${q.why}`)).join('') +
+    row('한계', d.limits) + row('자유 프롬프트', d.free) + (d.log || []).map((l, i) => row('보낸 프롬프트 ' + (i + 1), l.text + (l.memo ? '\n→ ' + l.memo : ''))).join('') + row('시작 앱', d.starterMade ? '만듦' : '');
+  if (step === 'check') h = D.checklist.map((c, i) => { const x = d[c.id] || {}; return row((i + 1) + '. ' + c.t, x.st ? `${{ ok: '됨', no: '안 됨', unk: '모르겠음' }[x.st]}${x.why ? ' — ' + x.why : ''}` : ''); }).join('');
+  if (step === 'reflect') h = D.rubric.map(r => { const x = (d.rub || {})[r.id] || {}; return row(r.t, x.lv ? `${{ 3: '잘함', 2: '보통', 1: '노력 필요' }[x.lv]}${x.why ? ' — ' + x.why : ''}` : ''); }).join('') + D.reflect.map(q => row(q.t, d[q.id])).join('');
+  return `<dl class="kv">${h || '<dt></dt><dd class="hint">쓴 내용이 없습니다</dd>'}</dl>`;
+}
+async function studentModal(id, after) {
+  let x; try { x = await API.aStudent(AP(), id, TASK); } catch (e) { return aFail(e); }
+  const latest = {}; x.notes.forEach(n => { if (!latest[n.step]) latest[n.step] = n; });
+  const cnt = s => x.notes.filter(n => n.step === s).length;
+  const m = modal(`<h3>${esc(x.student.nick)} <span class="hint">${esc(x.student.sid)} · ${esc(clsName(x.student.cls))} · 마지막 접속 ${ago(x.student.last_seen)}</span></h3>
+    ${Object.keys(STEPLBL).map(s => `<h4 style="margin:18px 0 8px">${STEPLBL[s]} ${latest[s] ? `<span class="hint">${latest[s].data && latest[s].data.done ? '마침' : '쓰는 중'} · ${ago(latest[s].ts)} · 판 ${cnt(s)}</span>` : ''}</h4>${noteView(s, latest[s] && latest[s].data)}`).join('')}
+    <h4 style="margin:18px 0 8px">⑥ 제출한 판</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span></div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">⑦ 받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, nick: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">한 평가</h4><ul class="rlist">${x.gave.length ? x.gave.map(r => reviewLi({ ...r, nick: '→ ' + r.to + ` ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
+    <p style="margin:22px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-act="rename">별명 바꾸기</button><button class="btn sm danger" data-act="del">학생 지우기</button></p>`, true);
+  m.box.addEventListener('click', async e => {
+    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판</h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
+    const a = e.target.closest('[data-act]'); if (!a) return;
+    if (a.dataset.act === 'rename') { const n = prompt('새 별명 (1~12자). 학생은 새 별명으로 다시 들어와야 합니다.', x.student.nick); if (!n) return; try { await API.aRename(AP(), id, n); toast('별명을 바꿨습니다. 학생에게 새 별명을 알려 주세요.'); m.close(); after && after(); } catch (err) { aFail(err); } }
+    if (a.dataset.act === 'del') { if (!confirm(`${x.student.nick}(${x.student.sid})의 모든 기록·판·평가를 지웁니다. 되돌릴 수 없습니다.`)) return; try { await API.aDelete(AP(), id); toast('지웠습니다.'); m.close(); after && after(); } catch (err) { aFail(err); } }
+  });
+}
+async function exportCsv() {
+  let rows; try { rows = await API.aExport(AP(), TASK); } catch (e) { return aFail(e); }
+  const q = v => { const s = String(v == null ? '' : v).replace(/\r?\n/g, ' '); return /[",]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const head = ['학번', '별명', '반'];
+  D.missions.forEach(m => head.push(m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나'));
+  head.push('AI가 엉뚱하게', ...D.model.map(x => '모형: ' + x.t.slice(0, 18)), '만들기 길', '앱 이름', '생활 속 예시', '퀴즈', '한계', '보낸 프롬프트 수', '프롬프트 기록',
+    ...D.checklist.map((c, i) => '점검' + (i + 1)), ...D.rubric.map(r => '자기평가: ' + r.t), ...D.reflect.map((r, i) => '성찰' + (i + 1)), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안');
+  const out = [head.map(q).join(',')];
+  rows.forEach(r => {
+    const n = r.notes || {}, fx = n.fix || {}, md = n.model || {}, mk = n.make || {}, ck = n.check || {}, rf = n.reflect || {};
+    const line = [r.sid, r.nick, clsName(r.cls)];
+    D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix); });
+    line.push(fx.aiWrong, ...D.model.map(x => md[x.id]), { template: '템플릿', free: '자유', starter: '시작 앱' }[mk.route] || '', mk.appName,
+      goodExamples(mk).map(e => `${e.name}(${e.kind}): ${e.text}`).join(' / '), goodQuiz(mk).map(x => `${x.q} [${CIRC[+x.answer]}]`).join(' / '), mk.limits,
+      (mk.log || []).length, (mk.log || []).map(l => l.text + (l.memo ? ' → ' + l.memo : '')).join(' // '),
+      ...D.checklist.map(c => { const x = ck[c.id] || {}; return x.st ? `${{ ok: '됨', no: '안 됨', unk: '모르겠음' }[x.st]}${x.why ? ': ' + x.why : ''}` : ''; }),
+      ...D.rubric.map(x => { const v = (rf.rub || {})[x.id] || {}; return v.lv ? `${{ 3: '잘함', 2: '보통', 1: '노력 필요' }[v.lv]}${v.why ? ': ' + v.why : ''}` : ''; }),
+      ...D.reflect.map(x => rf[x.id]), (r.works || []).length, (r.works || []).slice(-1).map(w => ({ public: '공개', pending: '확인 대기', hidden: '내려감' }[w.status])).join(''),
+      (r.got || []).length, (r.got || []).map(g => `${g.from}: ${g.praise}${g.suggest ? ' / 제안: ' + g.suggest : ''}`).join(' // '));
+    out.push(line.map(q).join(','));
+  });
+  download(`Studentgithub_${TASK}_${new Date().toISOString().slice(0, 10)}.csv`, '﻿' + out.join('\r\n'), 'text/csv;charset=utf-8');
+}
+async function aWorks(box) {
+  box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
+  let rows; try { rows = await API.aWorks(AP(), TASK); } catch (e) { return aFail(e); }
+  const pend = rows.filter(r => r.status === 'pending');
+  box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 10px"><p class="hint" style="margin:0">확인 대기 ${pend.length} · 모두 ${rows.length}</p>${pend.length ? `<button class="btn primary sm" data-allpub>확인 대기 모두 공개</button>` : ''}</div>
+    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${esc(r.title)} · ${r.v}판</b><span>${esc(r.nick)} (${esc(r.sid)}) · ${ago(r.ts)}</span>${r.summary ? `<p>${esc(r.summary)}</p>` : ''}</div>
+      <div class="ab">${statusBadge(r.status)}<button class="btn line sm" data-aw="${r.id}">돌려 보기</button>${r.status !== 'public' ? `<button class="btn primary sm" data-st="public" data-id="${r.id}">공개</button>` : ''}${r.status !== 'hidden' ? `<button class="btn sm danger" data-st="hidden" data-id="${r.id}">내리기</button>` : ''}</div></li>`).join('') : '<li class="empty">아직 올라온 앱이 없습니다.</li>'}</ul>`;
+  box.onclick = async e => {
+    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">${esc(w.nick)}</span></h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
+    const st = e.target.closest('[data-st]'); if (st) { try { await API.aStatus(AP(), [st.dataset.id], st.dataset.st); toast(st.dataset.st === 'public' ? '공개했습니다.' : '내렸습니다.'); aWorks(box); } catch (err) { aFail(err); } return; }
+    if (e.target.closest('[data-allpub]')) { try { const n = await API.aStatus(AP(), pend.map(r => r.id), 'public'); toast(n + '개를 공개했습니다.'); aWorks(box); } catch (err) { aFail(err); } }
+  };
+}
+async function aReviews(box) {
+  box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
+  let rows; try { rows = await API.aReviews(AP(), TASK); } catch (e) { return aFail(e); }
+  box.innerHTML = `<p class="hint" style="margin:0 0 10px">서로 평가 ${rows.length}개. 부적절한 평가는 숨기면 학생들에게 보이지 않습니다.</p>
+    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${esc(r.reviewer)} → ${esc(r.author)} ${r.v}판</b><span>${ago(r.ts)}</span><p>${checkBadges(r.checks)}</p><p><b>칭찬</b> ${esc(r.praise)}${r.suggest ? `<br><b>제안</b> ${esc(r.suggest)}` : ''}</p></div>
+      <div class="ab">${r.hidden ? '<span class="badge mute">숨김</span>' : ''}<button class="btn line sm" data-hide="${r.id}" data-h="${r.hidden ? 0 : 1}">${r.hidden ? '다시 보이기' : '숨기기'}</button></div></li>`).join('') : '<li class="empty">아직 평가가 없습니다.</li>'}</ul>`;
+  box.onclick = async e => { const b = e.target.closest('[data-hide]'); if (!b) return; try { await API.aReviewHide(AP(), +b.dataset.hide, b.dataset.h === '1'); aReviews(box); } catch (err) { aFail(err); } };
+}
+async function aTask(box) {
+  box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
+  let rows; try { rows = await API.aTasks(AP()); } catch (e) { return aFail(e); }
+  const t = rows.find(r => r.code === TASK) || { code: TASK, title: D.title, lesson_url: '', submit_open: true, review_open: false, auto_public: false };
+  box.innerHTML = `<form class="sform" id="tf"><div class="field"><label>과제 이름</label><input type="text" id="tt" maxlength="60" value="${esc(t.title)}"></div>
+    <div class="field"><label>수업 페이지 주소 <small>(https://… — 학생 작업실에 「수업 페이지 열기」로 나옵니다)</small></label><input type="url" id="tl" value="${esc(t.lesson_url || '')}" placeholder="https://scienceisjo.github.io/…"></div>
+    <label class="check"><input type="checkbox" id="ts"${t.submit_open ? ' checked' : ''}> 제출 받기</label>
+    <label class="check"><input type="checkbox" id="tr"${t.review_open ? ' checked' : ''}> 서로 평가 열기</label>
+    <label class="check"><input type="checkbox" id="ta"${t.auto_public ? ' checked' : ''}> 올리자마자 공개(선생님 확인 건너뛰기)</label>
+    <button class="btn primary" type="submit">저장</button></form>
+    <p class="hint">학생용 주소: <b>${esc(location.origin + location.pathname)}</b>${TASK !== 'gas' ? '?t=' + esc(TASK) : ''}</p>`;
+  $('#tf').onsubmit = async e => { e.preventDefault();
+    const nt = { code: TASK, title: $('#tt').value.trim() || D.title, lesson_url: $('#tl').value.trim(), submit_open: $('#ts').checked, review_open: $('#tr').checked, auto_public: $('#ta').checked };
+    if (nt.lesson_url && !/^https:\/\/\S+$/.test(nt.lesson_url)) return toast('수업 페이지 주소는 https:// 로 시작해야 합니다.', true);
+    try { await API.aTaskSave(AP(), nt); S.task = null; toast('저장했습니다.'); } catch (err) { aFail(err); } };
+}
+function aPass(box) {
+  box.innerHTML = `<form class="sform" id="pf" autocomplete="off"><div class="field"><label>지금 비밀번호</label><input type="password" id="po" required></div><div class="field"><label>새 비밀번호 <small>(6자 이상)</small></label><input type="password" id="pn" required></div><button class="btn primary" type="submit">바꾸기</button></form>`;
+  $('#pf').onsubmit = async e => { e.preventDefault(); try { await API.setPass($('#po').value, $('#pn').value); sset('sgh:ap', $('#pn').value); toast('비밀번호를 바꿨습니다.'); } catch (err) { toast(err.message, true); } };
+}
+
+/* ════════ 시작 ════════ */
+if (LOCAL) $('#localbar').hidden = false;
+drawWho();
+(async () => { try { await loadTask(); if (S.tok) await loadMe(); } catch (e) {} route(); })();
+</script>
+</body>
+</html>
