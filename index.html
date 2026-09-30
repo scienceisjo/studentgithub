@@ -663,7 +663,7 @@ function drawWho() {
 }
 $('#who').addEventListener('click', e => { if (e.target.closest('[data-act="out"]')) { flushNow().finally(() => { signOut(); toast('나갔습니다. 다음에 같은 학번·별명으로 들어오면 이어집니다.'); location.hash = '#/'; }); } });
 async function loadTask() {
-  if (S.task) return S.task;
+  if (S.task || S.notReady) return S.task;           // 서버 준비 전이면 다시 묻지 않는다
   try { S.task = await API.task(TASK); if (!S.task) S.task = { code: TASK, title: D.title, lesson_url: '', submit_open: false, review_open: false }; }
   catch (e) { if (e.status === 404 || e.code === 'PGRST202' || /schema cache|function/i.test(e.message)) { S.notReady = true; S.task = null; } else throw e; }
   return S.task;
