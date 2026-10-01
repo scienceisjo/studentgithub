@@ -313,7 +313,7 @@ const CIRC = '①②③④⑤⑥⑦⑧⑨';
 /* ════════ 과제 내용 (기체의 성질 · 나만의 공기 시뮬레이터) ════════ */
 const DEF = {
   gas: {
-    title: '나만의 공기 시뮬레이터', unit: '기체의 성질', starter: 'starter/gas.html',
+    title: '나만의 기체 시뮬레이터', unit: '기체의 성질', starter: 'starter/gas.html',
     missions: [
       { id: 'm1', name: '미션 1 · 압력', n: 5 },
       { id: 'm2', name: '미션 2 · 압력과 부피', n: 3 },
@@ -321,32 +321,33 @@ const DEF = {
     ],
     limits: [
       '화면이 2차원이다 (실제 공기는 3차원 공간에서 움직인다)',
-      '알갱이 수가 실제보다 훨씬 적다',
-      '모든 알갱이가 같은 빠르기로 움직인다 (실제는 제각각이다)',
-      '알갱이끼리 부딪히지 않는다 (실제는 서로 부딪힌다)',
-      '알갱이를 실제보다 훨씬 크게 그렸다',
+      '입자 수가 실제보다 훨씬 적다',
+      '모든 입자가 같은 빠르기로 움직인다 (실제는 제각각이다)',
+      '입자끼리 부딪히지 않는다 (실제는 서로 부딪힌다)',
+      '입자를 실제보다 훨씬 크게 그렸다',
       "압력을 '부딪힌 횟수'로만 나타낸다 (실제는 얼마나 세게 부딪히는지도 중요하다)"
     ],
     kinds: ['압력', '기체의 압력', '압력과 부피', '온도와 부피'],
     checklist: [
-      { id: 'c1', g: '과학', t: '알갱이가 사방으로 움직이고, 20초 넘게 두어도 바닥에 쌓이지 않는다', how: '20초 두고 본 모습을 적어요' },
-      { id: 'c2', g: '과학', t: '알갱이가 작고, 알갱이 사이가 대부분 비어 있다', how: '알갱이 크기와 사이 간격을 본 대로' },
-      { id: 'c3', g: '과학', t: '압력(또는 충돌 수)이 알갱이가 벽에 부딪힌 횟수에서 나온다', how: '멈춤을 눌렀을 때 충돌 수와 압력이 어떻게 되었나' },
-      { id: 'c4', g: '과학', t: '압력이 모든 방향으로 작용한다 (화살표가 있다면 네 벽 모두)', how: '화살표나 설명에서 확인한 것' },
-      { id: 'c5', g: '과학', t: '알갱이 수를 2배로 하면 충돌 수도 약 2배가 된다', how: '예: 20개일 때 10회, 40개일 때 20회' },
-      { id: 'c6', g: '과학', t: '온도가 일정할 때 부피를 절반으로 줄이면 손잡이 충돌 수가 약 2배가 되고, 평균 빠르기는 그대로다', how: '예: 100%일 때 ○회·빠르기 ○ / 50%일 때 ○회·빠르기 ○' },
-      { id: 'c7', g: '과학', t: '온도를 올리면 빠르기가 커지고 부피가 커진다. 알갱이 수와 크기는 그대로다', how: '0℃와 100℃에서 부피·알갱이 수·크기를 견준 결과' },
-      { id: 'c8', g: '내용', t: '생활 속 예시가 2개 이상 있고, 까닭이 단원 내용과 맞다', how: '예시마다 어느 개념과 맞는지' },
-      { id: 'c9', g: '내용', t: '내가 낸 퀴즈가 3문제 이상이고, 고르면 정답과 풀이가 나온다', how: '직접 풀어 본 결과' },
-      { id: 'c10', g: '내용', t: '설명에 비례·반비례·공식이나 K(켈빈)처럼 배우지 않은 표현이 없다', how: '앱의 글을 다 읽어 본 결과' },
-      { id: 'c11', g: '모형·작동', t: '이 시뮬레이터의 한계를 앱 안에 밝혔다', how: '적어 둔 한계' },
-      { id: 'c12', g: '모형·작동', t: '오류 없이 돌아가고(콘솔에 빨간 글씨 없음), 조작 방법이 안내되어 있다', how: '확인한 방법' }
+      { id: 'c1', g: '압력', t: '기체 입자가 모든 방향으로 끊임없이 움직이고, 20초 넘게 두어도 바닥에 쌓이지 않는다', how: '20초 두고 본 모습을 적어요' },
+      { id: 'c2', g: '압력', t: '압력이 입자가 벽에 부딪힌 횟수에서 나온다 (계산식으로 정해 두지 않았다)', how: '멈춤을 눌렀을 때 충돌 수와 압력이 어떻게 되었나' },
+      { id: 'c3', g: '압력', t: '압력이 모든 방향으로 작용한다 (화살표가 있다면 네 벽 모두)', how: '화살표나 설명에서 확인한 것' },
+      { id: 'c4', g: '압력과 부피', t: '부피를 줄이면 손잡이에 부딪히는 횟수가 늘고 압력이 커진다. 부피를 늘리면 그 반대다', how: '예: 100%일 때 ○회 / 50%일 때 ○회' },
+      { id: 'c5', g: '압력과 부피', t: '부피를 바꿔도 입자의 빠르기는 그대로다 (온도가 일정하므로)', how: '부피를 바꾸며 본 빠르기 숫자' },
+      { id: 'c6', g: '압력과 부피', t: '벽을 밀어도 입자가 상자 밖으로 빠져나가지 않는다', how: '벽을 끝까지 밀었다 놓아 본 결과' },
+      { id: 'c7', g: '온도와 부피', t: '온도를 올리면 입자가 빨라지고, 뚜껑이 올라가 부피가 커진다', how: '0℃와 100℃에서 부피와 빠르기를 견준 결과' },
+      { id: 'c8', g: '온도와 부피', t: '온도를 바꿔도 입자의 수와 크기는 그대로다', how: '0℃와 100℃에서 입자 수와 크기를 견준 결과' },
+      { id: 'c9', g: '최종본', t: '생활 속 예가 2개 이상 있고, 까닭이 배운 내용과 맞다', how: '예마다 어느 개념과 맞는지' },
+      { id: 'c10', g: '최종본', t: '내가 낸 퀴즈가 3문제 이상이고, 고르면 정답과 풀이가 나온다', how: '직접 풀어 본 결과' },
+      { id: 'c11', g: '최종본', t: '앱에 나오는 말과 숫자를 내가 모두 설명할 수 있다 (배우지 않은 낱말·단위·계산식이 없다)', how: '앱의 글을 다 읽어 본 결과' },
+      { id: 'c12', g: '모형·작동', t: '이 시뮬레이터의 한계를 앱 안에 밝혔다', how: '적어 둔 한계' },
+      { id: 'c13', g: '모형·작동', t: '오류 없이 돌아가고(콘솔에 빨간 글씨 없음), 조작 방법이 안내되어 있다', how: '확인한 방법' }
     ],
     rubric: [
       { id: 'r1', t: '관찰과 발견', lv: ['힌트 없이 잘못을 대부분 찾고, 어떻게 알아냈는지 말할 수 있다', '힌트를 보고 잘못을 찾았다', '확인하기를 보고서야 알았다'] },
-      { id: 'r2', t: '과학적 판단', lv: ['왜 틀렸는지 기체 알갱이의 성질로 설명할 수 있다', '틀린 건 알지만 까닭을 말로 옮기기 어려웠다', '이상해 보인다고만 느꼈다'] },
+      { id: 'r2', t: '과학적 판단', lv: ['왜 틀렸는지 기체 입자의 성질로 설명할 수 있다', '틀린 건 알지만 까닭을 말로 옮기기 어려웠다', '이상해 보인다고만 느꼈다'] },
       { id: 'r3', t: '지시와 검증', lv: ['보이는 것·까닭·고칠 곳을 갖춰 말하고, 고친 뒤 직접 조작해 확인했다', '고쳤지만 확인을 건너뛴 적이 있다', 'AI가 준 것을 그대로 받아들였다'] },
-      { id: 'r4', t: '만들기와 점검', lv: ['단원 내용을 담은 앱을 만들고, 점검표마다 확인한 방법과 까닭을 썼다', '앱은 만들었지만 점검의 까닭이 짧다', '만든 앱을 점검하지 않았다'] }
+      { id: 'r4', t: '만들기와 점검', lv: ['단계마다 앱을 키워 단원 내용을 담고, 점검표마다 확인한 방법과 까닭을 썼다', '앱은 만들었지만 점검의 까닭이 짧다', '만든 앱을 점검하지 않았다'] }
     ],
     reflect: [
       { id: 'q1', t: 'AI(또는 모형)가 틀렸던 순간은 언제였고, 나는 그것을 어떻게 알아챘나요?' },
@@ -360,7 +361,7 @@ const DEF = {
       { id: 'a3', t: '미션에서 내가 한 일은 과학자가 모형을 고치는 과정과 어떻게 닮았나요?' }
     ],
     reviewQs: [
-      { id: 'science', k: '과학', t: '과학이 맞나요? 알갱이가 사방으로 움직이고, 부피·온도에 따른 변화가 배운 내용과 맞나요?' },
+      { id: 'science', k: '과학', t: '과학이 맞나요? 기체 입자가 모든 방향으로 움직이고, 부피·온도에 따른 변화가 배운 내용과 맞나요? 배우지 않은 말은 없나요?' },
       { id: 'run', k: '작동', t: '잘 돌아가나요? 오류 없이 조작할 수 있고, 조작 방법을 알 수 있나요?' },
       { id: 'life', k: '예시·퀴즈', t: '생활 속 예시와 퀴즈가 단원 내용과 맞나요?' }
     ],
@@ -371,7 +372,7 @@ const D = DEF[TASK] || DEF.gas;
 const STEPS = [
   { id: 'fix', t: '고치기 기록', s: '미션에서 찾은 잘못', k: '고치기' },
   { id: 'model', t: '모형 생각', s: '시뮬레이터도 모형이다', k: '모형' },
-  { id: 'make', t: '만들기', s: '템플릿 · 자유 · 시작 앱', k: '만들기' },
+  { id: 'make', t: '만들기', s: '2·3·4단계로 키우기', k: '만들기' },
   { id: 'check', t: '점검표', s: '체크하고 까닭 쓰기', k: '점검' },
   { id: 'reflect', t: '자기평가·성찰', s: '돌아보기', k: '성찰' },
   { id: 'submit', t: '제출', s: '판이 쌓입니다', k: '제출' },
@@ -512,7 +513,7 @@ const Remote = {
 const Local = (() => {
   const K = 'sgh-local';
   const fresh = () => ({ students: [], tokens: {}, notes: [], works: [], reviews: [], seq: 1, admin: '1234',
-    tasks: { gas: { code: 'gas', title: '나만의 공기 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true } } });
+    tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true } } });
   const db = () => load(K, null) || fresh();
   const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); } catch (e) { throw fail('이 기기 저장 공간이 가득 찼습니다. 체험 자료를 지워 주세요'); } };
   const now = () => new Date().toISOString();
@@ -719,7 +720,7 @@ function viewList(back) {
     <h2>고치고, 만들고, 서로 평가합니다</h2>
     <div class="steps3">
       <div><b>1 고치기</b><p>불량 시뮬레이터에 숨은 잘못을 찾아 교과서로 판단하고 고칩니다.</p></div>
-      <div><b>2 만들기</b><p>템플릿이나 내 말로 AI에게 부탁해 나만의 공기 시뮬레이터를 만들고 점검합니다.</p></div>
+      <div><b>2 만들기</b><p>배운 만큼 단계마다 AI에게 부탁해 나만의 기체 시뮬레이터를 키우고 점검합니다.</p></div>
       <div><b>3 서로 평가</b><p>친구 앱을 돌려 보고 과학이 맞는지, 잘 돌아가는지 까닭을 들어 평가합니다.</p></div>
     </div>
     <a class="btn primary" href="#/me">내 작업실로</a>
@@ -1008,44 +1009,84 @@ function themeWord(v) { const t = D.themes.find(x => x[0] === v); return t ? t[3
 function mkData() { const d = S.draft.make = S.draft.make || {}; d.examples = d.examples || [{}, {}, {}]; d.quiz = d.quiz || [{}, {}, {}]; d.log = d.log || []; d.sent = d.sent || {}; return d; }
 function goodExamples(d) { return (d.examples || []).filter(e => e && filled(e.name, 2) && filled(e.text, 8) && filled(e.kind)); }
 function goodQuiz(d) { return (d.quiz || []).filter(q => q && filled(q.q, 4) && (q.choices || []).filter(c => filled(c)).length === 4 && q.answer != null && q.answer !== '' && filled(q.why, 2)); }
+const STAGE_TAG = ['2단계', '3단계', '4단계', '고칠 때'];
+const KEEP_RULES = '화면의 글은 중학교 1학년이 배운 말(기체 입자, 충돌, 압력, 부피, 온도, 빠르기)로만 쉽게 쓰고, 계산식이나 어려운 과학 낱말, 다른 단위는 넣지 마. 내가 말하지 않은 손잡이·버튼·기능도 더하지 마.';
 function pieces(d) {
-  const name = (d.appName || '').trim() || '나만의 공기 시뮬레이터';
+  const name = (d.appName || '').trim() || '나만의 기체 시뮬레이터';
   const ex = goodExamples(d), qz = goodQuiz(d);
+  const exText = ex.length ? ex.map((e, i) => `${i + 1}. ${e.name.trim()} (${e.kind}): ${e.text.trim()}`).join('\n') : '(위 「내 앱 설계」에 생활 속 예를 먼저 써 주세요)';
+  const qzText = qz.length ? qz.map((q, i) => `${i + 1}. ${q.q.trim()}\n   ① ${q.choices[0]} ② ${q.choices[1]} ③ ${q.choices[2]} ④ ${q.choices[3]}\n   정답: ${CIRC[+q.answer]} / 풀이: ${q.why.trim()}`).join('\n') : '(위 「내 앱 설계」에 퀴즈를 먼저 써 주세요)';
+  const lim = (d.limits || '').trim() || '(위 「내 앱 설계」에 한계를 먼저 써 주세요)';
   return [
-    { t: '시작', text: `작은 공기 알갱이들이 상자 안에서 사방으로 움직이며 벽에 부딪히는 간단한 웹앱을 만들어 줘. 앱 이름은 「${name}」이고, ${themeWord(d.theme)} 느낌으로 해 줘.`,
-      after: '알갱이가 사방으로 움직이나요? 바닥에 쌓이지 않나요?' },
-    { t: '알갱이와 충돌', text: '알갱이 수를 조절하는 손잡이(5개~80개)와, 1초 동안 벽에 부딪힌 횟수를 보여 주는 칸을 넣어 줘. 충돌은 벽에 튕겨 나오는 순간 한 번만 세 줘. 알갱이에 중력은 없고, 알갱이는 작게 그려 줘. 다른 부분은 그대로 둬.',
-      after: '알갱이를 2배로 하면 충돌 수도 약 2배가 되나요?' },
-    { t: '압력', text: '압력은 공식으로 정하지 말고 1초 동안 벽에 부딪힌 횟수로 나타내 줘. 압력 화살표를 그린다면 네 벽 모두에 그려 줘. 다른 부분은 그대로 둬.',
-      after: '멈추면 충돌 수와 압력이 함께 0이 되나요(또는 함께 멈추나요)?' },
-    { t: '압력과 부피', text: "탭을 하나 더 만들어 '압력과 부피'라고 해 줘. 오른쪽 벽(손잡이)을 밀어 부피를 100%에서 35%까지 줄일 수 있게 하고, 1초에 손잡이에 부딪힌 횟수와 알갱이의 평균 빠르기를 보여 줘. 온도는 일정하니까 부피를 줄여도 빠르기는 그대로여야 하고, 벽이 움직일 때 알갱이를 밀고 가게 해 줘. 다른 탭은 그대로 둬.",
-      after: '부피를 절반으로 줄이면 손잡이 충돌이 약 2배, 빠르기는 그대로인가요?' },
-    { t: '온도와 부피', text: "탭을 하나 더 만들어 '온도와 부피'라고 해 줘. 위에 뚜껑이 얹힌 상자와 0~100℃ 온도 손잡이를 넣어 줘. 온도를 올리면 알갱이의 빠르기만 커지고, 알갱이의 수와 크기는 그대로여야 해. 뚜껑 위에서 바깥 공기가 누르는 힘이 있어서, 뚜껑은 안에서 미는 힘과 같아지는 높이에서 멈춰야 해. 온도는 ℃로만 써 줘. 다른 탭은 그대로 둬.",
-      after: '온도를 올리면 뚜껑이 올라가다 멈추나요? 알갱이 수와 크기는 그대로인가요?' },
-    { t: '생활 속 공기', text: "탭을 하나 더 만들어 '생활 속 공기'라고 해 줘. 아래 예시를 카드로 보여 줘. 내 설명의 과학 내용은 바꾸지 말고 문장만 다듬어 줘. 과학적으로 틀린 곳이 있어 보이면 고치지 말고 맨 끝에 따로 알려 줘.\n" +
-        (ex.length ? ex.map((e, i) => `${i + 1}. ${e.name.trim()} (${e.kind}): ${e.text.trim()}`).join('\n') : '(아래 「내 앱 설계」에 예시를 먼저 써 주세요)'),
-      after: '내 예시가 그대로 들어갔나요? AI가 따로 알려 준 곳이 있다면 교과서로 확인했나요?' },
-    { t: '내가 낸 퀴즈', text: "탭을 하나 더 만들어 '내가 낸 퀴즈'라고 해 줘. 아래 문제를 그대로 넣고, 답을 고르면 맞았는지와 풀이를 보여 줘. 문제와 정답은 바꾸지 마.\n" +
-        (qz.length ? qz.map((q, i) => `${i + 1}. ${q.q.trim()}\n   ① ${q.choices[0]} ② ${q.choices[1]} ③ ${q.choices[2]} ④ ${q.choices[3]}\n   정답: ${CIRC[+q.answer]} / 풀이: ${q.why.trim()}`).join('\n') : '(아래 「내 앱 설계」에 퀴즈를 먼저 써 주세요)'),
-      after: '직접 풀어 보세요. 정답과 풀이가 맞게 나오나요?' },
-    { t: '한계와 설명', text: `화면 맨 아래에 '이 시뮬레이터의 한계' 칸을 만들어 이렇게 써 줘: ${(d.limits || '').trim() || '(아래 「내 앱 설계」에 한계를 먼저 써 주세요)'}\n그리고 설명 글에는 비례·반비례·공식을 쓰지 말고, K(켈빈) 대신 ℃를 쓰고, 중학교 1학년이 읽을 수 있는 쉬운 말로 써 줘.`,
-      after: '앱의 글을 다 읽어 보세요. 배우지 않은 표현이 남아 있지 않나요?' }
+    { t: '2단계 · 압력과 부피 (첫 판)', when: '압력과 부피를 배운 뒤', text:
+`기체 입자가 상자 안에서 움직이며 벽에 부딪히는 시뮬레이터 웹앱을 만들어 줘. 앱 이름은 「${name}」이고, ${themeWord(d.theme)} 느낌으로 꾸며 줘.
+
+[보여 줄 것]
+- 맨 위에 이렇게 써 줘: 「기체의 압력은 일정한 면적에 기체 입자가 충돌하여 작용하는 힘입니다. 기체의 압력은 모든 방향으로 작용합니다.」
+- 오른쪽 벽을 손잡이로 밀고 당겨서 기체의 부피를 100%에서 40%까지 바꿀 수 있게 해 줘.
+- 부피(%), 1초 동안 입자가 손잡이 벽에 부딪힌 횟수(이것을 압력으로 보여 줘), 입자의 평균 빠르기를 숫자로 보여 줘.
+
+[지켜야 할 과학]
+- 기체 입자는 모든 방향으로 끊임없이 움직이며 상자 전체에 고르게 퍼진다. 아래로 쏠리거나 바닥에 쌓이지 않는다.
+- 압력은 계산식으로 정하지 말고, 입자가 벽에 부딪혀 튕겨 나오는 순간을 한 번씩 세어서 나타낸다.
+- 압력은 일정한 면적에 부딪히는 힘이므로, 크기가 변하지 않는 손잡이 벽에 부딪힌 횟수만 센다.
+- 압력은 모든 방향으로 작용하니까, 화살표를 그린다면 네 벽 모두에 그린다.
+- 온도는 일정하다. 그래서 부피를 바꿔도 입자의 빠르기는 그대로다.
+- 벽을 밀면 입자도 함께 밀려 상자 안에 그대로 남는다.
+
+${KEEP_RULES}`,
+      after: '부피를 줄이면 부딪힌 횟수(압력)가 커지고, 늘리면 작아지나요? 부피를 바꿔도 빠르기는 그대로인가요? 입자가 바닥에 쌓이지 않나요? 배우지 않은 말은 없나요?' },
+    { t: '3단계 · 온도와 부피 더하기', when: '온도와 부피를 배운 뒤', text:
+`지금 앱의 화면은 '압력과 부피' 탭으로 그대로 두고, 탭을 하나 더 만들어 '온도와 부피'라고 해 줘.
+
+[보여 줄 것]
+- 위쪽에 위아래로 움직이는 뚜껑이 있는 상자 안에서 기체 입자가 움직이게 해 줘.
+- 온도를 0℃에서 100℃까지 바꾸는 손잡이를 넣어 줘. 온도는 ℃로만 써 줘.
+- 온도, 기체의 부피(%), 입자 수, 입자의 평균 빠르기를 숫자로 보여 줘.
+
+[지켜야 할 과학]
+- 온도를 올리면 입자가 빨라지고, 온도를 내리면 느려진다.
+- 온도를 바꿔도 입자의 수와 크기는 그대로다. 입자를 새로 만들거나 크게 그리지 않는다.
+- 빨라진 입자가 뚜껑을 더 세게 밀어 올려서 뚜껑이 올라가고 부피가 커진다.
+- 뚜껑 위에서는 바깥 공기가 늘 같은 힘으로 누른다. 그래서 뚜껑은 끝없이 올라가지 않고, 안에서 미는 힘과 바깥 공기가 누르는 힘이 같아지는 높이에서 멈춘다.
+
+'압력과 부피' 탭은 바꾸지 마. ${KEEP_RULES}`,
+      after: '온도를 올리면 빠르기가 커지고 뚜껑이 올라가다 멈추나요? 입자 수와 크기는 그대로인가요? 압력과 부피 탭은 그대로인가요?' },
+    { t: '4단계 · 최종본', when: '단원을 마칠 때', text:
+`지금 탭들의 시뮬레이터는 그대로 두고, 아래 세 가지를 더해 줘.
+
+1) '생활 속 예' 탭: 아래 예를 카드로 보여 줘. 내가 쓴 설명의 과학 내용은 바꾸지 말고 맞춤법만 다듬어 줘. 틀린 곳이 있어 보이면 고치지 말고 답장 맨 끝에 따로 알려 줘.
+${exText}
+
+2) '내가 낸 퀴즈' 탭: 아래 문제를 그대로 넣고, 답을 고르면 맞았는지와 풀이를 보여 줘. 문제와 정답은 바꾸지 마.
+${qzText}
+
+3) 화면 맨 아래에 '이 시뮬레이터의 한계' 칸을 만들어 이렇게 써 줘: ${lim}
+
+${KEEP_RULES}`,
+      after: '내 예와 퀴즈가 그대로 들어갔나요? 직접 풀어 보면 정답과 풀이가 맞게 나오나요? AI가 따로 알려 준 곳은 교과서로 확인했나요?' },
+    { t: '고칠 때 쓰는 틀', when: '언제든', text:
+`[보인 것] (예: 부피를 줄였는데 입자가 빨라집니다)
+[배운 내용] (예: 입자의 빠르기는 온도에 따라 달라지므로, 온도가 일정하면 빠르기는 그대로여야 합니다)
+[고칠 곳] (예: 부피를 바꿀 때 입자의 빠르기를 바꾸는 부분을 없애 주세요)
+다른 부분은 그대로 두고 이 한 곳만 고쳐 줘.`,
+      after: '괄호 속 예를 내가 본 것으로 바꿔 쓰고 보내세요. 고친 뒤에는 꼭 직접 조작해 확인합니다.' }
   ];
 }
 function panelMake(root) {
   const d = mkData(); d.route = d.route || 'template';
   root.innerHTML = `
-    <p class="lead2">최종 목표: <b>공기의 압력 · 압력과 부피 · 온도와 부피 · 생활 속 공기 · 내가 낸 퀴즈</b>에 <b>이 시뮬레이터의 한계</b>까지 담은 앱.</p>
+    <p class="lead2">내 시뮬레이터를 배운 만큼 키웁니다: <b>2단계 압력과 부피(첫 판) → 3단계 온도와 부피 → 4단계 최종본</b>(생활 속 예·내가 낸 퀴즈·한계). 단계마다 「제출」에 올리면 판이 쌓이고, 「이 단계 마치기」는 최종본까지 끝낸 뒤에 누릅니다.</p>
     <div class="box"><h3>내 앱 설계</h3>
       <div class="grid2"><div class="field"><label>앱 이름</label><input type="text" data-k="appName" maxlength="40" placeholder="예: 공기 탐험대"></div>
-        <div class="field"><label>한 줄 소개</label><input type="text" data-k="about" maxlength="80" placeholder="예: 공기 알갱이로 압력·부피·온도를 알아봐요"></div></div>
+        <div class="field"><label>한 줄 소개</label><input type="text" data-k="about" maxlength="80" placeholder="예: 기체 입자로 압력·부피·온도를 알아봐요"></div></div>
       <div class="lb">분위기</div>
       <div class="sw">${D.themes.map(t => `<label><input type="radio" name="theme" data-k="theme" value="${t[0]}"><i style="background:${t[2]}"></i>${t[1]}</label>`).join('')}</div>
       <div class="lb">생활 속 예시 <small>(2개 이상 — 내 말로, 까닭까지)</small></div>
       ${range(3).map(i => `<div class="qbox"><div class="grid3">
           <div class="field"><label>예시 ${i + 1}</label><input type="text" data-k="examples.${i}.name" maxlength="40" placeholder="예: 산 위에서 부푼 과자 봉지"></div>
           <div class="field"><label>관련 개념</label><select data-k="examples.${i}.kind"><option value="">고르기</option>${D.kinds.map(k => `<option>${k}</option>`).join('')}</select></div>
-          <div class="field"><label>까닭</label><input type="text" data-k="examples.${i}.text" maxlength="200" placeholder="알갱이의 움직임으로 설명해요"></div></div></div>`).join('')}
+          <div class="field"><label>까닭</label><input type="text" data-k="examples.${i}.text" maxlength="200" placeholder="기체 입자의 움직임으로 설명해요"></div></div></div>`).join('')}
       <div class="lb">내가 낸 퀴즈 <small>(3문제 — 보기 4개, 정답에 표시, 풀이까지)</small></div>
       ${range(3).map(i => `<div class="qbox">
           <div class="field"><label>문제 ${i + 1}</label><input type="text" data-k="quiz.${i}.q" maxlength="120"></div>
@@ -1058,45 +1099,44 @@ function panelMake(root) {
       <button data-route="template">ⓐ 템플릿 채우기</button><button data-route="free">ⓑ 자유롭게 쓰기</button><button data-route="starter">ⓒ 시작 앱으로 만들기</button></div>
     <div id="routeBox"></div>
     <div class="box"><h3>내가 보낸 프롬프트 기록</h3>
-      <p class="hint" style="margin:-6px 0 12px">AI에게 보낸 말은 꼭 기록하세요. 조각의 「보냈어요」를 누르면 저절로 들어갑니다. AI가 어떻게 답했는지 한 줄 메모도 남겨요.</p>
+      <p class="hint" style="margin:-6px 0 12px">AI에게 보낸 말은 꼭 기록하세요. 프롬프트의 「보냈어요」를 누르면 저절로 들어갑니다. AI가 어떻게 답했는지 한 줄 메모도 남겨요.</p>
       <ul class="logl" id="logl"></ul>
       <div class="field"><label>직접 더하기</label><textarea id="logAdd" rows="2" maxlength="1500" placeholder="보낸 프롬프트를 붙여넣으세요"></textarea></div>
       <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="logadd">기록에 더하기</button></p></div>`;
   bindFields(root, 'make', () => { if (d.route === 'template') drawPieces(); });
   const setRoute = r => { d.route = r; $$('[data-route]', root).forEach(b => b.setAttribute('aria-pressed', b.dataset.route === r)); drawRoute(); };
   function drawLog() {
-    $('#logl').innerHTML = d.log.length ? d.log.map((l, i) => `<li><div class="lh"><span>${esc(l.route === 'template' ? '템플릿' : l.route === 'free' ? '자유' : '직접')}${l.piece != null ? ' · 조각 ' + (l.piece + 1) : ''} · ${ago(l.ts)}</span><button type="button" class="btn sm danger" data-del="${i}">지우기</button></div><pre>${esc(l.text)}</pre><input type="text" data-memo="${i}" maxlength="160" placeholder="AI의 답 메모 (예: 거절함 / 중력을 넣어 버림 / 잘 됨)" value="${esc(l.memo || '')}"></li>`).join('') : '<li class="hint">아직 기록이 없습니다.</li>';
+    $('#logl').innerHTML = d.log.length ? d.log.map((l, i) => `<li><div class="lh"><span>${esc(l.route === 'template' ? '템플릿' : l.route === 'free' ? '자유' : '직접')}${l.piece != null ? ' · ' + (STAGE_TAG[l.piece] || '') : ''} · ${ago(l.ts)}</span><button type="button" class="btn sm danger" data-del="${i}">지우기</button></div><pre>${esc(l.text)}</pre><input type="text" data-memo="${i}" maxlength="160" placeholder="AI의 답 메모 (예: 잘 됨 / 시키지 않은 손잡이를 넣음 / 배우지 않은 낱말을 씀)" value="${esc(l.memo || '')}"></li>`).join('') : '<li class="hint">아직 기록이 없습니다.</li>';
   }
   function drawPieces() {
     const box = $('#pieces'); if (!box) return;
     const ps = pieces(d);
-    box.innerHTML = ps.map((p, i) => `<div class="piece${d.sent[i] ? ' sent' : ''}"><div class="ph"><b>조각 ${i + 1} · ${esc(p.t)}</b><span class="sp"></span><button type="button" class="btn line sm" data-copy="${i}">복사</button><label class="check" style="margin:0"><input type="checkbox" data-sent="${i}"${d.sent[i] ? ' checked' : ''}> 보냈어요</label></div><pre>${esc(p.text)}</pre><p class="after">보낸 뒤 확인 — ${esc(p.after)}</p></div>`).join('');
+    box.innerHTML = ps.map((p, i) => `<div class="piece${d.sent[i] ? ' sent' : ''}"><div class="ph"><b>${esc(p.t)}</b><span class="hint" style="margin-left:8px">${esc(p.when)}</span><span class="sp"></span><button type="button" class="btn line sm" data-copy="${i}">복사</button><label class="check" style="margin:0"><input type="checkbox" data-sent="${i}"${d.sent[i] ? ' checked' : ''}> 보냈어요</label></div><pre>${esc(p.text)}</pre><p class="after">보낸 뒤 확인 — ${esc(p.after)}</p></div>`).join('');
   }
   function drawRoute() {
     const box = $('#routeBox');
     if (d.route === 'template') {
-      box.innerHTML = `<div class="box"><h3>ⓐ 템플릿 — 조각을 하나씩 보내세요</h3>
-        <p class="hint" style="margin:-6px 0 12px">규칙이 긴 글을 한 번에 보내면 AI가 거절하는 일이 많습니다. 조각 하나를 보내고 → 미리보기로 확인하고 → 다음 조각. 위 「내 앱 설계」를 바꾸면 조각도 바로 바뀝니다.</p>
-        <div id="pieces"></div>
-        <details style="margin:0 0 14px"><summary class="hint" style="cursor:pointer">한 번에 보내는 글(길어서 거절될 수 있음)</summary><p style="margin:8px 0"><button type="button" class="btn line sm" data-act="all">전체 복사</button></p></details></div>`;
+      box.innerHTML = `<div class="box"><h3>ⓐ 템플릿 — 단계에 맞는 프롬프트를 보내세요</h3>
+        <p class="hint" style="margin:-6px 0 12px">그 단계를 배운 뒤에 프롬프트를 복사해 제미나이 캔버스에 보내고 → 미리보기에서 직접 조작해 확인하고 → 이상한 곳은 「고칠 때 쓰는 틀」로 한 곳씩 고칩니다. 3·4단계는 앞 단계 앱이 있는 <b>같은 대화</b>에서 이어서 보냅니다(대화를 잃어버렸다면 「제출」에 낸 내 코드를 먼저 붙여넣고 "이 코드에 이어서"라고 시작). 위 「내 앱 설계」를 바꾸면 프롬프트도 바로 바뀝니다.</p>
+        <div id="pieces"></div></div>`;
       drawPieces();
     } else if (d.route === 'free') {
       box.innerHTML = `<div class="box"><h3>ⓑ 자유롭게 쓰기</h3>
-        <div class="field"><label>내가 쓴 프롬프트</label><textarea data-k="free" rows="6" maxlength="3000" placeholder="예: 작은 공기 알갱이들이 상자 안에서 움직이는 앱을 만들어 줘. 알갱이 수를 바꾸는 손잡이도…"></textarea></div>
+        <div class="field"><label>내가 쓴 프롬프트</label><textarea data-k="free" rows="6" maxlength="3000" placeholder="예: 기체 입자가 상자 안에서 움직이며 벽에 부딪히는 시뮬레이터를 만들어 줘. 오른쪽 벽을 손잡이로 밀어 부피를 바꿀 수 있게…"></textarea></div>
         <div class="lb">좋은 프롬프트 점검</div>
-        <div class="ticks" style="flex-direction:column;align-items:stretch">${['무엇을 보여 줄지(어떤 관계인지) 말했다', '조절할 것(손잡이)과 화면에 보일 것(숫자)을 말했다', '과학 규칙(중력 없음·충돌로 압력·빠르기는 온도만·수와 크기 그대로)을 넣었다', '비례·반비례·공식·K를 쓰지 말라고 했다', '한 번에 하나씩, 나머지는 그대로 두라고 했다'].map((t, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="freeCheck.${i}"><span>${t}</span></label>`).join('')}</div>
+        <div class="ticks" style="flex-direction:column;align-items:stretch">${['무엇을 보여 줄지(어떤 관계인지) 말했다', '조절할 것(손잡이)과 화면에 보일 것(숫자)을 말했다', '지켜야 할 과학(모든 방향으로 움직임·충돌로 압력·빠르기는 온도에 따라)을 넣었다', '배운 말로만 쓰고, 내가 말하지 않은 기능은 넣지 말라고 했다', '한 번에 하나씩, 나머지는 그대로 두라고 했다'].map((t, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="freeCheck.${i}"><span>${t}</span></label>`).join('')}</div>
         <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="freecopy">복사</button> <button type="button" class="btn line sm" data-act="freelog">보냈어요 — 기록에 넣기</button></p></div>`;
       bindFields(box, 'make');
     } else {
       box.innerHTML = `<div class="box"><h3>ⓒ 시작 앱으로 만들기</h3>
-        <p class="hint" style="margin:-6px 0 12px">AI가 거절할 때의 길입니다. 선생님이 과학적으로 검증한 시작 앱에 위 「내 앱 설계」(이름·분위기·예시·퀴즈·한계)를 넣어 앱을 만듭니다. 만든 뒤 꾸미기나 기능 더하기는 AI나 직접 고치기로 해 보세요.</p>
+        <p class="hint" style="margin:-6px 0 12px">AI 없이 가는 길입니다. 선생님이 과학적으로 검증한 시작 앱에 위 「내 앱 설계」(이름·분위기·예시·퀴즈·한계)를 넣어 앱을 만듭니다. 만든 뒤 꾸미기나 기능 더하기는 AI나 직접 고치기로 해 보세요.</p>
         <p style="margin:0 0 14px"><button type="button" class="btn primary sm" data-act="build">시작 앱 만들기</button></p>
         <div id="sbox"></div></div>`;
     }
   }
   root.addEventListener('click', async e => {
     const r = e.target.closest('[data-route]'); if (r) { setRoute(r.dataset.route); touch('make'); return; }
-    const c = e.target.closest('[data-copy]'); if (c) { copyText(pieces(d)[+c.dataset.copy].text, `조각 ${+c.dataset.copy + 1}을 복사했습니다. AI에게 붙여넣으세요.`); return; }
+    const c = e.target.closest('[data-copy]'); if (c) { copyText(pieces(d)[+c.dataset.copy].text, `${STAGE_TAG[+c.dataset.copy]} 프롬프트를 복사했습니다. 제미나이에 붙여넣으세요.`); return; }
     const del = e.target.closest('[data-del]'); if (del) { d.log.splice(+del.dataset.del, 1); touch('make'); drawLog(); return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
     const act = a.dataset.act;
@@ -1106,7 +1146,6 @@ function panelMake(root) {
       if (!picked.length) { toast('「모형 생각」에서 고른 한계가 없습니다.', true); return; }
       const ta = $('[data-k="limits"]', root); ta.value = picked.join(' '); d.limits = ta.value; touch('make'); if (d.route === 'template') drawPieces();
     }
-    if (act === 'all') copyText(pieces(d).map((p, i) => `【${i + 1}. ${p.t}】\n${p.text}`).join('\n\n'), '전체를 복사했습니다.');
     if (act === 'freecopy') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); copyText(d.free, '복사했습니다.'); }
     if (act === 'freelog') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); d.log.push({ ts: new Date().toISOString(), route: 'free', text: d.free.trim(), memo: '' }); touch('make'); drawLog(); toast('기록에 넣었습니다.'); }
     if (act === 'logadd') { const t = $('#logAdd').value.trim(); if (!t) return; d.log.push({ ts: new Date().toISOString(), route: 'self', text: t, memo: '' }); $('#logAdd').value = ''; touch('make'); drawLog(); }
@@ -1118,7 +1157,7 @@ function panelMake(root) {
         store('sgh:draft:' + TASK, { html, title: d.appName, summary: d.about, from: 'starter' });
         $('#sbox').innerHTML = `${stageBar('', html, d.appName)}<div class="stage small" id="sstage"></div>
           <p style="margin:14px 0"><a class="btn primary sm" href="#/me/submit">이 앱을 제출하러 가기 ›</a></p>`;
-        runIn($('#sstage'), html, d.appName); wireStage($('#sbox'), html, d.appName || '나의 공기 시뮬레이터');
+        runIn($('#sstage'), html, d.appName); wireStage($('#sbox'), html, d.appName || '나의 기체 시뮬레이터');
         toast('시작 앱을 만들었습니다. 돌려 보고 점검해 보세요!');
       } catch (err) { toast('시작 앱을 불러오지 못했습니다. (' + err.message + ')', true); }
       finally { a.disabled = false; }
@@ -1163,7 +1202,7 @@ async function starterHtml(d) {
 /* ── ④ 점검표 ── */
 function panelCheck(root) {
   let g = '';
-  root.innerHTML = `<p class="lead2">내 앱을 직접 조작해 보며 점검합니다. <b>됨·안 됨</b>을 고르면 까닭(어떻게 확인했나)을 꼭 씁니다. 안 된 것은 고친 뒤 새 판으로 내면 됩니다.</p>
+  root.innerHTML = `<p class="lead2">내 앱을 직접 조작해 보며 점검합니다. <b>됨·안 됨</b>을 고르면 까닭(어떻게 확인했나)을 꼭 씁니다. 단계를 마칠 때마다 그 단계 묶음을 먼저 점검해도 되고, 최종본으로 모두 점검합니다. 안 된 것은 고친 뒤 새 판으로 내면 됩니다.</p>
     <p class="hint" id="csum" style="margin:-8px 0 14px"></p>` +
     D.checklist.map((c, i) => { const head = c.g !== g ? `<p class="cgroup">${esc(c.g)}</p>` : ''; g = c.g;
       return head + `<div class="crow" id="row-${c.id}"><p class="ct"><b>${i + 1}</b>${esc(c.t)}</p>

@@ -57,27 +57,27 @@
 /* ▼ 내 앱 설정 — Studentgithub 가 이 부분을 채웁니다 ▼ */
 const MY = {
   "title": "공기 탐험대",
-  "about": "공기 알갱이가 움직이고 부딪히는 모습으로 압력·부피·온도의 관계를 알아보는 시뮬레이터",
+  "about": "기체 입자가 움직이고 부딪히는 모습으로 압력·부피·온도의 관계를 알아보는 시뮬레이터",
   "maker": "예시",
   "theme": "sky",
   "examples": [
     { "name": "산 위에서 부푼 과자 봉지", "kind": "압력과 부피",
-      "text": "높은 산에 올라가면 봉지 바깥 공기가 누르는 힘이 약해집니다. 봉지 안 공기 알갱이들은 그대로 안쪽 벽을 밀기 때문에 봉지가 부풀어 오릅니다." },
+      "text": "높은 산에 올라가면 봉지 바깥 공기가 누르는 힘이 약해집니다. 봉지 안 기체 입자들은 그대로 안쪽 벽을 밀기 때문에 봉지가 부풀어 오릅니다." },
     { "name": "뜨거운 물에 넣은 찌그러진 탁구공", "kind": "온도와 부피",
-      "text": "탁구공 속 공기가 데워지면 공기 알갱이의 움직임이 활발해져 공 안쪽을 더 세게 밉니다. 그래서 찌그러진 곳이 펴집니다." }
+      "text": "탁구공 속 공기가 데워지면 기체 입자의 움직임이 활발해져 공 안쪽을 더 세게 밉니다. 그래서 찌그러진 곳이 펴집니다." }
   ],
   "quiz": [
-    { "q": "공기 알갱이 수를 늘리면 벽에 부딪히는 횟수는 어떻게 되나요?",
+    { "q": "기체 입자 수를 늘리면 벽에 부딪히는 횟수는 어떻게 되나요?",
       "choices": ["줄어든다", "변하지 않는다", "늘어난다", "0이 된다"], "answer": 2,
-      "why": "알갱이가 많을수록 더 자주 부딪히고, 그래서 압력이 커집니다." },
-    { "q": "온도가 일정할 때 주사기를 눌러 부피를 줄이면 공기 알갱이의 빠르기는 어떻게 되나요?",
+      "why": "입자가 많을수록 더 자주 부딪히고, 그래서 압력이 커집니다." },
+    { "q": "온도가 일정할 때 주사기를 눌러 부피를 줄이면 기체 입자의 빠르기는 어떻게 되나요?",
       "choices": ["빨라진다", "느려진다", "변하지 않는다", "멈춘다"], "answer": 2,
-      "why": "알갱이의 빠르기는 온도가 정합니다. 부피가 줄면 벽까지 가는 거리가 짧아져 더 자주 부딪힐 뿐입니다." },
+      "why": "입자의 빠르기는 온도에 따라 달라지므로, 온도가 그대로면 빠르기도 그대로입니다. 부피가 줄면 벽까지 가는 거리가 짧아져 더 자주 부딪힐 뿐입니다." },
     { "q": "공기를 데우면 부피가 커지는 까닭으로 알맞은 것은?",
-      "choices": ["알갱이 하나하나가 커져서", "알갱이 수가 늘어나서", "알갱이의 움직임이 활발해져서", "알갱이가 가벼워져서"], "answer": 2,
-      "why": "알갱이의 크기와 수는 그대로입니다. 움직임이 활발해진 알갱이가 더 세게 밀어 알갱이 사이가 넓어집니다." }
+      "choices": ["입자 하나하나가 커져서", "입자 수가 늘어나서", "입자의 움직임이 활발해져서", "입자가 가벼워져서"], "answer": 2,
+      "why": "입자의 크기와 수는 그대로입니다. 움직임이 활발해진 입자가 더 세게 밀어 입자 사이가 넓어집니다." }
   ],
-  "limits": "화면은 2차원이고, 실제 공기보다 알갱이를 훨씬 적게 그렸습니다. 모든 알갱이가 같은 빠르기로 움직이고 알갱이끼리는 부딪히지 않는데, 실제 공기 알갱이는 빠르기가 제각각이고 서로 부딪힙니다."
+  "limits": "화면은 2차원이고, 실제 공기보다 입자를 훨씬 적게 그렸습니다. 모든 입자가 같은 빠르기로 움직이고 입자끼리는 부딪히지 않는데, 실제 기체 입자는 빠르기가 제각각이고 서로 부딪힙니다."
 };
 /* ▲ 내 앱 설정 끝 ▲ */
 </script>
@@ -87,7 +87,7 @@ const MY = {
   <p id="appAbout"></p>
 </header>
 <nav id="tabs">
-  <button data-t="t1" class="on">공기의 압력</button>
+  <button data-t="t1" class="on">기체의 압력</button>
   <button data-t="t2">압력과 부피</button>
   <button data-t="t3">온도와 부피</button>
   <button data-t="t4">생활 속 공기</button>
@@ -95,19 +95,19 @@ const MY = {
 </nav>
 
 <main>
-  <!-- 1. 공기의 압력 -->
+  <!-- 1. 기체의 압력 -->
   <section id="t1" class="on">
     <div class="card">
-      <h2>공기의 압력은 어디에서 올까?</h2>
-      <p class="say">공기 알갱이는 쉬지 않고 사방으로 움직이며 벽에 부딪힙니다. 이렇게 <b>부딪히며 벽을 미는 것</b>이 공기의 압력입니다. 압력은 모든 방향으로 작용합니다.</p>
+      <h2>기체의 압력은 어디에서 올까?</h2>
+      <p class="say">기체 입자는 쉬지 않고 모든 방향으로 움직이며 벽에 부딪힙니다. <b>기체의 압력은 일정한 면적에 기체 입자가 충돌하여 작용하는 힘</b>이고, 모든 방향으로 작용합니다.</p>
       <canvas id="c1" width="520" height="340"></canvas>
-      <div class="row"><label for="n1">알갱이 수</label><input type="range" id="n1" min="4" max="60" value="24"><span class="v" id="n1v">24</span></div>
+      <div class="row"><label for="n1">입자 수</label><input type="range" id="n1" min="4" max="60" value="24"><span class="v" id="n1v">24</span></div>
       <div class="btns"><button id="p1">⏸ 멈춤</button></div>
       <div class="reads">
         <div class="read"><span>1초 동안 벽에 부딪힌 횟수</span><b id="h1">0</b></div>
         <div class="read"><span>압력 눈금</span><b id="pr1">0</b></div>
       </div>
-      <p class="say" style="margin-top:10px">알갱이 수를 늘리면 더 자주 부딪혀 압력이 커집니다.</p>
+      <p class="say" style="margin-top:10px">입자 수를 늘리면 더 자주 부딪혀 압력이 커집니다.</p>
     </div>
   </section>
 
@@ -115,7 +115,7 @@ const MY = {
   <section id="t2">
     <div class="card">
       <h2>좁히면 왜 압력이 커질까?</h2>
-      <p class="say">온도가 일정할 때 오른쪽 벽(손잡이)을 밀어 부피를 줄여 보세요. 알갱이의 빠르기는 그대로인데, 벽까지 가는 거리가 짧아져 <b>더 자주</b> 부딪힙니다.</p>
+      <p class="say">온도가 일정할 때 오른쪽 벽(손잡이)을 밀어 부피를 줄여 보세요. 입자의 빠르기는 그대로인데, 벽까지 가는 거리가 짧아져 <b>더 자주</b> 부딪히므로 압력이 커집니다.</p>
       <canvas id="c2" width="520" height="340"></canvas>
       <div class="row"><label for="v2">부피</label><input type="range" id="v2" min="35" max="100" value="100"><span class="v" id="v2v">100%</span></div>
       <div class="reads">
@@ -124,7 +124,7 @@ const MY = {
         <div class="read"><span>평균 빠르기</span><b id="s2">100</b></div>
         <div class="read"><span>압력 눈금</span><b id="pr2">0</b></div>
       </div>
-      <p class="say" style="margin-top:10px">위·아래 벽은 상자를 좁히면 함께 짧아지므로, 길이가 변하지 않는 손잡이에 부딪힌 횟수만 셉니다.</p>
+      <p class="say" style="margin-top:10px">압력은 일정한 면적에 부딪히는 힘이므로, 크기가 변하지 않는 손잡이에 부딪힌 횟수만 셉니다. (위·아래 벽은 상자를 좁히면 함께 짧아집니다)</p>
     </div>
   </section>
 
@@ -132,13 +132,13 @@ const MY = {
   <section id="t3">
     <div class="card">
       <h2>데우면 왜 부풀어 오를까?</h2>
-      <p class="say">온도를 높이면 알갱이의 움직임이 활발해져 뚜껑을 더 세게 밀어 올립니다. 뚜껑은 안에서 미는 것과 바깥 공기가 누르는 것이 같아지는 곳에서 멈춥니다. 알갱이의 <b>수와 크기는 변하지 않습니다</b>.</p>
+      <p class="say">온도를 높이면 입자의 움직임이 활발해져 뚜껑을 더 세게 밀어 올립니다. 뚜껑은 안에서 미는 것과 바깥 공기가 누르는 것이 같아지는 곳에서 멈춥니다. 입자의 <b>수와 크기는 변하지 않습니다</b>.</p>
       <canvas id="c3" width="520" height="360"></canvas>
       <div class="row"><label for="t3r">온도</label><input type="range" id="t3r" min="0" max="100" value="20"><span class="v" id="t3v">20℃</span></div>
       <div class="reads">
         <div class="read"><span>온도</span><b id="to3">20℃</b></div>
         <div class="read"><span>부피</span><b id="vo3">0%</b></div>
-        <div class="read"><span>알갱이 수</span><b id="n3">30</b></div>
+        <div class="read"><span>입자 수</span><b id="n3">30</b></div>
         <div class="read"><span>평균 빠르기</span><b id="s3">100</b></div>
       </div>
     </div>
@@ -194,7 +194,7 @@ document.getElementById('tabs').addEventListener('click', e => {
   document.querySelectorAll('main section').forEach(s => s.classList.toggle('on', s.id === cur));
 });
 
-/* ── 공통: 알갱이 그리기와 화살표 ── */
+/* ── 공통: 입자 그리기와 화살표 ── */
 const GREEN = '#3a7a3f';
 function dot(ctx, x, y, r) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = GREEN; ctx.fill(); }
 function arrow(ctx, x1, y1, x2, y2) {
@@ -212,7 +212,7 @@ function spray(n, x0, x1, y0, y1, r, v) {
   return out;
 }
 
-/* ── 1. 공기의 압력 : 네 벽 모두에서 튕기는 순간 한 번씩 센다 ── */
+/* ── 1. 기체의 압력 : 네 벽 모두에서 튕기는 순간 한 번씩 센다 ── */
 const T1 = (() => {
   const cv = document.getElementById('c1'), ctx = cv.getContext('2d'), W = cv.width, H = cv.height, R = 5, V = 2.7;
   let ps = spray(24, 0, W, 0, H, R, V), playing = true, hit = 0, shown = 0, flash = [0, 0, 0, 0];
@@ -271,7 +271,7 @@ const T2 = (() => {
   const v = document.getElementById('v2');
   v.oninput = () => {
     wall = W * v.value / 100;
-    for (const p of ps) if (p.x > wall - R) p.x = wall - R;           // 벽이 알갱이를 밀고 간다
+    for (const p of ps) if (p.x > wall - R) p.x = wall - R;           // 벽이 입자를 밀고 간다
     document.getElementById('v2v').textContent = v.value + '%';
     document.getElementById('vo2').textContent = v.value + '%';
   };
