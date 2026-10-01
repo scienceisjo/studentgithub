@@ -205,6 +205,7 @@ input:focus,select:focus,textarea:focus,.drop:focus{outline:2px solid var(--blue
 .logl li{background:#fff;border-radius:12px;padding:10px 12px;margin:0 0 8px;font-size:14.5px}
 .logl li pre{margin:4px 0 6px;white-space:pre-wrap;font:inherit;font-size:14px;color:var(--ink2);max-height:7.5em;overflow:auto}
 .logl .lh{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:13px}
+.logl li input + input{margin-top:6px}
 .crow{background:#fff;border-radius:14px;padding:14px 16px;margin:0 0 10px}
 .crow .ct{margin:0 0 10px;font-size:15.5px}
 .crow .ct b{color:var(--blue);margin-right:4px}
@@ -985,6 +986,7 @@ function panelFix(root) {
       <div class="field"><label>무엇이 보였나요? <small>내 눈으로 본 것</small></label><textarea data-k="${m.id}.see" rows="2" maxlength="600"></textarea></div>
       <div class="field"><label>왜 틀렸나요? <small>교과서의 어떤 내용과 어긋나나</small></label><textarea data-k="${m.id}.why" rows="2" maxlength="600"></textarea></div>
       <div class="field"><label>어떻게 고쳤나요? <small>AI에게 한 말, 또는 직접 바꾼 줄</small></label><textarea data-k="${m.id}.fix" rows="2" maxlength="800"></textarea></div>
+      <div class="field"><label>AI를 기다리며 한 예상 <small>결과와 같았나·달랐나도 한 줄 (직접 고쳤다면 비워 둡니다)</small></label><textarea data-k="${m.id}.guess" rows="2" maxlength="400"></textarea></div>
     </div>`).join('') +
     `<div class="box"><div class="field"><label>AI가 엉뚱하게 고치거나 거절한 적이 있다면 <small>없으면 비워 둡니다</small></label><textarea data-k="aiWrong" rows="2" maxlength="600"></textarea></div></div>`;
   bindFields(root, 'fix');
@@ -1099,14 +1101,14 @@ function panelMake(root) {
       <button data-route="template">ⓐ 템플릿 채우기</button><button data-route="free">ⓑ 자유롭게 쓰기</button><button data-route="starter">ⓒ 시작 앱으로 만들기</button></div>
     <div id="routeBox"></div>
     <div class="box"><h3>내가 보낸 프롬프트 기록</h3>
-      <p class="hint" style="margin:-6px 0 12px">AI에게 보낸 말은 꼭 기록하세요. 프롬프트의 「보냈어요」를 누르면 저절로 들어갑니다. AI가 어떻게 답했는지 한 줄 메모도 남겨요.</p>
+      <p class="hint" style="margin:-6px 0 12px">AI에게 보낸 말은 꼭 기록하세요. 프롬프트의 「보냈어요」를 누르면 저절로 들어갑니다. AI가 만드는 동안 조용히 <b>예상</b>을 적고, 나오면 같은 점·다른 점을 메모합니다. AI가 어떻게 답했는지 한 줄 메모도 남겨요.</p>
       <ul class="logl" id="logl"></ul>
       <div class="field"><label>직접 더하기</label><textarea id="logAdd" rows="2" maxlength="1500" placeholder="보낸 프롬프트를 붙여넣으세요"></textarea></div>
       <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="logadd">기록에 더하기</button></p></div>`;
   bindFields(root, 'make', () => { if (d.route === 'template') drawPieces(); });
   const setRoute = r => { d.route = r; $$('[data-route]', root).forEach(b => b.setAttribute('aria-pressed', b.dataset.route === r)); drawRoute(); };
   function drawLog() {
-    $('#logl').innerHTML = d.log.length ? d.log.map((l, i) => `<li><div class="lh"><span>${esc(l.route === 'template' ? '템플릿' : l.route === 'free' ? '자유' : '직접')}${l.piece != null ? ' · ' + (STAGE_TAG[l.piece] || '') : ''} · ${ago(l.ts)}</span><button type="button" class="btn sm danger" data-del="${i}">지우기</button></div><pre>${esc(l.text)}</pre><input type="text" data-memo="${i}" maxlength="160" placeholder="AI의 답 메모 (예: 잘 됨 / 시키지 않은 손잡이를 넣음 / 배우지 않은 낱말을 씀)" value="${esc(l.memo || '')}"></li>`).join('') : '<li class="hint">아직 기록이 없습니다.</li>';
+    $('#logl').innerHTML = d.log.length ? d.log.map((l, i) => `<li><div class="lh"><span>${esc(l.route === 'template' ? '템플릿' : l.route === 'free' ? '자유' : '직접')}${l.piece != null ? ' · ' + (STAGE_TAG[l.piece] || '') : ''} · ${ago(l.ts)}</span><button type="button" class="btn sm danger" data-del="${i}">지우기</button></div><pre>${esc(l.text)}</pre><input type="text" data-guess="${i}" maxlength="200" placeholder="보내기 전 예상 — 기다리며 적어요 (예: 손잡이를 밀면 부딪힌 횟수가 늘 것이다)" value="${esc(l.guess || '')}"><input type="text" data-memo="${i}" maxlength="160" placeholder="AI의 답 메모 — 예상과 같은 점·다른 점 (예: 잘 됨 / 시키지 않은 손잡이를 넣음)" value="${esc(l.memo || '')}"></li>`).join('') : '<li class="hint">아직 기록이 없습니다.</li>';
   }
   function drawPieces() {
     const box = $('#pieces'); if (!box) return;
@@ -1169,7 +1171,10 @@ function panelMake(root) {
     if (s.checked && !d.log.some(l => l.piece === i && l.route === 'template')) d.log.push({ ts: new Date().toISOString(), route: 'template', piece: i, text: pieces(d)[i].text, memo: '' });
     touch('make'); drawPieces(); drawLog();
   });
-  root.addEventListener('input', e => { const m = e.target.closest('[data-memo]'); if (m) { d.log[+m.dataset.memo].memo = m.value; touch('make'); } });
+  root.addEventListener('input', e => {
+    const m = e.target.closest('[data-memo]'); if (m) { d.log[+m.dataset.memo].memo = m.value; touch('make'); return; }
+    const g = e.target.closest('[data-guess]'); if (g) { d.log[+g.dataset.guess].guess = g.value; touch('make'); }
+  });
   setRoute(d.route); drawLog();
   doneBar(root, 'make', dd => {
     if (!filled(dd.appName, 2)) return '앱 이름을 정해 주세요.';
@@ -1258,7 +1263,7 @@ async function panelSubmit(root) {
     </form>
     <h3>내가 올린 판</h3>
     <ul class="vlist">${works.length ? works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}${w.summary ? ' · ' + esc(w.summary) : ''}</span></div>
-      <div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-see="${w.id}">돌려 보기</button>${w.status === 'public' ? `<a class="btn sm" href="#/w/${w.id}">전시관에서 ›</a>` : ''}</div></li>`).join('') : '<li class="hint">아직 올린 판이 없습니다.</li>'}</ul>`;
+      <div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-see="${w.id}">돌려 보기</button><button class="btn line sm" data-copyv="${w.id}">코드 복사</button>${w.status === 'public' ? `<a class="btn sm" href="#/w/${w.id}">전시관에서 ›</a>` : ''}</div></li>`).join('') : '<li class="hint">아직 올린 판이 없습니다.</li>'}</ul>`;
   $('#ftitle').value = dr.title || mk.appName || ''; $('#fsum').value = dr.summary || mk.about || ''; if (dr.html) $('#fsrc').value = dr.html;
   let thumb = null;
   const size = () => { const h = extractHtml($('#fsrc').value); $('#fsize').textContent = h ? `${Math.round(bytes(h) / 1024)}KB` : ''; };
@@ -1271,6 +1276,8 @@ async function panelSubmit(root) {
   root.addEventListener('paste', e => { const it = [...(e.clipboardData || {}).items || []].find(i => i.type.startsWith('image/')); if (it && (document.activeElement === $('#fthumb') || e.target.closest('#fthumb'))) { e.preventDefault(); setThumb(it.getAsFile()); } });
   $('#ffile').onchange = async e => { const f = e.target.files[0]; if (!f) return; if (f.size > MAX_HTML) return toast('파일이 2MB보다 큽니다.', true); $('#fsrc').value = await f.text(); keep(); size(); toast('파일을 불러왔습니다.'); };
   root.addEventListener('click', async e => {
+    const cv = e.target.closest('[data-copyv]');
+    if (cv) { try { const h = await API.myHtml(S.tok, cv.dataset.copyv); if (!h) return toast('코드를 찾지 못했습니다.', true); copyText(h, '내 코드를 복사했습니다. 제미나이 새 채팅(Canvas)에 "이 코드에 이어서 만들어 줘"와 함께 붙여넣으세요.'); } catch (err) { toast(err.message, true); } return; }
     const see = e.target.closest('[data-see]');
     if (see) { try { const h = await API.myHtml(S.tok, see.dataset.see); const m = modal(`<h3>내가 올린 판</h3><div class="stage" id="mstage"></div>`, true); runIn($('#mstage', m.box), h || '<p>없음</p>', '내 앱'); } catch (err) { toast(err.message, true); } return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
@@ -1372,11 +1379,11 @@ function noteView(step, d) {
   const row = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
   let h = '';
   if (step === 'fix') h = D.missions.map(m => { const x = d[m.id] || {}; const f = (x.found || []).map((v, i) => v ? CIRC[i] : '').join('');
-    return row(m.name + ' 찾음', f) + row('고친 방법', { ai: 'AI', self: '직접', both: '둘 다' }[x.how] || '') + row('기억에 남는 잘못', x.pick !== undefined && x.pick !== '' ? '잘못 ' + CIRC[+x.pick] : '') + row('보인 것', x.see) + row('왜 틀렸나', x.why) + row('어떻게 고쳤나', x.fix); }).join('') + row('AI가 엉뚱하게', d.aiWrong);
+    return row(m.name + ' 찾음', f) + row('고친 방법', { ai: 'AI', self: '직접', both: '둘 다' }[x.how] || '') + row('기억에 남는 잘못', x.pick !== undefined && x.pick !== '' ? '잘못 ' + CIRC[+x.pick] : '') + row('보인 것', x.see) + row('왜 틀렸나', x.why) + row('어떻게 고쳤나', x.fix) + row('기다리며 한 예상', x.guess); }).join('') + row('AI가 엉뚱하게', d.aiWrong);
   if (step === 'model') h = D.model.map(q => row(q.t, d[q.id])).join('') + row('고른 한계', D.limits.filter((_, i) => (d.lim || [])[i]).join(' / '));
   if (step === 'make') h = row('길', { template: 'ⓐ 템플릿', free: 'ⓑ 자유', starter: 'ⓒ 시작 앱' }[d.route]) + row('앱 이름', d.appName) + row('소개', d.about) +
     goodExamples(d).map((e, i) => row('예시 ' + (i + 1), `${e.name} (${e.kind}) — ${e.text}`)).join('') + goodQuiz(d).map((q, i) => row('퀴즈 ' + (i + 1), `${q.q} / 정답 ${CIRC[+q.answer]} ${q.choices[+q.answer]} / ${q.why}`)).join('') +
-    row('한계', d.limits) + row('자유 프롬프트', d.free) + (d.log || []).map((l, i) => row('보낸 프롬프트 ' + (i + 1), l.text + (l.memo ? '\n→ ' + l.memo : ''))).join('') + row('시작 앱', d.starterMade ? '만듦' : '');
+    row('한계', d.limits) + row('자유 프롬프트', d.free) + (d.log || []).map((l, i) => row('보낸 프롬프트 ' + (i + 1), l.text + (l.guess ? '\n[예상] ' + l.guess : '') + (l.memo ? '\n→ ' + l.memo : ''))).join('') + row('시작 앱', d.starterMade ? '만듦' : '');
   if (step === 'check') h = D.checklist.map((c, i) => { const x = d[c.id] || {}; return row((i + 1) + '. ' + c.t, x.st ? `${{ ok: '됨', no: '안 됨', unk: '모르겠음' }[x.st]}${x.why ? ' — ' + x.why : ''}` : ''); }).join('');
   if (step === 'reflect') h = D.rubric.map(r => { const x = (d.rub || {})[r.id] || {}; return row(r.t, x.lv ? `${{ 3: '잘함', 2: '보통', 1: '노력 필요' }[x.lv]}${x.why ? ' — ' + x.why : ''}` : ''); }).join('') + D.reflect.map(q => row(q.t, d[q.id])).join('');
   return `<dl class="kv">${h || '<dt></dt><dd class="hint">쓴 내용이 없습니다</dd>'}</dl>`;
@@ -1402,17 +1409,17 @@ async function exportCsv() {
   let rows; try { rows = await API.aExport(AP(), TASK); } catch (e) { return aFail(e); }
   const q = v => { const s = String(v == null ? '' : v).replace(/\r?\n/g, ' '); return /[",]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const head = ['학번', '별명', '반'];
-  D.missions.forEach(m => head.push(m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나'));
+  D.missions.forEach(m => head.push(m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나', m.name + ' 예상'));
   head.push('AI가 엉뚱하게', ...D.model.map(x => '모형: ' + x.t.slice(0, 18)), '만들기 길', '앱 이름', '생활 속 예시', '퀴즈', '한계', '보낸 프롬프트 수', '프롬프트 기록',
     ...D.checklist.map((c, i) => '점검' + (i + 1)), ...D.rubric.map(r => '자기평가: ' + r.t), ...D.reflect.map((r, i) => '성찰' + (i + 1)), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안');
   const out = [head.map(q).join(',')];
   rows.forEach(r => {
     const n = r.notes || {}, fx = n.fix || {}, md = n.model || {}, mk = n.make || {}, ck = n.check || {}, rf = n.reflect || {};
     const line = [r.sid, r.nick, clsName(r.cls)];
-    D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix); });
+    D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix, x.guess); });
     line.push(fx.aiWrong, ...D.model.map(x => md[x.id]), { template: '템플릿', free: '자유', starter: '시작 앱' }[mk.route] || '', mk.appName,
       goodExamples(mk).map(e => `${e.name}(${e.kind}): ${e.text}`).join(' / '), goodQuiz(mk).map(x => `${x.q} [${CIRC[+x.answer]}]`).join(' / '), mk.limits,
-      (mk.log || []).length, (mk.log || []).map(l => l.text + (l.memo ? ' → ' + l.memo : '')).join(' // '),
+      (mk.log || []).length, (mk.log || []).map(l => l.text + (l.guess ? ' [예상] ' + l.guess : '') + (l.memo ? ' → ' + l.memo : '')).join(' // '),
       ...D.checklist.map(c => { const x = ck[c.id] || {}; return x.st ? `${{ ok: '됨', no: '안 됨', unk: '모르겠음' }[x.st]}${x.why ? ': ' + x.why : ''}` : ''; }),
       ...D.rubric.map(x => { const v = (rf.rub || {})[x.id] || {}; return v.lv ? `${{ 3: '잘함', 2: '보통', 1: '노력 필요' }[v.lv]}${v.why ? ': ' + v.why : ''}` : ''; }),
       ...D.reflect.map(x => rf[x.id]), (r.works || []).length, (r.works || []).slice(-1).map(w => ({ public: '공개', pending: '확인 대기', hidden: '내려감' }[w.status])).join(''),
