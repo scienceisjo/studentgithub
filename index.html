@@ -206,6 +206,13 @@ input:focus,select:focus,textarea:focus,.drop:focus{outline:2px solid var(--blue
 .logl li pre{margin:4px 0 6px;white-space:pre-wrap;font:inherit;font-size:14px;color:var(--ink2);max-height:7.5em;overflow:auto}
 .logl .lh{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:13px}
 .logl li input + input{margin-top:6px}
+.limpick{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+.stepnav a.locked{opacity:.55}
+.kd{display:inline-block;font-size:12px;font-weight:700;color:#fff;background:var(--blue,#2f6fdb);border-radius:20px;padding:1px 8px;margin-right:6px;vertical-align:2px}
+.limpick .btn{white-space:normal;text-align:left;line-height:1.4}
+details.rf{margin:6px 0 0}
+details.rf > summary{cursor:pointer;font-size:13px;color:var(--blue,#2f6fdb);font-weight:700}
+details.rf dl.kv{margin:6px 0 0}
 .crow{background:#fff;border-radius:14px;padding:14px 16px;margin:0 0 10px}
 .crow .ct{margin:0 0 10px;font-size:15.5px}
 .crow .ct b{color:var(--blue);margin-right:4px}
@@ -316,9 +323,16 @@ const DEF = {
   gas: {
     title: '나만의 기체 시뮬레이터', unit: '기체의 성질', starter: 'starter/gas.html',
     missions: [
-      { id: 'm1', name: '미션 1 · 압력', n: 5 },
-      { id: 'm2', name: '미션 2 · 압력과 부피', n: 3 },
-      { id: 'm3', name: '미션 3 · 온도와 부피', n: 3 }
+      { id: 'm1', name: '미션 1 · 압력', n: 5, stage: 1 },
+      { id: 'm2', name: '미션 2 · 압력과 부피', n: 3, stage: 2 },
+      { id: 'm3', name: '미션 3 · 온도와 부피', n: 3, stage: 3 }
+    ],
+    // 올리는 것 — 미션마다 고친 시뮬레이터, 마지막에 최종본. stage 가 열린 단계보다 크면 잠김
+    uploads: [
+      { id: 'm1', k: '미션 1', t: '미션 1 · 고친 압력 시뮬레이터', stage: 1 },
+      { id: 'm2', k: '미션 2', t: '미션 2 · 고친 압력과 부피 시뮬레이터', stage: 2 },
+      { id: 'm3', k: '미션 3', t: '미션 3 · 고친 온도와 부피 시뮬레이터', stage: 3 },
+      { id: 'final', k: '최종본', t: '최종본 · 나만의 기체 시뮬레이터', stage: 4 }
     ],
     limits: [
       '화면이 2차원이다 (실제 공기는 3차원 공간에서 움직인다)',
@@ -351,10 +365,15 @@ const DEF = {
       { id: 'r4', t: '만들기와 점검', lv: ['단계마다 앱을 키워 단원 내용을 담고, 점검표마다 확인한 방법과 까닭을 썼다', '앱은 만들었지만 점검의 까닭이 짧다', '만든 앱을 점검하지 않았다'] }
     ],
     reflect: [
-      { id: 'q1', t: 'AI(또는 모형)가 틀렸던 순간은 언제였고, 나는 그것을 어떻게 알아챘나요?' },
-      { id: 'q2', t: '가장 어려웠던 점은 무엇이고, 어떻게 해결했나요?' },
-      { id: 'q3', t: '내 시뮬레이터의 가장 아쉬운 한계는 무엇이고, 다음 판에서 무엇을 고치고 싶나요?' },
       { id: 'q4', t: '친구들의 평가와 내 점검·자기평가가 다른 곳은 어디인가요? 왜 그럴까요?', after: true }
+    ],
+    // 올릴 때마다 쓰는 「이번 판 돌아보기」 — 판마다 쌓여 세특 근거가 된다(선생님만 봄)
+    submitQs: [
+      { id: 'did', k: '만든 것', t: '이번 판에서 무엇을 만들거나 고쳤나요?', ph: '예: 미션 1의 잘못 5개 가운데 4개를 고쳤다 — 입자가 바닥에 쌓이지 않게 하고, 화살표를 네 벽 모두에 그렸다', req: true },
+      { id: 'judge', k: '과학 판단', t: 'AI가 만든 것 중 배운 과학과 맞지 않는 곳을 찾았나요? 어떻게 알아채고 어떻게 고쳤나요?', ph: '예: 부피를 줄이니 입자가 빨라져서, 빠르기는 온도에 따라 달라진다는 것을 근거로 고쳐 달라고 했다 (없었다면 무엇을 조작해 확인했는지)', req: true },
+      { id: 'hard', k: '어려움', t: '가장 어려웠던 점은 무엇이고, 어떻게 해결했나요?', ph: '예: 충돌 횟수가 계속 흔들려서 몇 초씩 지켜보며 견주었다', req: true },
+      { id: 'feel', k: '느낀 점', t: '이번 활동으로 새로 알게 된 점이나 느낀 점은 무엇인가요?', ph: '예: AI가 만든 모형도 틀릴 수 있어서, 배운 내용으로 직접 확인해야 한다는 것을 알았다', req: true },
+      { id: 'next', k: '다음', t: '다음 판에서 더하거나 고치고 싶은 것 (골라서)', ph: '', req: false }
     ],
     model: [
       { id: 'a1', t: '내가 고친(또는 만든) 시뮬레이터가 실제 공기와 닮은 점 한 가지' },
@@ -370,13 +389,16 @@ const DEF = {
   }
 };
 const D = DEF[TASK] || DEF.gas;
+const STEP_STAGE = { make: 4, check: 4, reflect: 4 };          // 최종본(4단계)에서 여는 작업실 단계
+const OPEN = () => (S.task && +S.task.open_stage) || 2;        // 열린 단계(선생님이 관리 → 과제 설정에서 정함)
+const stepLocked = id => (STEP_STAGE[id] || 1) > OPEN();
+const kindOf = rf => D.uploads.find(u => u.id === (rf || {}).kind);
 const STEPS = [
   { id: 'fix', t: '고치기 기록', s: '미션에서 찾은 잘못', k: '고치기' },
-  { id: 'model', t: '모형 생각', s: '시뮬레이터도 모형이다', k: '모형' },
   { id: 'make', t: '만들기', s: '2·3·4단계로 키우기', k: '만들기' },
   { id: 'check', t: '점검표', s: '체크하고 까닭 쓰기', k: '점검' },
-  { id: 'reflect', t: '자기평가·성찰', s: '돌아보기', k: '성찰' },
-  { id: 'submit', t: '제출', s: '판이 쌓입니다', k: '제출' },
+  { id: 'reflect', t: '자기평가', s: '네 영역 돌아보기', k: '자기평가' },
+  { id: 'submit', t: '제출', s: '돌아보기와 함께 · 판이 쌓입니다', k: '제출' },
   { id: 'review', t: '서로 평가', s: '친구 앱 평가하기', k: '서로 평가' }
 ];
 
@@ -486,7 +508,7 @@ const Remote = {
   task: code => rpc('sgh_task', { p_code: code }),
   me: (tok, task) => rpc('sgh_me', { p_token: tok, p_task: task }),
   noteSave: (tok, task, step, data) => rpc('sgh_note_save', { p_token: tok, p_task: task, p_step: step, p_data: data }),
-  submit: (tok, task, a) => rpc('sgh_submit', { p_token: tok, p_task: task, p_title: a.title, p_summary: a.summary, p_html: a.html, p_thumb: a.thumb || null }),
+  submit: (tok, task, a) => rpc('sgh_submit', { p_token: tok, p_task: task, p_title: a.title, p_summary: a.summary, p_html: a.html, p_thumb: a.thumb || null, p_reflect: a.reflect || {} }),
   myHtml: (tok, id) => rpc('sgh_my_html', { p_token: tok, p_id: id }),
   gallery: task => rpc('sgh_gallery', { p_task: task }),
   thumb: id => rpc('sgh_thumb', { p_id: id }),
@@ -496,7 +518,7 @@ const Remote = {
   reviewSave: (tok, work, checks, praise, suggest) => rpc('sgh_review_save', { p_token: tok, p_work: work, p_checks: checks, p_praise: praise, p_suggest: suggest }),
   isAdmin: p => rpc('sgh_is_admin', { p_pass: p }),
   aTasks: p => rpc('sgh_admin_tasks', { p_pass: p }),
-  aTaskSave: (p, t) => rpc('sgh_admin_task_save', { p_pass: p, p_code: t.code, p_title: t.title, p_lesson_url: t.lesson_url || '', p_submit: t.submit_open, p_review: t.review_open, p_auto: t.auto_public }),
+  aTaskSave: (p, t) => rpc('sgh_admin_task_save', { p_pass: p, p_code: t.code, p_title: t.title, p_lesson_url: t.lesson_url || '', p_submit: t.submit_open, p_review: t.review_open, p_auto: t.auto_public, p_open_stage: t.open_stage || 2 }),
   aProgress: (p, task) => rpc('sgh_admin_progress', { p_pass: p, p_task: task }),
   aStudent: (p, id, task) => rpc('sgh_admin_student', { p_pass: p, p_student: id, p_task: task }),
   aWorks: (p, task) => rpc('sgh_admin_works', { p_pass: p, p_task: task }),
@@ -514,7 +536,7 @@ const Remote = {
 const Local = (() => {
   const K = 'sgh-local';
   const fresh = () => ({ students: [], tokens: {}, notes: [], works: [], reviews: [], seq: 1, admin: '1234',
-    tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true } } });
+    tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 2 } } });
   const db = () => load(K, null) || fresh();
   const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); } catch (e) { throw fail('이 기기 저장 공간이 가득 찼습니다. 체험 자료를 지워 주세요'); } };
   const now = () => new Date().toISOString();
@@ -547,14 +569,14 @@ const Local = (() => {
       const tok = uid(); d.tokens[tok] = s.id; s.last_seen = now(); save(d);
       return { token: tok, nick: s.nick, sid: s.sid, cls: cls(s.sid), is_new: isNew };
     },
-    async task(code) { const t = db().tasks[code]; return t ? { code: t.code, title: t.title, lesson_url: t.lesson_url, submit_open: t.submit_open, review_open: t.review_open } : null; },
+    async task(code) { const t = db().tasks[code]; return t ? { code: t.code, title: t.title, lesson_url: t.lesson_url, submit_open: t.submit_open, review_open: t.review_open, open_stage: t.open_stage || 2 } : null; },
     async me(tok, task) {
       const d = db(), me = who(d, tok), s = stu(d, me);
       const mine = d.works.filter(w => w.student_id === me && w.task === task).sort((a, b) => b.v - a.v);
       return {
         student: { nick: s.nick, sid: s.sid, cls: cls(s.sid) },
         notes: latestNotes(d, me, task),
-        works: mine.map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, has_thumb: !!w.thumb })),
+        works: mine.map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, has_thumb: !!w.thumb, reflect: w.reflect || {} })),
         got: d.reviews.filter(r => !r.hidden && mine.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })),
         gave: d.reviews.filter(r => r.reviewer_id === me).map(r => { const w = d.works.find(x => x.id === r.work_id); return { work: r.work_id, title: w.title, nick: stu(d, w.student_id).nick, ts: r.updated_at }; })
       };
@@ -570,8 +592,9 @@ const Local = (() => {
     async submit(tok, task, a) {
       const d = db(), me = who(d, tok), t = d.tasks[task];
       if (!t) throw fail('없는 과제입니다'); if (!t.submit_open) throw fail('지금은 제출 기간이 아닙니다');
+      const rf = a.reflect || {}; if (['did', 'judge', 'hard', 'feel'].some(k => String(rf[k] || '').trim().length < 2)) throw fail('「이번 판 돌아보기」 네 칸을 채워 주세요');
       const v = Math.max(0, ...d.works.filter(w => w.student_id === me && w.task === task).map(w => w.v)) + 1;
-      const w = { id: uid(), student_id: me, task, v, title: a.title, summary: a.summary || '', html: a.html, thumb: a.thumb || null, status: t.auto_public ? 'public' : 'pending', created_at: now() };
+      const w = { id: uid(), student_id: me, task, v, title: a.title, summary: a.summary || '', html: a.html, thumb: a.thumb || null, status: t.auto_public ? 'public' : 'pending', reflect: rf, created_at: now() };
       d.works.push(w); save(d); return { id: w.id, v, status: w.status };
     },
     async myHtml(tok, id) { const d = db(), me = who(d, tok); const w = d.works.find(x => x.id === id && x.student_id === me); return w ? w.html : null; },
@@ -619,12 +642,12 @@ const Local = (() => {
       const d = db(); need(d, p); const s = stu(d, id); const ws = d.works.filter(w => w.student_id === id && w.task === task);
       return { student: { id: s.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), created: s.created_at, last_seen: s.last_seen },
         notes: d.notes.filter(n => n.student_id === id && n.task === task).sort((a, b) => b.id - a.id).map(n => ({ id: n.id, step: n.step, data: n.data, created: n.created_at, ts: n.updated_at })),
-        works: ws.sort((a, b) => b.v - a.v).map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at })),
+        works: ws.sort((a, b) => b.v - a.v).map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, reflect: w.reflect || {} })),
         got: d.reviews.filter(r => ws.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at })),
         gave: d.reviews.filter(r => r.reviewer_id === id).map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, to: stu(d, w.student_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }) };
     },
-    async aWorks(p, task) { const d = db(); need(d, p); return d.works.filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1)).map(w => { const s = stu(d, w.student_id); return { id: w.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, status: w.status, ts: w.created_at, has_thumb: !!w.thumb }; }); },
-    async aWork(p, id) { const d = db(); need(d, p); const w = d.works.find(x => x.id === id); const s = stu(d, w.student_id); return { id: w.id, title: w.title, summary: w.summary, v: w.v, status: w.status, html: w.html, thumb: w.thumb, nick: s.nick, sid: s.sid }; },
+    async aWorks(p, task) { const d = db(); need(d, p); return d.works.filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1)).map(w => { const s = stu(d, w.student_id); return { id: w.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, status: w.status, ts: w.created_at, has_thumb: !!w.thumb, reflect: w.reflect || {} }; }); },
+    async aWork(p, id) { const d = db(); need(d, p); const w = d.works.find(x => x.id === id); const s = stu(d, w.student_id); return { id: w.id, title: w.title, summary: w.summary, v: w.v, status: w.status, html: w.html, thumb: w.thumb, nick: s.nick, sid: s.sid, reflect: w.reflect || {} }; },
     async aStatus(p, ids, st) { const d = db(); need(d, p); let n = 0; d.works.forEach(w => { if (ids.includes(w.id)) { w.status = st; n++; } }); save(d); return n; },
     async aReviews(p, task) { const d = db(); need(d, p); return d.reviews.map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, work_id: r.work_id, author: stu(d, w.student_id).nick, reviewer: stu(d, r.reviewer_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }).reverse(); },
     async aReviewHide(p, id, h) { const d = db(); need(d, p); const r = d.reviews.find(x => x.id === id); if (r) r.hidden = h; save(d); },
@@ -644,7 +667,7 @@ const Local = (() => {
       const d = db(); need(d, p);
       return d.students.map(s => { const ln = latestNotes(d, s.id, task), notes = {}; Object.entries(ln).forEach(([k, v]) => { notes[k] = v.data; });
         const ws = d.works.filter(w => w.student_id === s.id && w.task === task);
-        return { sid: s.sid, nick: s.nick, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, status: w.status })),
+        return { sid: s.sid, nick: s.nick, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, status: w.status, reflect: w.reflect || {} })),
           got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).map(r => ({ from: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest })) }; });
     },
     async setPass(o, n) { const d = db(); need(d, o); if (String(n || '').length < 6) throw fail('새 비밀번호는 6자 이상으로 정해 주세요'); d.admin = n; save(d); return true; }
@@ -721,7 +744,7 @@ function viewList(back) {
     <h2>고치고, 만들고, 서로 평가합니다</h2>
     <div class="steps3">
       <div><b>1 고치기</b><p>불량 시뮬레이터에 숨은 잘못을 찾아 교과서로 판단하고 고칩니다.</p></div>
-      <div><b>2 만들기</b><p>배운 만큼 단계마다 AI에게 부탁해 나만의 기체 시뮬레이터를 키우고 점검합니다.</p></div>
+      <div><b>2 올리기 · 만들기</b><p>미션마다 고친 시뮬레이터를 올리고, 마지막에 나만의 기체 시뮬레이터를 만들어 점검합니다.</p></div>
       <div><b>3 서로 평가</b><p>친구 앱을 돌려 보고 과학이 맞는지, 잘 돌아가는지 까닭을 들어 평가합니다.</p></div>
     </div>
     <a class="btn primary" href="#/me">내 작업실로</a>
@@ -909,8 +932,8 @@ addEventListener('beforeunload', e => { if (S.dirty.size) { flushNow(); e.preven
 function drawStepNav() {
   const ul = $('#stepnav'); if (!ul || !S.me) return;
   const cur = S.page === 'me' ? S.step : '';
-  ul.innerHTML = STEPS.map((s, i) => { const dn = stepDone(s.id), st = stepStarted(s.id);
-    return `<li><a href="#/me/${s.id}" class="${cur === s.id ? 'on' : ''} ${dn ? 'done' : st ? 'started' : ''}"><span class="dot">${dn ? '✓' : i + 1}</span><span>${s.t}<small>${s.s}</small></span></a></li>`; }).join('');
+  ul.innerHTML = STEPS.map((s, i) => { const dn = stepDone(s.id), st = stepStarted(s.id), lk = stepLocked(s.id);
+    return `<li><a href="#/me/${s.id}" class="${cur === s.id ? 'on' : ''} ${dn ? 'done' : st ? 'started' : ''}${lk ? ' locked' : ''}"><span class="dot">${dn ? '✓' : lk ? '🔒' : i + 1}</span><span>${s.t}<small>${lk ? '최종본 때 열려요' : s.s}</small></span></a></li>`; }).join('');
   const n = STEPS.filter(s => stepDone(s.id)).length;
   $('#progi').style.width = Math.round(n / STEPS.length * 100) + '%';
   $('#progt').textContent = `${STEPS.length}단계 중 ${n}단계 마침`;
@@ -923,7 +946,7 @@ async function viewMe(step) {
   if (!S.tok) { location.hash = '#/in'; return; }
   if (!S.me) { try { await loadMe(); } catch (e) { view.innerHTML = `<div class="wrap pad"><p class="empty">불러오지 못했습니다. (${esc(e.message)})</p></div>`; return; } }
   if (!S.me) { location.hash = '#/in'; return; }
-  if (!STEPS.some(s => s.id === step)) { const first = STEPS.find(s => !stepDone(s.id)); location.replace('#/me/' + (first ? first.id : 'review')); return; }
+  if (!STEPS.some(s => s.id === step)) { const first = STEPS.find(s => !stepDone(s.id) && !stepLocked(s.id)); location.replace('#/me/' + (first ? first.id : 'submit')); return; }
   S.step = step;
   const me = S.me.student, lesson = S.task && S.task.lesson_url;
   view.innerHTML = `<div class="wrap ws">
@@ -941,6 +964,7 @@ async function viewMe(step) {
   const idx = STEPS.findIndex(s => s.id === step);
   $('#panel').innerHTML = `<div class="stephead"><div><p class="eyebrow" style="margin:0 0 4px">${idx + 1}단계</p><h2>${STEPS[idx].t}</h2></div></div>`;
   const body = document.createElement('div'); $('#panel').appendChild(body);
+  if (stepLocked(step)) { body.innerHTML = `<div class="notice"><b>🔒 아직 열리지 않은 단계입니다.</b><p>나만의 기체 시뮬레이터(최종본)는 <b>온도와 부피까지 배운 뒤</b> 선생님이 열어 줍니다. 지금은 수업 페이지의 미션을 고치고, 고친 시뮬레이터를 <b>제출</b>에 올리세요.</p><p style="margin:10px 0 0"><a class="btn primary sm" href="#/me/submit">제출로 가기 ›</a> <a class="btn line sm" href="#/me/fix">고치기 기록 ›</a></p></div>`; return; }
   await P(body);
 }
 /* 칸 ↔ 기록 잇기: data-k 가 붙은 칸은 S.draft[단계] 의 그 자리에 저장된다 */
@@ -960,7 +984,7 @@ function bindFields(root, step, onChange) {
   };
   root.addEventListener('input', h); root.addEventListener('change', h);
 }
-function doneBar(root, step, check, msgOk) {
+function doneBar(root, step, check, msgOk, next) {
   const box = document.createElement('div'); box.className = 'donebar';
   const done = S.draft[step] && S.draft[step].done;
   box.innerHTML = `<p class="hint" id="dmsg">${done ? '마친 단계입니다. 고쳐 써도 됩니다(판이 새로 쌓입니다).' : '다 썼으면 이 단계를 마치세요. 쓰는 동안 저절로 저장됩니다.'}</p><button class="btn primary">${done ? '다시 저장하고 다음으로' : '이 단계 마치기'}</button>`;
@@ -970,14 +994,14 @@ function doneBar(root, step, check, msgOk) {
     if (miss) { toast(miss, true); return; }
     S.draft[step].done = true; S.dirty.add(step); await flushNow();
     toast(msgOk || '이 단계를 마쳤습니다!');
-    const i = STEPS.findIndex(s => s.id === step); location.hash = '#/me/' + STEPS[Math.min(i + 1, STEPS.length - 1)].id;
+    const i = STEPS.findIndex(s => s.id === step); location.hash = '#/me/' + (next || STEPS[Math.min(i + 1, STEPS.length - 1)].id);
   };
 }
 
 /* ── ① 고치기 기록 ── */
 function panelFix(root) {
   root.innerHTML = `<p class="lead2">수업 페이지의 미션을 하며 찾은 잘못과 고친 방법을 적습니다. 한 미션만 해도 그 미션부터 적어 두세요.</p>` +
-    D.missions.map(m => `<div class="box"><h3>${esc(m.name)}</h3>
+    D.missions.map(m => m.stage > OPEN() ? `<div class="box"><h3>🔒 ${esc(m.name)}</h3><p class="hint" style="margin:0 0 14px">온도와 부피를 배운 뒤 선생님이 열어 줍니다.</p></div>` : `<div class="box"><h3>${esc(m.name)}</h3>
       <div class="lb">찾은 잘못</div>
       <div class="ticks">${range(m.n).map(i => `<label class="tick"><input type="checkbox" data-k="${m.id}.found.${i}"><span>잘못 ${CIRC[i]}</span></label>`).join('')}</div>
       <div class="lb">고친 방법</div>
@@ -993,7 +1017,7 @@ function panelFix(root) {
   doneBar(root, 'fix', d => {
     const okM = D.missions.some(m => { const x = d[m.id] || {}; return (x.found || []).some(Boolean) && filled(x.see, 5) && filled(x.why, 5) && filled(x.fix, 3); });
     return okM ? '' : '미션 하나 이상에서 찾은 잘못을 표시하고, 무엇이 보였는지·왜 틀렸는지·어떻게 고쳤는지 써 주세요.';
-  }, '고치기 기록을 마쳤습니다. 다음은 모형 생각!');
+  }, '고치기 기록을 저장했습니다. 이제 고친 시뮬레이터를 올려요!', 'submit');
 }
 
 /* ── ② 모형 생각 ── */
@@ -1011,7 +1035,7 @@ function themeWord(v) { const t = D.themes.find(x => x[0] === v); return t ? t[3
 function mkData() { const d = S.draft.make = S.draft.make || {}; d.examples = d.examples || [{}, {}, {}]; d.quiz = d.quiz || [{}, {}, {}]; d.log = d.log || []; d.sent = d.sent || {}; return d; }
 function goodExamples(d) { return (d.examples || []).filter(e => e && filled(e.name, 2) && filled(e.text, 8) && filled(e.kind)); }
 function goodQuiz(d) { return (d.quiz || []).filter(q => q && filled(q.q, 4) && (q.choices || []).filter(c => filled(c)).length === 4 && q.answer != null && q.answer !== '' && filled(q.why, 2)); }
-const STAGE_TAG = ['2단계', '3단계', '4단계', '고칠 때'];
+const STAGE_TAG = ['①', '②', '③', '고칠 때'];
 const KEEP_RULES = '화면의 글은 중학교 1학년이 배운 말(기체 입자, 충돌, 압력, 부피, 온도, 빠르기)로만 쉽게 쓰고, 계산식이나 어려운 과학 낱말, 다른 단위는 넣지 마. 내가 말하지 않은 손잡이·버튼·기능도 더하지 마.';
 function pieces(d) {
   const name = (d.appName || '').trim() || '나만의 기체 시뮬레이터';
@@ -1020,7 +1044,7 @@ function pieces(d) {
   const qzText = qz.length ? qz.map((q, i) => `${i + 1}. ${q.q.trim()}\n   ① ${q.choices[0]} ② ${q.choices[1]} ③ ${q.choices[2]} ④ ${q.choices[3]}\n   정답: ${CIRC[+q.answer]} / 풀이: ${q.why.trim()}`).join('\n') : '(위 「내 앱 설계」에 퀴즈를 먼저 써 주세요)';
   const lim = (d.limits || '').trim() || '(위 「내 앱 설계」에 한계를 먼저 써 주세요)';
   return [
-    { t: '2단계 · 압력과 부피 (첫 판)', when: '압력과 부피를 배운 뒤', text:
+    { t: '① 압력과 부피 화면 만들기', when: '처음에 — 새 채팅', text:
 `기체 입자가 상자 안에서 움직이며 벽에 부딪히는 시뮬레이터 웹앱을 만들어 줘. 앱 이름은 「${name}」이고, ${themeWord(d.theme)} 느낌으로 꾸며 줘.
 
 [보여 줄 것]
@@ -1038,7 +1062,7 @@ function pieces(d) {
 
 ${KEEP_RULES}`,
       after: '부피를 줄이면 부딪힌 횟수(압력)가 커지고, 늘리면 작아지나요? 부피를 바꿔도 빠르기는 그대로인가요? 입자가 바닥에 쌓이지 않나요? 배우지 않은 말은 없나요?' },
-    { t: '3단계 · 온도와 부피 더하기', when: '온도와 부피를 배운 뒤', text:
+    { t: '② 온도와 부피 더하기', when: '①을 보낸 같은 대화에서', text:
 `지금 앱의 화면은 '압력과 부피' 탭으로 그대로 두고, 탭을 하나 더 만들어 '온도와 부피'라고 해 줘.
 
 [보여 줄 것]
@@ -1054,7 +1078,7 @@ ${KEEP_RULES}`,
 
 '압력과 부피' 탭은 바꾸지 마. ${KEEP_RULES}`,
       after: '온도를 올리면 빠르기가 커지고 뚜껑이 올라가다 멈추나요? 입자 수와 크기는 그대로인가요? 압력과 부피 탭은 그대로인가요?' },
-    { t: '4단계 · 최종본', when: '단원을 마칠 때', text:
+    { t: '③ 생활 속 예 · 퀴즈 · 한계 더하기', when: '②에 이어서 — 마지막', text:
 `지금 탭들의 시뮬레이터는 그대로 두고, 아래 세 가지를 더해 줘.
 
 1) '생활 속 예' 탭: 아래 예를 카드로 보여 줘. 내가 쓴 설명의 과학 내용은 바꾸지 말고 맞춤법만 다듬어 줘. 틀린 곳이 있어 보이면 고치지 말고 답장 맨 끝에 따로 알려 줘.
@@ -1071,14 +1095,14 @@ ${KEEP_RULES}`,
 `[보인 것] (예: 부피를 줄였는데 입자가 빨라집니다)
 [배운 내용] (예: 입자의 빠르기는 온도에 따라 달라지므로, 온도가 일정하면 빠르기는 그대로여야 합니다)
 [고칠 곳] (예: 부피를 바꿀 때 입자의 빠르기를 바꾸는 부분을 없애 주세요)
-다른 부분은 그대로 두고 이 한 곳만 고쳐 줘.`,
+다른 부분은 그대로 두고 말한 곳만 고쳐 줘. (고칠 곳은 여러 개 적어도 됩니다)`,
       after: '괄호 속 예를 내가 본 것으로 바꿔 쓰고 보내세요. 고친 뒤에는 꼭 직접 조작해 확인합니다.' }
   ];
 }
 function panelMake(root) {
   const d = mkData(); d.route = d.route || 'template';
   root.innerHTML = `
-    <p class="lead2">내 시뮬레이터를 배운 만큼 키웁니다: <b>2단계 압력과 부피(첫 판) → 3단계 온도와 부피 → 4단계 최종본</b>(생활 속 예·내가 낸 퀴즈·한계). 단계마다 「제출」에 올리면 판이 쌓이고, 「이 단계 마치기」는 최종본까지 끝낸 뒤에 누릅니다.</p>
+    <p class="lead2">온도와 부피까지 배운 뒤 만드는 <b>나만의 기체 시뮬레이터(최종본)</b>입니다. 같은 대화에서 <b>① 압력과 부피 화면 → ② 온도와 부피 더하기 → ③ 생활 속 예·내가 낸 퀴즈·한계</b>를 차례로 만들고, 다 되면 「제출」에 <b>최종본</b>으로 올립니다.</p>
     <div class="box"><h3>내 앱 설계</h3>
       <div class="grid2"><div class="field"><label>앱 이름</label><input type="text" data-k="appName" maxlength="40" placeholder="예: 공기 탐험대"></div>
         <div class="field"><label>한 줄 소개</label><input type="text" data-k="about" maxlength="80" placeholder="예: 기체 입자로 압력·부피·온도를 알아봐요"></div></div>
@@ -1095,7 +1119,8 @@ function panelMake(root) {
           <div class="choices">${range(4).map(j => `<input type="radio" name="ans${i}" data-k="quiz.${i}.answer" value="${j}" title="정답"><input type="text" data-k="quiz.${i}.choices.${j}" maxlength="60" placeholder="보기 ${CIRC[j]}">`).join('')}</div>
           <p class="hint" style="margin:-4px 0 10px">왼쪽 동그라미로 정답을 고르세요.</p>
           <div class="field"><label>풀이</label><input type="text" data-k="quiz.${i}.why" maxlength="160"></div></div>`).join('')}
-      <div class="field"><label>이 시뮬레이터의 한계 <button type="button" class="btn sm" data-act="lim">모형 생각에서 고른 것 가져오기</button></label><textarea data-k="limits" rows="3" maxlength="500"></textarea></div>
+      <div class="field"><label>이 시뮬레이터의 한계 <small>아래 목록에서 ＋로 고르거나 직접 써요</small></label><textarea data-k="limits" rows="3" maxlength="500"></textarea>
+        <div class="limpick">${D.limits.map((l, i) => `<button type="button" class="btn line sm" data-limadd="${i}">＋ ${esc(l)}</button>`).join('')}</div></div>
     </div>
     <div class="tabs2" role="group" aria-label="만드는 방법">
       <button data-route="template">ⓐ 템플릿 채우기</button><button data-route="free">ⓑ 자유롭게 쓰기</button><button data-route="starter">ⓒ 시작 앱으로 만들기</button></div>
@@ -1119,14 +1144,14 @@ function panelMake(root) {
     const box = $('#routeBox');
     if (d.route === 'template') {
       box.innerHTML = `<div class="box"><h3>ⓐ 템플릿 — 단계에 맞는 프롬프트를 보내세요</h3>
-        <p class="hint" style="margin:-6px 0 12px">그 단계를 배운 뒤에 프롬프트를 복사해 제미나이 캔버스에 보내고 → 미리보기에서 직접 조작해 확인하고 → 이상한 곳은 「고칠 때 쓰는 틀」로 한 곳씩 고칩니다. 3·4단계는 앞 단계 앱이 있는 <b>같은 대화</b>에서 이어서 보냅니다(대화를 잃어버렸다면 「제출」에 낸 내 코드를 먼저 붙여넣고 "이 코드에 이어서"라고 시작). 위 「내 앱 설계」를 바꾸면 프롬프트도 바로 바뀝니다.</p>
+        <p class="hint" style="margin:-6px 0 12px">①부터 차례로 복사해 제미나이 캔버스에 보내고 → 미리보기에서 직접 조작해 확인하고 → 이상한 곳은 「고칠 때 쓰는 틀」로 고칩니다. ②·③은 ①을 보낸 <b>같은 대화</b>에서 이어서 보냅니다(대화를 잃어버렸다면 「제출」의 「내가 올린 판」에서 <b>코드 복사</b> → 새 채팅에 붙여넣고 "이 코드에 이어서"라고 시작). 위 「내 앱 설계」를 바꾸면 프롬프트도 바로 바뀝니다.</p>
         <div id="pieces"></div></div>`;
       drawPieces();
     } else if (d.route === 'free') {
       box.innerHTML = `<div class="box"><h3>ⓑ 자유롭게 쓰기</h3>
         <div class="field"><label>내가 쓴 프롬프트</label><textarea data-k="free" rows="6" maxlength="3000" placeholder="예: 기체 입자가 상자 안에서 움직이며 벽에 부딪히는 시뮬레이터를 만들어 줘. 오른쪽 벽을 손잡이로 밀어 부피를 바꿀 수 있게…"></textarea></div>
         <div class="lb">좋은 프롬프트 점검</div>
-        <div class="ticks" style="flex-direction:column;align-items:stretch">${['무엇을 보여 줄지(어떤 관계인지) 말했다', '조절할 것(손잡이)과 화면에 보일 것(숫자)을 말했다', '지켜야 할 과학(모든 방향으로 움직임·충돌로 압력·빠르기는 온도에 따라)을 넣었다', '배운 말로만 쓰고, 내가 말하지 않은 기능은 넣지 말라고 했다', '한 번에 하나씩, 나머지는 그대로 두라고 했다'].map((t, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="freeCheck.${i}"><span>${t}</span></label>`).join('')}</div>
+        <div class="ticks" style="flex-direction:column;align-items:stretch">${['무엇을 보여 줄지(어떤 관계인지) 말했다', '조절할 것(손잡이)과 화면에 보일 것(숫자)을 말했다', '지켜야 할 과학(모든 방향으로 움직임·충돌로 압력·빠르기는 온도에 따라)을 넣었다', '배운 말로만 쓰고, 내가 말하지 않은 기능은 넣지 말라고 했다', '고칠 곳을 분명히 말하고, 나머지는 그대로 두라고 했다'].map((t, i) => `<label class="tick" style="border-radius:12px;padding:8px 14px"><input type="checkbox" data-k="freeCheck.${i}"><span>${t}</span></label>`).join('')}</div>
         <p style="margin:0 0 14px"><button type="button" class="btn line sm" data-act="freecopy">복사</button> <button type="button" class="btn line sm" data-act="freelog">보냈어요 — 기록에 넣기</button></p></div>`;
       bindFields(box, 'make');
     } else {
@@ -1140,14 +1165,12 @@ function panelMake(root) {
     const r = e.target.closest('[data-route]'); if (r) { setRoute(r.dataset.route); touch('make'); return; }
     const c = e.target.closest('[data-copy]'); if (c) { copyText(pieces(d)[+c.dataset.copy].text, `${STAGE_TAG[+c.dataset.copy]} 프롬프트를 복사했습니다. 제미나이에 붙여넣으세요.`); return; }
     const del = e.target.closest('[data-del]'); if (del) { d.log.splice(+del.dataset.del, 1); touch('make'); drawLog(); return; }
+    const la = e.target.closest('[data-limadd]');
+    if (la) { const ta = $('[data-k="limits"]', root), t = D.limits[+la.dataset.limadd];
+      if (!ta.value.includes(t)) { ta.value = (ta.value.trim() ? ta.value.trim() + ' ' : '') + t + '.'; d.limits = ta.value; touch('make'); if (d.route === 'template') drawPieces(); }
+      return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
     const act = a.dataset.act;
-    if (act === 'lim') {
-      const lim = ((S.draft.model || {}).lim || []);
-      const picked = D.limits.filter((_, i) => lim[i]);
-      if (!picked.length) { toast('「모형 생각」에서 고른 한계가 없습니다.', true); return; }
-      const ta = $('[data-k="limits"]', root); ta.value = picked.join(' '); d.limits = ta.value; touch('make'); if (d.route === 'template') drawPieces();
-    }
     if (act === 'freecopy') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); copyText(d.free, '복사했습니다.'); }
     if (act === 'freelog') { if (!filled(d.free, 5)) return toast('프롬프트를 먼저 써 주세요.', true); d.log.push({ ts: new Date().toISOString(), route: 'free', text: d.free.trim(), memo: '' }); touch('make'); drawLog(); toast('기록에 넣었습니다.'); }
     if (act === 'logadd') { const t = $('#logAdd').value.trim(); if (!t) return; d.log.push({ ts: new Date().toISOString(), route: 'self', text: t, memo: '' }); $('#logAdd').value = ''; touch('make'); drawLog(); }
@@ -1204,6 +1227,9 @@ async function starterHtml(d) {
   return src.replace(re, (m, a, b) => a + 'const MY = ' + json + ';\n' + b);
 }
 
+function hasReflect(rf) { return !!rf && D.submitQs.some(q => String(rf[q.id] || '').trim()); }
+function reflectHTML(rf) { if (!hasReflect(rf)) return ''; return `<dl class="kv">${D.submitQs.filter(q => String(rf[q.id] || '').trim()).map(q => `<dt>${esc(q.t)}</dt><dd>${esc(rf[q.id])}</dd>`).join('')}</dl>`; }
+
 /* ── ④ 점검표 ── */
 function panelCheck(root) {
   let g = '';
@@ -1229,16 +1255,16 @@ function panelCheck(root) {
 /* ── ⑤ 자기평가·성찰 ── */
 function panelReflect(root) {
   const got = (S.me.got || []).length;
-  root.innerHTML = `<p class="lead2">이번 활동을 돌아봅니다. 솔직하게 쓸수록 다음 판이 좋아집니다.</p>
+  root.innerHTML = `<p class="lead2">네 영역에서 나는 어땠는지 고르고 까닭을 씁니다. 판마다 쓰는 「이번 판 돌아보기」는 <b>제출</b>에 있습니다.</p>
     <div class="box"><h3>자기평가</h3>${D.rubric.map(r => `<div class="rub"><h4>${esc(r.t)}</h4>
       <div class="lvs">${r.lv.map((t, i) => `<label><input type="radio" name="${r.id}" data-k="rub.${r.id}.lv" value="${3 - i}"><span><b>${['잘함', '보통', '노력 필요'][i]}</b>${esc(t)}</span></label>`).join('')}</div>
       <input type="text" data-k="rub.${r.id}.why" maxlength="200" placeholder="그렇게 고른 까닭 한 줄"></div>`).join('')}</div>
-    <div class="box"><h3>돌아보기</h3>${D.reflect.map(q => `<div class="field"><label>${esc(q.t)}${q.after ? ` <small>${got ? '' : '— 친구 평가를 받은 뒤에 씁니다'}</small>` : ''}</label><textarea data-k="${q.id}" rows="3" maxlength="800"${q.after && !got ? ' disabled' : ''}></textarea></div>`).join('')}</div>`;
+    <div class="box"><h3>친구 평가와 견주기</h3>${D.reflect.map(q => `<div class="field"><label>${esc(q.t)}${q.after ? ` <small>${got ? '' : '— 친구 평가를 받은 뒤에 씁니다'}</small>` : ''}</label><textarea data-k="${q.id}" rows="3" maxlength="800"${q.after && !got ? ' disabled' : ''}></textarea></div>`).join('')}</div>`;
   bindFields(root, 'reflect');
   doneBar(root, 'reflect', d => {
     const r = D.rubric.filter(x => !((d.rub || {})[x.id] || {}).lv); if (r.length) return '자기평가 네 가지를 모두 골라 주세요.';
-    const q = D.reflect.filter(x => !x.after && !filled(d[x.id], 5)); return q.length ? '돌아보기 질문 1~3에 답해 주세요.' : '';
-  }, '돌아보기를 마쳤습니다. 이제 제출!');
+    return '';
+  }, '자기평가를 마쳤습니다. 이제 제출!');
 }
 
 /* ── ⑥ 제출 ── */
@@ -1249,6 +1275,7 @@ async function panelSubmit(root) {
     ${t.submit_open ? '' : `<div class="notice" style="margin:0 0 20px"><b>지금은 제출 기간이 아닙니다.</b><p>선생님이 제출을 열면 올릴 수 있습니다. 그동안 준비해 두세요.</p></div>`}
     <p class="lead2">앱 코드를 올립니다. 고쳐서 다시 올리면 <b>새 판</b>이 쌓이고, 전시관에는 가장 새 판이 보입니다. 올린 앱은 선생님 확인 뒤 전시관에 나옵니다.</p>
     <form id="sf" class="box" autocomplete="off">
+      <div class="field"><label for="fkind">무엇을 올리나요?</label><select id="fkind">${D.uploads.map(u => `<option value="${u.id}"${u.stage > OPEN() ? ' disabled' : ''}>${u.stage > OPEN() ? '🔒 ' : ''}${esc(u.t)}</option>`).join('')}</select></div>
       <div class="grid2"><div class="field"><label>제목</label><input type="text" id="ftitle" maxlength="60" required></div>
         <div class="field"><label>한 줄 소개</label><input type="text" id="fsum" maxlength="200"></div></div>
       <div class="lb">앱 코드</div>
@@ -1258,18 +1285,28 @@ async function panelSubmit(root) {
       <div class="stage small" id="fstage" hidden></div>
       <div class="lb" style="margin-top:14px">대표 화면 <small>(없어도 됩니다 — 캡처해서 여기 누르고 Ctrl+V)</small></div>
       <div class="drop" id="fthumb" tabindex="0"><span class="hint">눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
+      <div class="lb" style="margin-top:18px">이번 판 돌아보기 <small>(선생님께만 보입니다 — 전시관에는 나오지 않아요)</small></div>
+      <p class="hint" style="margin:-2px 0 10px">올릴 때마다 씁니다. 판마다 쌓여서 내가 어떻게 자랐는지 보여 줍니다.</p>
+      ${D.submitQs.map((q, i) => `<div class="field"><label for="fr-${q.id}">${i + 1}. ${esc(q.t)}</label><textarea id="fr-${q.id}" rows="2" maxlength="600" placeholder="${esc(q.ph || '')}"></textarea></div>`).join('')}
       <label class="check" style="margin-top:16px"><input type="checkbox" id="fpriv"> 앱 안에 내 실명·사진·연락처가 없습니다.</label>
       <p style="margin:0 0 16px"><button class="btn primary" type="submit"${t.submit_open ? '' : ' disabled'}>올리기</button></p>
     </form>
     <h3>내가 올린 판</h3>
-    <ul class="vlist">${works.length ? works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}${w.summary ? ' · ' + esc(w.summary) : ''}</span></div>
+    <ul class="vlist">${works.length ? works.map(w => `<li><div class="vi"><b>${kindOf(w.reflect) ? `<span class="kd">${esc(kindOf(w.reflect).k)}</span>` : ''}${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}${w.summary ? ' · ' + esc(w.summary) : ''}</span>${hasReflect(w.reflect) ? `<details class="rf"><summary>내가 쓴 돌아보기</summary>${reflectHTML(w.reflect)}</details>` : ''}</div>
       <div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-see="${w.id}">돌려 보기</button><button class="btn line sm" data-copyv="${w.id}">코드 복사</button>${w.status === 'public' ? `<a class="btn sm" href="#/w/${w.id}">전시관에서 ›</a>` : ''}</div></li>`).join('') : '<li class="hint">아직 올린 판이 없습니다.</li>'}</ul>`;
-  $('#ftitle').value = dr.title || mk.appName || ''; $('#fsum').value = dr.summary || mk.about || ''; if (dr.html) $('#fsrc').value = dr.html;
+  const sent = new Set(works.map(w => (w.reflect || {}).kind));
+  const openUps = D.uploads.filter(u => u.stage <= OPEN());
+  const kindTitle = id => { const u = D.uploads.find(x => x.id === id); return id === 'final' ? (mk.appName || u.t) : u.t; };
+  $('#fkind').value = (openUps.find(u => u.id === dr.kind) || openUps.find(u => !sent.has(u.id)) || openUps[openUps.length - 1] || D.uploads[0]).id;
+  $('#ftitle').value = dr.title || kindTitle($('#fkind').value); $('#fsum').value = dr.summary || (($('#fkind').value === 'final') ? mk.about || '' : ''); if (dr.html) $('#fsrc').value = dr.html;
+  $('#fkind').onchange = () => { const all = D.uploads.map(u => kindTitle(u.id)); if (!$('#ftitle').value.trim() || all.includes($('#ftitle').value.trim())) $('#ftitle').value = kindTitle($('#fkind').value); keep(); };
+  D.submitQs.forEach(q => { $('#fr-' + q.id).value = (dr.reflect || {})[q.id] || ''; });
+  const reflectNow = () => Object.fromEntries(D.submitQs.map(q => [q.id, $('#fr-' + q.id).value.trim()]));
   let thumb = null;
   const size = () => { const h = extractHtml($('#fsrc').value); $('#fsize').textContent = h ? `${Math.round(bytes(h) / 1024)}KB` : ''; };
   size();
-  const keep = () => store('sgh:draft:' + TASK, { html: $('#fsrc').value, title: $('#ftitle').value, summary: $('#fsum').value });
-  root.addEventListener('input', e => { if (['fsrc', 'ftitle', 'fsum'].includes(e.target.id)) { keep(); size(); } });
+  const keep = () => store('sgh:draft:' + TASK, { html: $('#fsrc').value, title: $('#ftitle').value, summary: $('#fsum').value, reflect: reflectNow(), kind: $('#fkind').value });
+  root.addEventListener('input', e => { if (['fsrc', 'ftitle', 'fsum'].includes(e.target.id) || e.target.id.startsWith('fr-')) { keep(); size(); } });
   const setThumb = async blob => { thumb = await imageToThumb(blob); if (!thumb) return toast('그림이 너무 큽니다.', true); $('#fthumb').className = 'drop ok'; $('#fthumb').innerHTML = `<img src="${thumb}" alt="대표 화면">`; };
   $('#fthumb').onclick = () => $('#fimg').click();
   $('#fimg').onchange = e => { const f = e.target.files[0]; if (f) setThumb(f); };
@@ -1293,10 +1330,14 @@ async function panelSubmit(root) {
     const html = extractHtml($('#fsrc').value);
     if (!html) return toast('앱 코드를 붙여넣어 주세요(<!DOCTYPE html> 부터 </html> 까지).', true);
     if (bytes(html) > MAX_HTML) return toast('코드가 2MB보다 큽니다. 넣은 그림을 줄여 주세요.', true);
+    const reflect = { ...reflectNow(), kind: $('#fkind').value };
+    const miss = D.submitQs.findIndex(q => q.req && reflect[q.id].length < 8);
+    if (miss >= 0) { $('#fr-' + D.submitQs[miss].id).focus(); return toast(`「이번 판 돌아보기」 ${miss + 1}번을 한 문장 이상 써 주세요.`, true); }
     if (!$('#fpriv').checked) return toast('실명·사진·연락처가 없는지 확인하고 체크해 주세요.', true);
     const b = $('#sf button[type=submit]'); b.disabled = true;
     try {
-      const r = await API.submit(S.tok, TASK, { title: $('#ftitle').value.trim(), summary: $('#fsum').value.trim(), html, thumb });
+      const r = await API.submit(S.tok, TASK, { title: $('#ftitle').value.trim(), summary: $('#fsum').value.trim(), html, thumb, reflect });
+      store('sgh:draft:' + TASK, {});   // 다음 판은 새로 쓴다(코드·제목·돌아보기)
       toast(r.status === 'public' ? `${r.v}판을 올렸습니다. 전시관에 바로 나옵니다.` : `${r.v}판을 올렸습니다. 선생님 확인 뒤 전시관에 나옵니다.`);
       await loadMe(); route();
     } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
@@ -1373,7 +1414,7 @@ async function aProgress(box) {
   };
   draw();
 }
-const STEPLBL = { fix: '① 고치기 기록', model: '② 모형 생각', make: '③ 만들기', check: '④ 점검표', reflect: '⑤ 자기평가·성찰' };
+const STEPLBL = { fix: '① 고치기 기록', make: '② 만들기', check: '③ 점검표', reflect: '④ 자기평가' };
 function noteView(step, d) {
   if (!d) return '<p class="hint">없음</p>';
   const row = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
@@ -1394,8 +1435,8 @@ async function studentModal(id, after) {
   const cnt = s => x.notes.filter(n => n.step === s).length;
   const m = modal(`<h3>${esc(x.student.nick)} <span class="hint">${esc(x.student.sid)} · ${esc(clsName(x.student.cls))} · 마지막 접속 ${ago(x.student.last_seen)}</span></h3>
     ${Object.keys(STEPLBL).map(s => `<h4 style="margin:18px 0 8px">${STEPLBL[s]} ${latest[s] ? `<span class="hint">${latest[s].data && latest[s].data.done ? '마침' : '쓰는 중'} · ${ago(latest[s].ts)} · 판 ${cnt(s)}</span>` : ''}</h4>${noteView(s, latest[s] && latest[s].data)}`).join('')}
-    <h4 style="margin:18px 0 8px">⑥ 제출한 판</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span></div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
-    <h4 style="margin:18px 0 8px">⑦ 받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, nick: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">⑤ 제출한 판 · 이번 판 돌아보기</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${kindOf(w.reflect) ? `<span class="kd">${esc(kindOf(w.reflect).k)}</span>` : ''}${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span>${hasReflect(w.reflect) ? `<details class="rf" open><summary>이번 판 돌아보기</summary>${reflectHTML(w.reflect)}</details>` : ''}</div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">⑥ 받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, nick: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
     <h4 style="margin:18px 0 8px">한 평가</h4><ul class="rlist">${x.gave.length ? x.gave.map(r => reviewLi({ ...r, nick: '→ ' + r.to + ` ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
     <p style="margin:22px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-act="rename">별명 바꾸기</button><button class="btn sm danger" data-act="del">학생 지우기</button></p>`, true);
   m.box.addEventListener('click', async e => {
@@ -1410,19 +1451,22 @@ async function exportCsv() {
   const q = v => { const s = String(v == null ? '' : v).replace(/\r?\n/g, ' '); return /[",]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
   const head = ['학번', '별명', '반'];
   D.missions.forEach(m => head.push(m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나', m.name + ' 예상'));
-  head.push('AI가 엉뚱하게', ...D.model.map(x => '모형: ' + x.t.slice(0, 18)), '만들기 길', '앱 이름', '생활 속 예시', '퀴즈', '한계', '보낸 프롬프트 수', '프롬프트 기록',
-    ...D.checklist.map((c, i) => '점검' + (i + 1)), ...D.rubric.map(r => '자기평가: ' + r.t), ...D.reflect.map((r, i) => '성찰' + (i + 1)), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안');
+  head.push('AI가 엉뚱하게', '만들기 길', '앱 이름', '생활 속 예시', '퀴즈', '한계', '보낸 프롬프트 수', '프롬프트 기록',
+    ...D.checklist.map((c, i) => '점검' + (i + 1)), ...D.rubric.map(r => '자기평가: ' + r.t), ...D.reflect.map(r => '성찰: ' + r.t.slice(0, 16)), '올린 것(판별)', ...D.submitQs.map(q => '돌아보기: ' + q.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안');
   const out = [head.map(q).join(',')];
   rows.forEach(r => {
     const n = r.notes || {}, fx = n.fix || {}, md = n.model || {}, mk = n.make || {}, ck = n.check || {}, rf = n.reflect || {};
     const line = [r.sid, r.nick, clsName(r.cls)];
     D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix, x.guess); });
-    line.push(fx.aiWrong, ...D.model.map(x => md[x.id]), { template: '템플릿', free: '자유', starter: '시작 앱' }[mk.route] || '', mk.appName,
+    line.push(fx.aiWrong, { template: '템플릿', free: '자유', starter: '시작 앱' }[mk.route] || '', mk.appName,
       goodExamples(mk).map(e => `${e.name}(${e.kind}): ${e.text}`).join(' / '), goodQuiz(mk).map(x => `${x.q} [${CIRC[+x.answer]}]`).join(' / '), mk.limits,
       (mk.log || []).length, (mk.log || []).map(l => l.text + (l.guess ? ' [예상] ' + l.guess : '') + (l.memo ? ' → ' + l.memo : '')).join(' // '),
       ...D.checklist.map(c => { const x = ck[c.id] || {}; return x.st ? `${{ ok: '됨', no: '안 됨', unk: '모르겠음' }[x.st]}${x.why ? ': ' + x.why : ''}` : ''; }),
       ...D.rubric.map(x => { const v = (rf.rub || {})[x.id] || {}; return v.lv ? `${{ 3: '잘함', 2: '보통', 1: '노력 필요' }[v.lv]}${v.why ? ': ' + v.why : ''}` : ''; }),
-      ...D.reflect.map(x => rf[x.id]), (r.works || []).length, (r.works || []).slice(-1).map(w => ({ public: '공개', pending: '확인 대기', hidden: '내려감' }[w.status])).join(''),
+      ...D.reflect.map(x => rf[x.id]),
+      (r.works || []).map(w => `${w.v}판 ${kindOf(w.reflect) ? kindOf(w.reflect).k : ''}`.trim()).join(' / '),
+      ...D.submitQs.map(q => (r.works || []).filter(w => String((w.reflect || {})[q.id] || '').trim()).map(w => `${w.v}판${kindOf(w.reflect) ? '(' + kindOf(w.reflect).k + ')' : ''}: ${w.reflect[q.id]}`).join(' / ')),
+      (r.works || []).length, (r.works || []).slice(-1).map(w => ({ public: '공개', pending: '확인 대기', hidden: '내려감' }[w.status])).join(''),
       (r.got || []).length, (r.got || []).map(g => `${g.from}: ${g.praise}${g.suggest ? ' / 제안: ' + g.suggest : ''}`).join(' // '));
     out.push(line.map(q).join(','));
   });
@@ -1433,7 +1477,7 @@ async function aWorks(box) {
   let rows; try { rows = await API.aWorks(AP(), TASK); } catch (e) { return aFail(e); }
   const pend = rows.filter(r => r.status === 'pending');
   box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 10px"><p class="hint" style="margin:0">확인 대기 ${pend.length} · 모두 ${rows.length}</p>${pend.length ? `<button class="btn primary sm" data-allpub>확인 대기 모두 공개</button>` : ''}</div>
-    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${esc(r.title)} · ${r.v}판</b><span>${esc(r.nick)} (${esc(r.sid)}) · ${ago(r.ts)}</span>${r.summary ? `<p>${esc(r.summary)}</p>` : ''}</div>
+    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${kindOf(r.reflect) ? `<span class="kd">${esc(kindOf(r.reflect).k)}</span>` : ''}${esc(r.title)} · ${r.v}판</b><span>${esc(r.nick)} (${esc(r.sid)}) · ${ago(r.ts)}</span>${r.summary ? `<p>${esc(r.summary)}</p>` : ''}${hasReflect(r.reflect) ? `<details class="rf"><summary>이번 판 돌아보기</summary>${reflectHTML(r.reflect)}</details>` : ''}</div>
       <div class="ab">${statusBadge(r.status)}<button class="btn line sm" data-aw="${r.id}">돌려 보기</button>${r.status !== 'public' ? `<button class="btn primary sm" data-st="public" data-id="${r.id}">공개</button>` : ''}${r.status !== 'hidden' ? `<button class="btn sm danger" data-st="hidden" data-id="${r.id}">내리기</button>` : ''}</div></li>`).join('') : '<li class="empty">아직 올라온 앱이 없습니다.</li>'}</ul>`;
   box.onclick = async e => {
     const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">${esc(w.nick)}</span></h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
@@ -1452,16 +1496,18 @@ async function aReviews(box) {
 async function aTask(box) {
   box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
   let rows; try { rows = await API.aTasks(AP()); } catch (e) { return aFail(e); }
-  const t = rows.find(r => r.code === TASK) || { code: TASK, title: D.title, lesson_url: '', submit_open: true, review_open: false, auto_public: false };
+  const t = rows.find(r => r.code === TASK) || { code: TASK, title: D.title, lesson_url: '', submit_open: true, review_open: false, auto_public: false, open_stage: 2 };
+  const ST = [[1, '1단계까지 — 압력 (미션 1)'], [2, '2단계까지 — 압력과 부피 (미션 2)'], [3, '3단계까지 — 온도와 부피 (미션 3)'], [4, '4단계 모두 — 최종본 (만들기·점검표·자기평가)']];
   box.innerHTML = `<form class="sform" id="tf"><div class="field"><label>과제 이름</label><input type="text" id="tt" maxlength="60" value="${esc(t.title)}"></div>
     <div class="field"><label>수업 페이지 주소 <small>(https://… — 학생 작업실에 「수업 페이지 열기」로 나옵니다)</small></label><input type="url" id="tl" value="${esc(t.lesson_url || '')}" placeholder="https://scienceisjo.github.io/…"></div>
+    <div class="field"><label for="to">열린 단계 <small>(학생에게 열리는 곳 — 수업 페이지 「따라 하기」·미션 3 탭과 이 사이트의 만들기·점검표·자기평가가 함께 따릅니다)</small></label><select id="to">${ST.map(([v, lb]) => `<option value="${v}"${(+t.open_stage || 2) === v ? ' selected' : ''}>${lb}</option>`).join('')}</select></div>
     <label class="check"><input type="checkbox" id="ts"${t.submit_open ? ' checked' : ''}> 제출 받기</label>
     <label class="check"><input type="checkbox" id="tr"${t.review_open ? ' checked' : ''}> 서로 평가 열기</label>
     <label class="check"><input type="checkbox" id="ta"${t.auto_public ? ' checked' : ''}> 올리자마자 공개(선생님 확인 건너뛰기)</label>
     <button class="btn primary" type="submit">저장</button></form>
     <p class="hint">학생용 주소: <b>${esc(location.origin + location.pathname)}</b>${TASK !== 'gas' ? '?t=' + esc(TASK) : ''}</p>`;
   $('#tf').onsubmit = async e => { e.preventDefault();
-    const nt = { code: TASK, title: $('#tt').value.trim() || D.title, lesson_url: $('#tl').value.trim(), submit_open: $('#ts').checked, review_open: $('#tr').checked, auto_public: $('#ta').checked };
+    const nt = { code: TASK, title: $('#tt').value.trim() || D.title, lesson_url: $('#tl').value.trim(), submit_open: $('#ts').checked, review_open: $('#tr').checked, auto_public: $('#ta').checked, open_stage: +$('#to').value };
     if (nt.lesson_url && !/^https:\/\/\S+$/.test(nt.lesson_url)) return toast('수업 페이지 주소는 https:// 로 시작해야 합니다.', true);
     try { await API.aTaskSave(AP(), nt); S.task = null; toast('저장했습니다.'); } catch (err) { aFail(err); } };
 }
