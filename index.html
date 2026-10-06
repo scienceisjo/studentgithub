@@ -1299,8 +1299,20 @@ async function panelSubmit(root) {
   const kindTitle = id => { const u = D.uploads.find(x => x.id === id); return id === 'final' ? (mk.appName || u.t) : u.t; };
   $('#fkind').value = (openUps.find(u => u.id === dr.kind) || openUps.find(u => !sent.has(u.id)) || openUps[openUps.length - 1] || D.uploads[0]).id;
   $('#ftitle').value = dr.title || kindTitle($('#fkind').value); $('#fsum').value = dr.summary || (($('#fkind').value === 'final') ? mk.about || '' : ''); if (dr.html) $('#fsrc').value = dr.html;
-  $('#fkind').onchange = () => { const all = D.uploads.map(u => kindTitle(u.id)); if (!$('#ftitle').value.trim() || all.includes($('#ftitle').value.trim())) $('#ftitle').value = kindTitle($('#fkind').value); keep(); };
+  $('#fkind').onchange = () => { const all = D.uploads.map(u => kindTitle(u.id)); if (!$('#ftitle').value.trim() || all.includes($('#ftitle').value.trim())) $('#ftitle').value = kindTitle($('#fkind').value); fromLesson(); keep(); };
   D.submitQs.forEach(q => { $('#fr-' + q.id).value = (dr.reflect || {})[q.id] || ''; });
+  /* 수업 페이지(같은 주소·같은 기기)의 미션 6단계·최종본 돌아보기를 빈 칸에 미리 넣는다 — 어려웠던 점 ← 극복한 점, 느낀 점 ← 느낀 점 */
+  const pre = {};
+  function fromLesson() {
+    if (TASK !== 'gas') return;
+    const id = $('#fkind').value === 'final' ? 'fin' : $('#fkind').value;
+    const get = k => { try { const v = JSON.parse(localStorage.getItem('gasvibe:refl:' + id + '-' + k) || 'null'); return typeof v === 'string' ? v.trim() : ''; } catch (e) { return ''; } };
+    [['hard', 'over'], ['feel', 'feel']].forEach(([q, k]) => {
+      const ta = $('#fr-' + q), v = get(k); if (!ta) return;
+      if (!ta.value.trim() || ta.value === pre[q]) { ta.value = v; pre[q] = v; }
+    });
+  }
+  fromLesson();
   const reflectNow = () => Object.fromEntries(D.submitQs.map(q => [q.id, $('#fr-' + q.id).value.trim()]));
   let thumb = null;
   const size = () => { const h = extractHtml($('#fsrc').value); $('#fsize').textContent = h ? `${Math.round(bytes(h) / 1024)}KB` : ''; };
