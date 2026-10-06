@@ -323,7 +323,7 @@ const DEF = {
   gas: {
     title: '나만의 기체 시뮬레이터', unit: '기체의 성질', starter: 'starter/gas.html',
     missions: [
-      { id: 'm1', name: '미션 1 · 압력', n: 5, stage: 1 },
+      { id: 'm1', name: '미션 1 · 압력', n: 3, stage: 1 },
       { id: 'm2', name: '미션 2 · 압력과 부피', n: 3, stage: 2 },
       { id: 'm3', name: '미션 3 · 온도와 부피', n: 3, stage: 3 }
     ],
@@ -369,7 +369,7 @@ const DEF = {
     ],
     // 올릴 때마다 쓰는 「이번 판 돌아보기」 — 판마다 쌓여 세특 근거가 된다(선생님만 봄)
     submitQs: [
-      { id: 'did', k: '만든 것', t: '이번 판에서 무엇을 만들거나 고쳤나요?', ph: '예: 미션 1의 잘못 5개 가운데 4개를 고쳤다 — 입자가 바닥에 쌓이지 않게 하고, 화살표를 네 벽 모두에 그렸다', req: true },
+      { id: 'did', k: '만든 것', t: '이번 판에서 무엇을 만들거나 고쳤나요?', ph: '예: 미션 1의 잘못 3개를 모두 고쳤다 — 입자를 작게 하고, 바닥에 쌓이지 않게 하고, 화살표를 네 벽 모두에 그렸다', req: true },
       { id: 'judge', k: '과학 판단', t: 'AI가 만든 것 중 배운 과학과 맞지 않는 곳을 찾았나요? 어떻게 알아채고 어떻게 고쳤나요?', ph: '예: 부피를 줄이니 입자가 빨라져서, 빠르기는 온도에 따라 달라진다는 것을 근거로 고쳐 달라고 했다 (없었다면 무엇을 조작해 확인했는지)', req: true },
       { id: 'hard', k: '어려움', t: '가장 어려웠던 점은 무엇이고, 어떻게 해결했나요?', ph: '예: 충돌 횟수가 계속 흔들려서 몇 초씩 지켜보며 견주었다', req: true },
       { id: 'feel', k: '느낀 점', t: '이번 활동으로 새로 알게 된 점이나 느낀 점은 무엇인가요?', ph: '예: AI가 만든 모형도 틀릴 수 있어서, 배운 내용으로 직접 확인해야 한다는 것을 알았다', req: true },
@@ -1005,12 +1005,12 @@ function panelFix(root) {
       <div class="lb">찾은 잘못</div>
       <div class="ticks">${range(m.n).map(i => `<label class="tick"><input type="checkbox" data-k="${m.id}.found.${i}"><span>잘못 ${CIRC[i]}</span></label>`).join('')}</div>
       <div class="lb">고친 방법</div>
-      <div class="radios">${[['ai', 'AI에게 말해서'], ['self', '직접 코드를 고쳐서'], ['both', '둘 다']].map(([v, t]) => `<label><input type="radio" name="${m.id}-how" data-k="${m.id}.how" value="${v}"> ${t}</label>`).join('')}</div>
+      <div class="radios">${[['ai', 'ⓐ 준비된 문장으로'], ['self', 'ⓑ 직접 고치기(내 말로 쓴 프롬프트)'], ['both', '둘 다']].map(([v, t]) => `<label><input type="radio" name="${m.id}-how" data-k="${m.id}.how" value="${v}"> ${t}</label>`).join('')}</div>
       <div class="field"><label>가장 기억에 남는 잘못</label><select data-k="${m.id}.pick"><option value="">고르기</option>${range(m.n).map(i => `<option value="${i}">잘못 ${CIRC[i]}</option>`).join('')}</select></div>
       <div class="field"><label>무엇이 보였나요? <small>내 눈으로 본 것</small></label><textarea data-k="${m.id}.see" rows="2" maxlength="600"></textarea></div>
       <div class="field"><label>왜 틀렸나요? <small>교과서의 어떤 내용과 어긋나나</small></label><textarea data-k="${m.id}.why" rows="2" maxlength="600"></textarea></div>
-      <div class="field"><label>어떻게 고쳤나요? <small>AI에게 한 말, 또는 직접 바꾼 줄</small></label><textarea data-k="${m.id}.fix" rows="2" maxlength="800"></textarea></div>
-      <div class="field"><label>AI를 기다리며 한 예상 <small>결과와 같았나·달랐나도 한 줄 (직접 고쳤다면 비워 둡니다)</small></label><textarea data-k="${m.id}.guess" rows="2" maxlength="400"></textarea></div>
+      <div class="field"><label>어떻게 고쳤나요? <small>AI에게 한 말 — 수업 페이지 ⓑ에서 만든 프롬프트를 붙여넣어도 됩니다</small></label><textarea data-k="${m.id}.fix" rows="2" maxlength="800"></textarea></div>
+      <div class="field"><label>AI를 기다리며 한 예상 <small>결과와 같았나·달랐나도 한 줄</small></label><textarea data-k="${m.id}.guess" rows="2" maxlength="400"></textarea></div>
     </div>`).join('') +
     `<div class="box"><div class="field"><label>AI가 엉뚱하게 고치거나 거절한 적이 있다면 <small>없으면 비워 둡니다</small></label><textarea data-k="aiWrong" rows="2" maxlength="600"></textarea></div></div>`;
   bindFields(root, 'fix');
@@ -1420,7 +1420,7 @@ function noteView(step, d) {
   const row = (k, v) => v ? `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>` : '';
   let h = '';
   if (step === 'fix') h = D.missions.map(m => { const x = d[m.id] || {}; const f = (x.found || []).map((v, i) => v ? CIRC[i] : '').join('');
-    return row(m.name + ' 찾음', f) + row('고친 방법', { ai: 'AI', self: '직접', both: '둘 다' }[x.how] || '') + row('기억에 남는 잘못', x.pick !== undefined && x.pick !== '' ? '잘못 ' + CIRC[+x.pick] : '') + row('보인 것', x.see) + row('왜 틀렸나', x.why) + row('어떻게 고쳤나', x.fix) + row('기다리며 한 예상', x.guess); }).join('') + row('AI가 엉뚱하게', d.aiWrong);
+    return row(m.name + ' 찾음', f) + row('고친 방법', { ai: 'ⓐ 준비된 문장', self: 'ⓑ 내 말로', both: '둘 다' }[x.how] || '') + row('기억에 남는 잘못', x.pick !== undefined && x.pick !== '' ? '잘못 ' + CIRC[+x.pick] : '') + row('보인 것', x.see) + row('왜 틀렸나', x.why) + row('어떻게 고쳤나', x.fix) + row('기다리며 한 예상', x.guess); }).join('') + row('AI가 엉뚱하게', d.aiWrong);
   if (step === 'model') h = D.model.map(q => row(q.t, d[q.id])).join('') + row('고른 한계', D.limits.filter((_, i) => (d.lim || [])[i]).join(' / '));
   if (step === 'make') h = row('길', { template: 'ⓐ 템플릿', free: 'ⓑ 자유', starter: 'ⓒ 시작 앱' }[d.route]) + row('앱 이름', d.appName) + row('소개', d.about) +
     goodExamples(d).map((e, i) => row('예시 ' + (i + 1), `${e.name} (${e.kind}) — ${e.text}`)).join('') + goodQuiz(d).map((q, i) => row('퀴즈 ' + (i + 1), `${q.q} / 정답 ${CIRC[+q.answer]} ${q.choices[+q.answer]} / ${q.why}`)).join('') +
