@@ -504,7 +504,14 @@ async function rpc(fn, args) {
   const t = await r.text(); return t ? JSON.parse(t) : null;
 }
 const Remote = {
-  enter: (sid, nick) => rpc('sgh_enter', { p_sid: sid, p_nick: nick }),
+  enter: async (sid, nick) => {
+    if (nick) return rpc('sgh_enter', { p_sid: sid, p_nick: nick });
+    try { return await rpc('sgh_enter', { p_sid: sid }); }
+    catch (e) {                                         // 선생님이 새 SQL 을 돌리기 전(학번만 받는 함수가 없음) → 이번에만 별명으로
+      if (e.code === 'PGRST202' || e.status === 404) { const x = new Error('need-nick'); x.needNick = true; throw x; }
+      throw e;
+    }
+  },
   task: code => rpc('sgh_task', { p_code: code }),
   me: (tok, task) => rpc('sgh_me', { p_token: tok, p_task: task }),
   noteSave: (tok, task, step, data) => rpc('sgh_note_save', { p_token: tok, p_task: task, p_step: step, p_data: data }),
@@ -542,8 +549,9 @@ const Local = (() => {
   const now = () => new Date().toISOString();
   const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x' + Math.random().toString(16).slice(2) + Date.now());
   function fail(m, hint) { const e = new Error(m); e.hint = hint || ''; return e; }
-  const who = (d, tok) => { const id = d.tokens[tok]; if (!id) throw fail('다시 들어와 주세요(학번과 별명)', 'login'); return id; };
+  const who = (d, tok) => { const id = d.tokens[tok]; if (!id) throw fail('다시 들어와 주세요(학번)', 'login'); return id; };
   const stu = (d, id) => d.students.find(s => s.id === id);
+  const aidOf = s => s ? 'a' + String(s.id).replace(/[^0-9a-f]/gi, '').slice(0, 10) : '';   // 서버의 작성자 키(sgh__aid)와 같은 구실
   const need = (d, p) => { if (p !== d.admin) throw fail('관리자 비밀번호가 맞지 않습니다'); };
   const pub = d => { const best = {}; d.works.filter(w => w.status === 'public').forEach(w => { const k = w.student_id + '|' + w.task; if (!best[k] || best[k].v < w.v) best[k] = w; }); return Object.values(best); };
   const rcount = (d, wid) => d.reviews.filter(r => r.work_id === wid && !r.hidden).length;
@@ -556,29 +564,24 @@ const Local = (() => {
     Object.values(out).forEach(o => delete o._id); return out;
   };
   const A = {
-    async enter(sid, nick) {
-      const d = db(); sid = String(sid || ''); const k = nickKey(nick), n = String(nick || '').replace(/\s+/g, ' ').trim();
+    async enter(sid) {                                   // 학번만 — 처음이면 만들고, 있으면 이어서 (2026-10-08 별명 없앰)
+      const d = db(); sid = String(sid || '');
       if (!/^[0-9]{4,6}$/.test(sid)) throw fail('학번은 숫자 4~6자리로 넣어 주세요');
-      if (!k || n.length > 12) throw fail('별명은 1~12자로 정해 주세요');
       let s = d.students.find(x => x.sid === sid), isNew = false;
-      if (s) { if (s.nick_key !== k) throw fail('이 학번은 다른 별명으로 등록되어 있어요. 처음에 쓴 별명을 넣어 주세요. 기억나지 않으면 선생님께 말씀드리세요', 'nick'); }
-      else {
-        if (d.students.some(x => x.nick_key === k)) throw fail('다른 친구가 쓰고 있는 별명이에요. 다른 별명을 정해 주세요', 'taken');
-        s = { id: uid(), sid, nick: n, nick_key: k, created_at: now(), last_seen: now() }; d.students.push(s); isNew = true;
-      }
+      if (!s) { s = { id: uid(), sid, created_at: now(), last_seen: now() }; d.students.push(s); isNew = true; }
       const tok = uid(); d.tokens[tok] = s.id; s.last_seen = now(); save(d);
-      return { token: tok, nick: s.nick, sid: s.sid, cls: cls(s.sid), is_new: isNew };
+      return { token: tok, nick: aidOf(s), sid: s.sid, cls: cls(s.sid), is_new: isNew };
     },
     async task(code) { const t = db().tasks[code]; return t ? { code: t.code, title: t.title, lesson_url: t.lesson_url, submit_open: t.submit_open, review_open: t.review_open, open_stage: t.open_stage || 2 } : null; },
     async me(tok, task) {
       const d = db(), me = who(d, tok), s = stu(d, me);
       const mine = d.works.filter(w => w.student_id === me && w.task === task).sort((a, b) => b.v - a.v);
       return {
-        student: { nick: s.nick, sid: s.sid, cls: cls(s.sid) },
+        student: { nick: aidOf(s), sid: s.sid, cls: cls(s.sid) },
         notes: latestNotes(d, me, task),
         works: mine.map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, has_thumb: !!w.thumb, reflect: w.reflect || {} })),
-        got: d.reviews.filter(r => !r.hidden && mine.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })),
-        gave: d.reviews.filter(r => r.reviewer_id === me).map(r => { const w = d.works.find(x => x.id === r.work_id); return { work: r.work_id, title: w.title, nick: stu(d, w.student_id).nick, ts: r.updated_at }; })
+        got: d.reviews.filter(r => !r.hidden && mine.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: aidOf(stu(d, r.reviewer_id)), checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })),
+        gave: d.reviews.filter(r => r.reviewer_id === me).map(r => { const w = d.works.find(x => x.id === r.work_id); return { work: r.work_id, title: w.title, nick: aidOf(stu(d, w.student_id)), ts: r.updated_at }; })
       };
     },
     async noteSave(tok, task, step, data) {
@@ -601,15 +604,15 @@ const Local = (() => {
     async gallery(task) {
       const d = db();
       return pub(d).filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1))
-        .map(w => { const s = stu(d, w.student_id); return { id: w.id, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, has_thumb: !!w.thumb, ts: w.created_at, reviews: rcount(d, w.id) }; });
+        .map(w => { const s = stu(d, w.student_id); return { id: w.id, nick: aidOf(s), cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, has_thumb: !!w.thumb, ts: w.created_at, reviews: rcount(d, w.id) }; });
     },
     async thumb(id) { const w = db().works.find(x => x.id === id && x.status === 'public'); return w ? w.thumb : null; },
     async work(id) {
       const d = db(), w = d.works.find(x => x.id === id && x.status === 'public'); if (!w) return null; const s = stu(d, w.student_id);
-      return { id: w.id, task: w.task, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, ts: w.created_at, html: w.html,
+      return { id: w.id, task: w.task, nick: aidOf(s), cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, ts: w.created_at, html: w.html,
         latest: Math.max(...d.works.filter(x => x.student_id === w.student_id && x.task === w.task && x.status === 'public').map(x => x.v)) };
     },
-    async reviewsOf(id) { const d = db(); return d.reviews.filter(r => r.work_id === id && !r.hidden).map(r => ({ id: r.id, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })); },
+    async reviewsOf(id) { const d = db(); return d.reviews.filter(r => r.work_id === id && !r.hidden).map(r => ({ id: r.id, nick: aidOf(stu(d, r.reviewer_id)), checks: r.checks, praise: r.praise, suggest: r.suggest, ts: r.updated_at })); },
     async assign(tok, task) {
       const d = db(), me = who(d, tok), myc = cls(stu(d, me).sid);
       const done = new Set(d.reviews.filter(r => r.reviewer_id === me).map(r => d.works.find(w => w.id === r.work_id).student_id));
@@ -634,22 +637,22 @@ const Local = (() => {
         const ln = latestNotes(d, s.id, task), steps = {};
         Object.entries(ln).forEach(([k, v]) => { steps[k] = { ts: v.ts, done: !!(v.data && v.data.done), n: v.n }; });
         const ws = d.works.filter(w => w.student_id === s.id && w.task === task).sort((a, b) => b.v - a.v);
-        return { student_id: s.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), last_seen: s.last_seen, steps, works: ws.length, latest_status: ws[0] ? ws[0].status : null,
+        return { student_id: s.id, sid: s.sid, nick: null, cls: cls(s.sid), last_seen: s.last_seen, steps, works: ws.length, latest_status: ws[0] ? ws[0].status : null,
           gave: d.reviews.filter(r => r.reviewer_id === s.id).length, got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).length };
       }).sort((a, b) => (a.sid > b.sid ? 1 : -1));
     },
     async aStudent(p, id, task) {
       const d = db(); need(d, p); const s = stu(d, id); const ws = d.works.filter(w => w.student_id === id && w.task === task);
-      return { student: { id: s.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), created: s.created_at, last_seen: s.last_seen },
+      return { student: { id: s.id, sid: s.sid, nick: null, cls: cls(s.sid), created: s.created_at, last_seen: s.last_seen },
         notes: d.notes.filter(n => n.student_id === id && n.task === task).sort((a, b) => b.id - a.id).map(n => ({ id: n.id, step: n.step, data: n.data, created: n.created_at, ts: n.updated_at })),
         works: ws.sort((a, b) => b.v - a.v).map(w => ({ id: w.id, v: w.v, title: w.title, summary: w.summary, status: w.status, ts: w.created_at, reflect: w.reflect || {} })),
-        got: d.reviews.filter(r => ws.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at })),
-        gave: d.reviews.filter(r => r.reviewer_id === id).map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, to: stu(d, w.student_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }) };
+        got: d.reviews.filter(r => ws.some(w => w.id === r.work_id)).map(r => ({ id: r.id, v: d.works.find(w => w.id === r.work_id).v, nick: stu(d, r.reviewer_id).sid, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at })),
+        gave: d.reviews.filter(r => r.reviewer_id === id).map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, to: stu(d, w.student_id).sid, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }) };
     },
-    async aWorks(p, task) { const d = db(); need(d, p); return d.works.filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1)).map(w => { const s = stu(d, w.student_id); return { id: w.id, sid: s.sid, nick: s.nick, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, status: w.status, ts: w.created_at, has_thumb: !!w.thumb, reflect: w.reflect || {} }; }); },
-    async aWork(p, id) { const d = db(); need(d, p); const w = d.works.find(x => x.id === id); const s = stu(d, w.student_id); return { id: w.id, title: w.title, summary: w.summary, v: w.v, status: w.status, html: w.html, thumb: w.thumb, nick: s.nick, sid: s.sid, reflect: w.reflect || {} }; },
+    async aWorks(p, task) { const d = db(); need(d, p); return d.works.filter(w => w.task === task).sort((a, b) => (b.created_at > a.created_at ? 1 : -1)).map(w => { const s = stu(d, w.student_id); return { id: w.id, sid: s.sid, nick: null, cls: cls(s.sid), title: w.title, summary: w.summary, v: w.v, status: w.status, ts: w.created_at, has_thumb: !!w.thumb, reflect: w.reflect || {} }; }); },
+    async aWork(p, id) { const d = db(); need(d, p); const w = d.works.find(x => x.id === id); const s = stu(d, w.student_id); return { id: w.id, title: w.title, summary: w.summary, v: w.v, status: w.status, html: w.html, thumb: w.thumb, nick: null, sid: s.sid, reflect: w.reflect || {} }; },
     async aStatus(p, ids, st) { const d = db(); need(d, p); let n = 0; d.works.forEach(w => { if (ids.includes(w.id)) { w.status = st; n++; } }); save(d); return n; },
-    async aReviews(p, task) { const d = db(); need(d, p); return d.reviews.map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, work_id: r.work_id, author: stu(d, w.student_id).nick, reviewer: stu(d, r.reviewer_id).nick, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }).reverse(); },
+    async aReviews(p, task) { const d = db(); need(d, p); return d.reviews.map(r => { const w = d.works.find(x => x.id === r.work_id); return { id: r.id, work_id: r.work_id, author: stu(d, w.student_id).sid, reviewer: stu(d, r.reviewer_id).sid, v: w.v, checks: r.checks, praise: r.praise, suggest: r.suggest, hidden: r.hidden, ts: r.updated_at }; }).reverse(); },
     async aReviewHide(p, id, h) { const d = db(); need(d, p); const r = d.reviews.find(x => x.id === id); if (r) r.hidden = h; save(d); },
     async aRename(p, id, nick) {
       const d = db(); need(d, p); const k = nickKey(nick);
@@ -667,8 +670,8 @@ const Local = (() => {
       const d = db(); need(d, p);
       return d.students.map(s => { const ln = latestNotes(d, s.id, task), notes = {}; Object.entries(ln).forEach(([k, v]) => { notes[k] = v.data; });
         const ws = d.works.filter(w => w.student_id === s.id && w.task === task);
-        return { sid: s.sid, nick: s.nick, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, status: w.status, reflect: w.reflect || {} })),
-          got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).map(r => ({ from: stu(d, r.reviewer_id).nick, checks: r.checks, praise: r.praise, suggest: r.suggest })) }; });
+        return { sid: s.sid, nick: null, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, status: w.status, reflect: w.reflect || {} })),
+          got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).map(r => ({ from: stu(d, r.reviewer_id).sid, checks: r.checks, praise: r.praise, suggest: r.suggest })) }; });
     },
     async setPass(o, n) { const d = db(); need(d, o); if (String(n || '').length < 6) throw fail('새 비밀번호는 6자 이상으로 정해 주세요'); d.admin = n; save(d); return true; }
   };
@@ -683,10 +686,10 @@ function signOut() { S.tok = ''; S.me = null; store(TOKK, ''); drawWho(); }
 function relogin(msg) { signOut(); toast(msg || '다시 들어와 주세요.', true); location.hash = '#/in'; }
 function drawWho() {
   const w = $('#who');
-  if (S.me) w.innerHTML = `<span class="me">${esc(S.me.student.nick)}${S.me.student.cls ? ' · ' + esc(clsName(S.me.student.cls)) : ''}</span><a class="btn primary sm" href="#/me">내 작업실</a><button class="btn sm" data-act="out">나가기</button>`;
+  if (S.me) w.innerHTML = `<span class="me">학번 ${esc(S.me.student.sid)}${S.me.student.cls ? ' · ' + esc(clsName(S.me.student.cls)) : ''}</span><a class="btn primary sm" href="#/me">내 작업실</a><button class="btn sm" data-act="out">나가기</button>`;
   else w.innerHTML = `<a class="btn primary sm" href="#/in">들어가기</a>`;
 }
-$('#who').addEventListener('click', e => { if (e.target.closest('[data-act="out"]')) { flushNow().finally(() => { signOut(); toast('나갔습니다. 다음에 같은 학번·별명으로 들어오면 이어집니다.'); location.hash = '#/'; }); } });
+$('#who').addEventListener('click', e => { if (e.target.closest('[data-act="out"]')) { flushNow().finally(() => { signOut(); toast('나갔습니다. 다음에 같은 학번으로 들어오면 이어집니다.'); location.hash = '#/'; }); } });
 async function loadTask() {
   if (S.task || S.notReady) return S.task;           // 서버 준비 전이면 다시 묻지 않는다
   try { S.task = await API.task(TASK); if (!S.task) S.task = { code: TASK, title: D.title, lesson_url: '', submit_open: false, review_open: false }; }
@@ -780,7 +783,7 @@ function cardHtml(a) {
   return `<a class="card" href="#/w/${a.id}">
     <div class="thumb" data-id="${a.id}" data-has="${a.has_thumb ? 1 : 0}"><span class="tile" aria-hidden="true">${esc(firstChar(a.title))}</span></div>
     <div class="body"><h3>${esc(a.title)}</h3>${a.summary ? `<p class="sum">${esc(a.summary)}</p>` : ''}
-      <p class="meta"><span>${esc(a.nick)}</span>${a.cls ? `<span>${esc(clsName(a.cls))}</span>` : ''}<span>${a.v}판</span></p>
+      <p class="meta">${a.cls ? `<span>${esc(clsName(a.cls))}</span>` : ''}<span>${a.v}판</span></p>
       <p class="by"><span>${ago(a.ts)}</span><span>평가 ${a.reviews}</span></p></div></a>`;
 }
 const thumbCache = new Map();
@@ -813,7 +816,7 @@ async function viewWork(id) {
   document.title = w.title + ' · Studentgithub';
   const newer = w.latest > w.v && S.gallery ? S.gallery.find(g => g.nick === w.nick) : null;
   $('#wbody').innerHTML = `
-    <p class="eyebrow">${esc(w.nick)}${w.cls ? ' · ' + esc(clsName(w.cls)) : ''} · ${w.v}판 · ${ago(w.ts)}</p>
+    <p class="eyebrow">${w.cls ? esc(clsName(w.cls)) + ' · ' : ''}${w.v}판 · ${ago(w.ts)}</p>
     <h1 style="margin:0 0 10px">${esc(w.title)}</h1>
     ${w.summary ? `<p class="lead" style="margin:0 0 20px">${esc(w.summary)}</p>` : ''}
     ${w.latest > w.v ? `<p class="note" style="margin:0 0 14px">이 친구가 고친 새 판(${w.latest}판)이 있습니다.${newer ? ` <a href="#/w/${newer.id}">새 판 보기 ›</a>` : ''}</p>` : ''}
@@ -826,7 +829,7 @@ async function viewWork(id) {
   runIn($('#stage'), w.html, w.title); wireStage($('#stg'), w.html, w.title);
   drawReviews(id);
   const box = $('#rform');
-  if (!S.me) box.innerHTML = `<p class="note">평가하려면 <a href="#/in">학번과 별명으로 들어가</a> 주세요.</p>`;
+  if (!S.me) box.innerHTML = `<p class="note">평가하려면 <a href="#/in">학번으로 들어가</a> 주세요.</p>`;
   else if (!S.task || !S.task.review_open) box.innerHTML = `<p class="note">선생님이 서로 평가를 열면 여기서 평가할 수 있습니다.</p>`;
   else if (w.nick === S.me.student.nick) box.innerHTML = `<p class="note">내 앱입니다. 친구들의 평가는 내 작업실 「서로 평가」에서도 볼 수 있습니다.</p>`;
   else reviewForm(box, id, () => drawReviews(id));
@@ -843,7 +846,7 @@ function checkBadges(c) {
 }
 function reviewLi(r) {
   const why = D.reviewQs.map(q => r.checks && r.checks[q.id + '_why'] ? `<br><span class="hint">${esc(q.k)}: ${esc(r.checks[q.id + '_why'])}</span>` : '').join('');
-  return `<li><div class="rh"><b>${esc(r.nick)}</b><span>${ago(r.ts)}</span>${checkBadges(r.checks)}</div>
+  return `<li><div class="rh"><b>${esc(r.who || '친구')}</b><span>${ago(r.ts)}</span>${checkBadges(r.checks)}</div>
     <p class="rb"><b>칭찬</b> ${esc(r.praise)}${r.suggest ? `<br><b>제안</b> ${esc(r.suggest)}` : ''}${why}</p></li>`;
 }
 function reviewForm(box, workId, after) {
@@ -854,7 +857,7 @@ function reviewForm(box, workId, after) {
       <input type="text" name="${q.id}_why" maxlength="150" placeholder="그렇게 판단한 까닭 (무엇을 조작해 보았나)"></div>`).join('')}
     <div class="field"><label>칭찬 한 가지 <em style="color:var(--bad);font-style:normal">*</em></label><textarea name="praise" maxlength="300" rows="2" required></textarea></div>
     <div class="field"><label>고치면 더 좋을 한 가지</label><textarea name="suggest" maxlength="300" rows="2"></textarea></div>
-    <p class="hint" style="margin:0 0 12px">평가한 사람의 별명이 함께 보입니다. 친구가 기분 좋게 고칠 수 있게, 까닭을 들어 써 주세요.</p>
+    <p class="hint" style="margin:0 0 12px">평가는 이름 없이 「친구」로 보입니다. 친구가 기분 좋게 고칠 수 있게, 까닭을 들어 써 주세요.</p>
     <p style="margin:0 0 14px"><button class="btn primary" type="submit">평가 보내기</button></p></form>`;
   const f = box.querySelector('form');
   f.onsubmit = async e => {
@@ -873,30 +876,33 @@ function viewEnter() {
   document.title = '들어가기 · Studentgithub';
   view.innerHTML = `<div class="wrap pad narrow">
     <p class="eyebrow">${esc(D.unit)} · ${esc(D.title)}</p><h1 style="margin:0 0 10px">들어가기</h1>
-    <p class="lead" style="margin:0 0 26px">처음이면 새로 만들어지고, 전에 쓴 학번·별명이면 하던 곳부터 이어집니다.</p>
+    <p class="lead" style="margin:0 0 26px">학번만 넣으면 됩니다. 처음이면 새로 만들어지고, 전에 들어온 학번이면 하던 곳부터 이어집니다.</p>
     <div id="enterBox"></div></div>`;
   (async () => {
     await loadTask();
     if (S.notReady) { $('#enterBox').innerHTML = notReadyBox(); return; }
-    if (S.me) { $('#enterBox').innerHTML = `<div class="notice" style="margin:0"><b>${esc(S.me.student.nick)}(으)로 들어와 있습니다.</b><p>다른 학번으로 들어가려면 먼저 나가기를 누르세요.</p><a class="btn primary" href="#/me">내 작업실</a></div>`; return; }
+    if (S.me) { $('#enterBox').innerHTML = `<div class="notice" style="margin:0"><b>학번 ${esc(S.me.student.sid)}(으)로 들어와 있습니다.</b><p>다른 학번으로 들어가려면 먼저 나가기를 누르세요.</p><a class="btn primary" href="#/me">내 작업실</a></div>`; return; }
     $('#enterBox').innerHTML = `<form id="ef" autocomplete="off">
       <div class="field"><label for="sid">학번</label><input type="text" id="sid" inputmode="numeric" maxlength="6" placeholder="예: 10312 (1학년 3반 12번)" required></div>
-      <div class="field"><label for="nick">별명 <small>(1~12자, 전시관에 보입니다 — 실명은 쓰지 마세요)</small></label><input type="text" id="nick" maxlength="12" placeholder="예: 민트초코" required></div>
-      <p class="hint" style="margin:-4px 0 18px">학번과 별명은 다음에 이어서 할 때 똑같이 넣어야 합니다. 별명을 잊지 마세요.</p>
+      <div class="field" id="nickRow" style="display:none"><label for="nick">별명 <small>(선생님이 서버를 바꾸기 전이라 이번에만 — 처음에 쓴 별명)</small></label><input type="text" id="nick" maxlength="12"></div>
+      <p class="hint" style="margin:-4px 0 18px">다음에도 학번만 넣으면 하던 곳부터 이어집니다.</p>
       <button class="btn primary" type="submit">들어가기</button>
       <p class="hint" id="eerr" style="color:var(--bad);margin:14px 0 0"></p></form>`;
     $('#ef').onsubmit = async e => {
       e.preventDefault();
-      const sid = $('#sid').value.replace(/\D/g, ''), nick = $('#nick').value.trim();
+      const sid = $('#sid').value.replace(/\D/g, ''), nick = $('#nickRow').style.display === 'none' ? '' : $('#nick').value.trim();
       $('#eerr').textContent = '';
       const b = $('#ef button'); b.disabled = true;
       try {
         const r = await API.enter(sid, nick);
         S.tok = r.token; store(TOKK, r.token);
         await loadMe();
-        toast(r.is_new ? `반가워요, ${r.nick}! 작업실이 만들어졌습니다.` : `돌아온 걸 환영해요, ${r.nick}! 하던 곳부터 이어 갑니다.`);
+        toast(r.is_new ? `반가워요! 학번 ${sid} — 작업실이 만들어졌습니다.` : `돌아온 걸 환영해요! 하던 곳부터 이어 갑니다.`);
         location.hash = '#/me';
-      } catch (err) { $('#eerr').textContent = err.message; }
+      } catch (err) {
+        if (err.needNick) { $('#nickRow').style.display = ''; $('#nick').focus(); $('#eerr').textContent = '선생님이 서버를 바꾸기 전이라, 이번에만 처음에 쓴 별명도 넣어 주세요.'; }
+        else $('#eerr').textContent = err.message;
+      }
       finally { b.disabled = false; }
     };
   })();
@@ -951,7 +957,7 @@ async function viewMe(step) {
   const me = S.me.student, lesson = S.task && S.task.lesson_url;
   view.innerHTML = `<div class="wrap ws">
     <aside class="side">
-      <p class="hello">안녕하세요<b>${esc(me.nick)}</b></p>
+      <p class="hello">안녕하세요<b>${esc(me.sid)}</b></p>
       <p class="hint" style="margin:0">${esc(clsName(me.cls))}${me.cls ? ' · ' : ''}${esc(D.title)}</p>
       <div class="prog"><i id="progi"></i></div><p class="progt" id="progt"></p>
       <ul class="stepnav" id="stepnav"></ul>
@@ -1217,7 +1223,7 @@ function starterMissing(d) {
 async function starterHtml(d) {
   const r = await fetch(D.starter, { cache: 'no-cache' }); if (!r.ok) throw new Error('시작 앱 ' + r.status);
   const src = await r.text();
-  const MY = { title: d.appName.trim(), about: (d.about || '').trim(), maker: S.me ? S.me.student.nick : '', theme: d.theme || 'sky',
+  const MY = { title: d.appName.trim(), about: (d.about || '').trim(), maker: S.me ? clsName(S.me.student.cls) : '', theme: d.theme || 'sky',
     examples: goodExamples(d).map(e => ({ name: e.name.trim(), kind: e.kind, text: e.text.trim() })),
     quiz: goodQuiz(d).map(q => ({ q: q.q.trim(), choices: q.choices.map(c => String(c).trim()), answer: +q.answer, why: q.why.trim() })),
     limits: (d.limits || '').trim() };
@@ -1366,9 +1372,9 @@ async function panelReview(root) {
       <p style="margin:0 0 18px"><button class="btn primary" data-act="assign">평가할 앱 받기</button> <a class="btn" href="#/">전시관에서 골라 평가하기 ›</a></p>
       <div id="asg"></div>` : `<div class="notice" style="margin:0 0 22px"><b>선생님이 서로 평가를 열면 할 수 있습니다.</b><p>그동안 받은 평가와 한 평가를 여기서 볼 수 있습니다.</p></div>`}
     <h3 style="margin-top:26px">내가 한 평가 (${gave.length})</h3>
-    <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>${esc(g.nick)} · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
+    <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>친구 앱 · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
     <h3 style="margin-top:26px">내가 받은 평가 (${got.length})</h3>
-    <ul class="rlist">${got.length ? got.map(r => reviewLi({ ...r, nick: r.nick + ` · ${r.v}판` })).join('') : '<li class="hint">아직 없습니다. 받은 평가는 「자기평가·성찰」의 4번 질문에 씁니다.</li>'}</ul>`;
+    <ul class="rlist">${got.length ? got.map(r => reviewLi({ ...r, who: `친구 · ${r.v}판` })).join('') : '<li class="hint">아직 없습니다. 받은 평가는 「자기평가·성찰」의 4번 질문에 씁니다.</li>'}</ul>`;
   root.addEventListener('click', async e => {
     const a = e.target.closest('[data-act="assign"]'); if (a) {
       a.disabled = true;
@@ -1416,8 +1422,8 @@ async function aProgress(box) {
         <div class="chips">${['', ...cl].map(c => `<button class="chip" data-cls="${c}" aria-pressed="${cur === c}">${c ? clsName(c) : '전체'}<span class="n">${rows.filter(r => !c || r.cls === c).length}</span></button>`).join('')}</div>
         <button class="btn line sm" data-act="csv">CSV 내려받기(세특 근거)</button></div>
       <p class="hint" style="margin:0 0 10px">✓ 마침 · • 쓰는 중 · 제출은 판 수 · 서로 평가는 한 개수(2개 이상 초록). 줄을 누르면 그 학생의 모든 기록이 열립니다.</p>
-      <div class="tscroll"><table class="ptable"><tr><th>학번</th><th>별명</th>${STEPS.map((s, i) => `<th class="c">${i + 1} ${s.k}</th>`).join('')}<th>상태</th><th class="c">받은 평가</th><th>마지막 접속</th></tr>
-      ${list.length ? list.map(r => `<tr class="row" data-sid="${r.student_id}"><td>${esc(r.sid)}</td><td>${esc(r.nick)}</td>${STEPS.map(s => `<td class="c">${cell(r, s.id)}</td>`).join('')}<td>${r.latest_status ? statusBadge(r.latest_status) : ''}</td><td class="c">${r.got || ''}</td><td class="hint">${ago(r.last_seen)}</td></tr>`).join('') : `<tr><td colspan="12" class="empty">아직 들어온 학생이 없습니다.</td></tr>`}</table></div>`;
+      <div class="tscroll"><table class="ptable"><tr><th>학번</th>${STEPS.map((s, i) => `<th class="c">${i + 1} ${s.k}</th>`).join('')}<th>상태</th><th class="c">받은 평가</th><th>마지막 접속</th></tr>
+      ${list.length ? list.map(r => `<tr class="row" data-sid="${r.student_id}"><td>${esc(r.sid)}</td>${STEPS.map(s => `<td class="c">${cell(r, s.id)}</td>`).join('')}<td>${r.latest_status ? statusBadge(r.latest_status) : ''}</td><td class="c">${r.got || ''}</td><td class="hint">${ago(r.last_seen)}</td></tr>`).join('') : `<tr><td colspan="10" class="empty">아직 들어온 학생이 없습니다.</td></tr>`}</table></div>`;
   };
   box.onclick = async e => {
     const c = e.target.closest('[data-cls]'); if (c) { cur = c.dataset.cls; draw(); return; }
@@ -1445,30 +1451,29 @@ async function studentModal(id, after) {
   let x; try { x = await API.aStudent(AP(), id, TASK); } catch (e) { return aFail(e); }
   const latest = {}; x.notes.forEach(n => { if (!latest[n.step]) latest[n.step] = n; });
   const cnt = s => x.notes.filter(n => n.step === s).length;
-  const m = modal(`<h3>${esc(x.student.nick)} <span class="hint">${esc(x.student.sid)} · ${esc(clsName(x.student.cls))} · 마지막 접속 ${ago(x.student.last_seen)}</span></h3>
+  const m = modal(`<h3>학번 ${esc(x.student.sid)} <span class="hint">${esc(clsName(x.student.cls))} · 마지막 접속 ${ago(x.student.last_seen)}</span></h3>
     ${Object.keys(STEPLBL).map(s => `<h4 style="margin:18px 0 8px">${STEPLBL[s]} ${latest[s] ? `<span class="hint">${latest[s].data && latest[s].data.done ? '마침' : '쓰는 중'} · ${ago(latest[s].ts)} · 판 ${cnt(s)}</span>` : ''}</h4>${noteView(s, latest[s] && latest[s].data)}`).join('')}
     <h4 style="margin:18px 0 8px">⑤ 제출한 판 · 이번 판 돌아보기</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${kindOf(w.reflect) ? `<span class="kd">${esc(kindOf(w.reflect).k)}</span>` : ''}${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span>${hasReflect(w.reflect) ? `<details class="rf" open><summary>이번 판 돌아보기</summary>${reflectHTML(w.reflect)}</details>` : ''}</div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
-    <h4 style="margin:18px 0 8px">⑥ 받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, nick: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
-    <h4 style="margin:18px 0 8px">한 평가</h4><ul class="rlist">${x.gave.length ? x.gave.map(r => reviewLi({ ...r, nick: '→ ' + r.to + ` ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
-    <p style="margin:22px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn line sm" data-act="rename">별명 바꾸기</button><button class="btn sm danger" data-act="del">학생 지우기</button></p>`, true);
+    <h4 style="margin:18px 0 8px">⑥ 받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, who: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">한 평가</h4><ul class="rlist">${x.gave.length ? x.gave.map(r => reviewLi({ ...r, who: '→ ' + r.to + ` ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
+    <p style="margin:22px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm danger" data-act="del">학생 지우기</button></p>`, true);
   m.box.addEventListener('click', async e => {
     const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판</h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
-    if (a.dataset.act === 'rename') { const n = prompt('새 별명 (1~12자). 학생은 새 별명으로 다시 들어와야 합니다.', x.student.nick); if (!n) return; try { await API.aRename(AP(), id, n); toast('별명을 바꿨습니다. 학생에게 새 별명을 알려 주세요.'); m.close(); after && after(); } catch (err) { aFail(err); } }
-    if (a.dataset.act === 'del') { if (!confirm(`${x.student.nick}(${x.student.sid})의 모든 기록·판·평가를 지웁니다. 되돌릴 수 없습니다.`)) return; try { await API.aDelete(AP(), id); toast('지웠습니다.'); m.close(); after && after(); } catch (err) { aFail(err); } }
+    if (a.dataset.act === 'del') { if (!confirm(`학번 ${x.student.sid}의 모든 기록·판·평가를 지웁니다. 되돌릴 수 없습니다.`)) return; try { await API.aDelete(AP(), id); toast('지웠습니다.'); m.close(); after && after(); } catch (err) { aFail(err); } }
   });
 }
 async function exportCsv() {
   let rows; try { rows = await API.aExport(AP(), TASK); } catch (e) { return aFail(e); }
   const q = v => { const s = String(v == null ? '' : v).replace(/\r?\n/g, ' '); return /[",]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-  const head = ['학번', '별명', '반'];
+  const head = ['학번', '반'];
   D.missions.forEach(m => head.push(m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나', m.name + ' 예상'));
   head.push('AI가 엉뚱하게', '만들기 길', '앱 이름', '생활 속 예시', '퀴즈', '한계', '보낸 프롬프트 수', '프롬프트 기록',
     ...D.checklist.map((c, i) => '점검' + (i + 1)), ...D.rubric.map(r => '자기평가: ' + r.t), ...D.reflect.map(r => '성찰: ' + r.t.slice(0, 16)), '올린 것(판별)', ...D.submitQs.map(q => '돌아보기: ' + q.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안');
   const out = [head.map(q).join(',')];
   rows.forEach(r => {
     const n = r.notes || {}, fx = n.fix || {}, md = n.model || {}, mk = n.make || {}, ck = n.check || {}, rf = n.reflect || {};
-    const line = [r.sid, r.nick, clsName(r.cls)];
+    const line = [r.sid, clsName(r.cls)];
     D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix, x.guess); });
     line.push(fx.aiWrong, { template: '템플릿', free: '자유', starter: '시작 앱' }[mk.route] || '', mk.appName,
       goodExamples(mk).map(e => `${e.name}(${e.kind}): ${e.text}`).join(' / '), goodQuiz(mk).map(x => `${x.q} [${CIRC[+x.answer]}]`).join(' / '), mk.limits,
@@ -1489,10 +1494,10 @@ async function aWorks(box) {
   let rows; try { rows = await API.aWorks(AP(), TASK); } catch (e) { return aFail(e); }
   const pend = rows.filter(r => r.status === 'pending');
   box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 10px"><p class="hint" style="margin:0">확인 대기 ${pend.length} · 모두 ${rows.length}</p>${pend.length ? `<button class="btn primary sm" data-allpub>확인 대기 모두 공개</button>` : ''}</div>
-    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${kindOf(r.reflect) ? `<span class="kd">${esc(kindOf(r.reflect).k)}</span>` : ''}${esc(r.title)} · ${r.v}판</b><span>${esc(r.nick)} (${esc(r.sid)}) · ${ago(r.ts)}</span>${r.summary ? `<p>${esc(r.summary)}</p>` : ''}${hasReflect(r.reflect) ? `<details class="rf"><summary>이번 판 돌아보기</summary>${reflectHTML(r.reflect)}</details>` : ''}</div>
+    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${kindOf(r.reflect) ? `<span class="kd">${esc(kindOf(r.reflect).k)}</span>` : ''}${esc(r.title)} · ${r.v}판</b><span>학번 ${esc(r.sid)} · ${ago(r.ts)}</span>${r.summary ? `<p>${esc(r.summary)}</p>` : ''}${hasReflect(r.reflect) ? `<details class="rf"><summary>이번 판 돌아보기</summary>${reflectHTML(r.reflect)}</details>` : ''}</div>
       <div class="ab">${statusBadge(r.status)}<button class="btn line sm" data-aw="${r.id}">돌려 보기</button>${r.status !== 'public' ? `<button class="btn primary sm" data-st="public" data-id="${r.id}">공개</button>` : ''}${r.status !== 'hidden' ? `<button class="btn sm danger" data-st="hidden" data-id="${r.id}">내리기</button>` : ''}</div></li>`).join('') : '<li class="empty">아직 올라온 앱이 없습니다.</li>'}</ul>`;
   box.onclick = async e => {
-    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">${esc(w.nick)}</span></h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
+    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">학번 ${esc(w.sid)}</span></h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
     const st = e.target.closest('[data-st]'); if (st) { try { await API.aStatus(AP(), [st.dataset.id], st.dataset.st); toast(st.dataset.st === 'public' ? '공개했습니다.' : '내렸습니다.'); aWorks(box); } catch (err) { aFail(err); } return; }
     if (e.target.closest('[data-allpub]')) { try { const n = await API.aStatus(AP(), pend.map(r => r.id), 'public'); toast(n + '개를 공개했습니다.'); aWorks(box); } catch (err) { aFail(err); } }
   };
