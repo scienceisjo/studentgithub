@@ -69,6 +69,9 @@ h3{font-size:19px;font-weight:600;letter-spacing:-.02em;margin:0 0 10px}
 .hero .lead{max-width:640px;margin:18px auto 0}
 .hero .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:28px 0 0}
 .hero .stat{margin:22px 0 0;font-size:14px;color:var(--muted)}
+.hero .other{margin:18px 0 0;font-size:15px}
+.hero .other a{display:inline-block;padding:8px 18px;border-radius:980px;border:1px solid var(--line);background:#fff;color:var(--blue);text-decoration:none;font-weight:600}
+.hero .other a:hover{border-color:#c7c7cc}
 .hero .stat b{color:var(--ink);font-weight:600}
 
 /* 칩 */
@@ -260,6 +263,7 @@ details.rf dl.kv{margin:6px 0 0}
   <a class="logo" href="#/" aria-label="Studentgithub 처음으로"><img src="icon.svg" alt=""><span><span class="t">Student</span>github</span></a>
   <span class="sp"></span>
   <a class="nl" href="#/">전시관</a>
+  <a class="nl" id="swtask" href="#/"></a>
   <span class="who" id="who"></span>
 </div></header>
 <div class="localbar" id="localbar" hidden>체험 모드 — 이 기기에만 저장됩니다(서버에 올라가지 않음) · 관리 비밀번호 <b>1234</b> · <a href="./">체험 끝내기</a></div>
@@ -287,6 +291,19 @@ const DEF = {
   gas: {
     title: '나만의 기체 시뮬레이터', unit: '기체의 성질',
     lesson: 'https://scienceisjo.github.io/gas-properties/model-fixing.html',
+    ui: {
+      noun: '모델', mine: '내 모델', limLabel: '실제 기체와 다른 점', limT: '실제 기체와 다른 점(한계)',
+      h1: '우리가 만든<br>과학 앱',
+      lead: 'AI가 만든 시뮬레이터의 잘못을 찾아 고치고, 그 경험으로 나만의 시뮬레이터(모델)를 만들었습니다. 소개를 읽고 돌려 본 뒤, 서로 평가해 주세요.',
+      darkH2: '고치고, 소개하고, 서로 평가합니다',
+      dark: [['1 고치기 · 만들기 — 수업 페이지', '불량 시뮬레이터에 숨은 잘못을 찾아 교과서로 판단하고 고칩니다. 마지막에 나만의 기체 시뮬레이터를 만듭니다.'],
+             ['2 소개하며 올리기 — 여기', '무엇을 보여 주는 모델인지, 어떻게 써 보면 되는지, 실제 기체와 무엇이 다른지 소개와 함께 올립니다.'],
+             ['3 서로 평가 — 여기', '친구 모델의 소개를 읽고 돌려 본 뒤, 과학이 맞는지·소개대로 돌아가는지 까닭을 들어 평가합니다.']],
+      submitLead: '수업 페이지에서 고치거나 만든 시뮬레이터(모델)를 올리고 친구들에게 소개합니다.',
+      side: '고치기·만들기·질문에 답하기는 <b>수업 페이지</b>에서 합니다. 이곳에서는 내 모델을 <b>소개하며 올리고</b>, 친구 모델을 평가합니다.',
+      steps: [{ id: 'submit', t: '내 모델 올리기', s: '소개와 함께 · 판이 쌓입니다', k: '올리기' },
+              { id: 'review', t: '서로 평가', s: '친구 모델 평가하기', k: '서로 평가' }]
+    },
     missions: [                                                    // 옛 작업실의 고치기 기록을 관리 화면에서 읽을 때
       { id: 'm1', name: '미션 1 · 압력', n: 3, stage: 1 },
       { id: 'm2', name: '미션 2 · 압력과 부피', n: 3, stage: 2 },
@@ -334,15 +351,57 @@ const DEF = {
       { id: 'run', k: '작동', t: '소개대로 조작해 보니 잘 돌아가나요? 오류 없이 조작할 수 있나요?' },
       { id: 'life', k: '예시·퀴즈', t: '생활 속 예시와 퀴즈가 단원 내용과 맞나요?' }
     ]
+  },
+  /* 보일의 법칙 가상실험실 — 주사기와 압력계로 한 실험을 그대로 해 볼 수 있게 학생이 만든 가상실험실.
+     같은 사이트·같은 학번으로 들어오되 과제 코드가 달라(?t=boyle) 전시관·서로 평가·올리기가 나만의 시뮬레이터와 섞이지 않는다. */
+  boyle: {
+    title: '보일의 법칙 가상실험실', unit: '기체의 성질', lesson: '',
+    ui: {
+      noun: '가상실험실', mine: '내 실험실', limLabel: '실제 실험과 다른 점', limT: '실제 실험과 다른 점(한계)',
+      h1: '우리가 만든<br>보일의 법칙 가상실험실',
+      lead: '주사기와 압력계로 한 실험을 그대로 해 볼 수 있게 만든 가상실험실입니다. 소개를 읽고 돌려 본 뒤, 내 실험 결과와 견주어 평가해 주세요.',
+      darkH2: '실험하고, 가상실험실로 만들고, 서로 평가합니다',
+      dark: [['1 실험 — 수업 시간', '주사기와 압력계로 공기의 부피를 바꾸며 압력을 재고, 결과를 표로 정리합니다.'],
+             ['2 가상실험실 만들기 · 올리기 — 여기', 'AI와 함께 그 실험을 해 볼 수 있는 가상실험실을 만들고, 소개와 함께 올립니다.'],
+             ['3 서로 평가 — 여기', '친구 가상실험실의 소개를 읽고 돌려 본 뒤, 내가 한 실험 결과와 견주어 평가합니다.']],
+      submitLead: '주사기와 압력계 실험을 해 볼 수 있게 만든 가상실험실을 올리고 친구들에게 소개합니다.',
+      side: '이곳에서는 내 가상실험실을 <b>소개하며 올리고</b>, 친구 가상실험실을 평가합니다.',
+      steps: [{ id: 'submit', t: '내 가상실험실 올리기', s: '소개와 함께 · 판이 쌓입니다', k: '올리기' },
+              { id: 'review', t: '서로 평가', s: '친구 가상실험실 평가하기', k: '서로 평가' }]
+    },
+    missions: [],
+    uploads: [{ id: 'lab', k: '가상실험실', t: '보일의 법칙 가상실험실', stage: 1 }],
+    limits: [
+      '주사기 속 공기가 새지 않고 온도가 늘 일정하다고 놓았다 (실제 실험에서는 조금 새거나 온도가 바뀔 수 있다)',
+      '압력계 숫자가 흔들림 없이 나온다 (실제 측정값은 조금씩 흔들린다)',
+      '내 실험 결과의 값을 넣어 숫자가 비슷하게 나오도록 맞추었다',
+      '입자 수가 실제보다 훨씬 적고 크게 그렸다',
+      '화면이 2차원이다'
+    ],
+    intro: [
+      { id: 'summary', k: '보여 주는 것', t: '이 가상실험실은 무엇을 보여 주나요?', req: true, max: 200,
+        ph: '예: 주사기 속 공기의 부피를 줄이면 압력계 숫자가 커지는 것을, 내가 한 실험 결과처럼 보여 줍니다' },
+      { id: 'how', k: '써 보는 법', t: '이렇게 해 보세요 — 무엇을 조작하고, 무엇을 보면 되나요?', req: true, max: 300,
+        ph: '예: 주사기 손잡이를 밀어 부피를 20 mL에서 10 mL로 줄이고, 압력계 숫자와 기체 입자의 모습이 어떻게 달라지는지 보세요' },
+      { id: 'lim', k: '한계', t: '실제 실험과 다른 점(한계)', req: false, max: 300, ph: '아래 목록에서 ＋로 고르거나 직접 써요' }
+    ],
+    oldReflect: [],
+    reviewQs: [
+      { id: 'science', k: '과학', t: '과학이 맞나요? 부피가 줄어들면 압력이 커지고, 부피가 커지면 압력이 작아지는 모습이 우리가 한 실험 결과와 맞나요? 배우지 않은 말은 없나요?' },
+      { id: 'run', k: '작동', t: '소개대로 조작해 보니 잘 돌아가나요? 오류 없이 조작할 수 있나요?' },
+      { id: 'match', k: '실험과 견주기', t: '내가 한 실험의 숫자와 견주어 보세요. 부피를 같게 맞추면 압력 숫자가 실험 결과와 비슷하게 나오나요?' }
+    ]
   }
 };
+const TASKS = { gas: '나만의 기체 시뮬레이터', boyle: '보일의 법칙 가상실험실' };
 const D = DEF[TASK] || DEF.gas;
+const U = D.ui;
+// 같은 사이트의 다른 과제로 가는 주소 — 학번으로 들어와 있으면 그대로 이어진다(들어온 정보는 과제와 상관없이 같은 기기에 저장)
+const otherTask = (() => { const k = TASK === 'boyle' ? 'gas' : 'boyle'; const u = new URL(location.href); u.hash = '#/';
+  if (k === 'gas') u.searchParams.delete('t'); else u.searchParams.set('t', k); return { key: k, name: TASKS[k], href: u.pathname + u.search + u.hash }; })();
 const OPEN = () => (S.task && +S.task.open_stage) || 2;        // 열린 단계(선생님이 관리 → 과제 설정에서 정함) — 올릴 수 있는 것(미션 3·최종본)
 const kindOf = rf => D.uploads.find(u => u.id === (rf || {}).kind);
-const STEPS = [
-  { id: 'submit', t: '내 모델 올리기', s: '소개와 함께 · 판이 쌓입니다', k: '올리기' },
-  { id: 'review', t: '서로 평가', s: '친구 모델 평가하기', k: '서로 평가' }
-];
+const STEPS = U.steps;
 // 수업 페이지로 옮긴 옛 작업실 단계 — 옛 주소(#/me/fix 등)로 와도 안내하고, 관리 화면에서 옛 기록을 읽을 때 이름표로 쓴다
 const MOVED = { fix: '고치기 기록', model: '모형 생각', make: '만들기', check: '점검표', reflect: '자기평가' };
 
@@ -481,8 +540,9 @@ const Remote = {
 const Local = (() => {
   const K = 'sgh-local';
   const fresh = () => ({ students: [], tokens: {}, notes: [], works: [], reviews: [], seq: 1, admin: '1234',
-    tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 2 } } });
-  const db = () => load(K, null) || fresh();
+    tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 2 },
+             boyle: { code: 'boyle', title: '보일의 법칙 가상실험실', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 4 } } });
+  const db = () => { const d = load(K, null) || fresh(); if (!d.tasks.boyle) d.tasks.boyle = fresh().tasks.boyle; return d; };
   const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); } catch (e) { throw fail('이 기기 저장 공간이 가득 찼습니다. 체험 자료를 지워 주세요'); } };
   const now = () => new Date().toISOString();
   const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x' + Math.random().toString(16).slice(2) + Date.now());
@@ -627,7 +687,7 @@ function signOut() { S.tok = ''; S.me = null; store(TOKK, ''); drawWho(); }
 function relogin(msg) { signOut(); toast(msg || '다시 들어와 주세요.', true); location.hash = '#/in'; }
 function drawWho() {
   const w = $('#who');
-  if (S.me) w.innerHTML = `<span class="me">학번 ${esc(S.me.student.sid)}${S.me.student.cls ? ' · ' + esc(clsName(S.me.student.cls)) : ''}</span><a class="btn primary sm" href="#/me">내 모델</a><button class="btn sm" data-act="out">나가기</button>`;
+  if (S.me) w.innerHTML = `<span class="me">학번 ${esc(S.me.student.sid)}${S.me.student.cls ? ' · ' + esc(clsName(S.me.student.cls)) : ''}</span><a class="btn primary sm" href="#/me">${esc(U.mine)}</a><button class="btn sm" data-act="out">나가기</button>`;
   else w.innerHTML = `<a class="btn primary sm" href="#/in">들어가기</a>`;
 }
 $('#who').addEventListener('click', e => { if (e.target.closest('[data-act="out"]')) { signOut(); toast('나갔습니다. 다음에 같은 학번으로 들어오면 이어집니다.'); location.hash = '#/'; } });
@@ -669,9 +729,10 @@ function viewList(back) {
   view.innerHTML = `
   <section class="hero"><div class="wrap">
     <p class="eyebrow">${esc(D.unit)} · ${esc(D.title)}</p>
-    <h1>우리가 만든<br>과학 앱</h1>
-    <p class="lead">AI가 만든 시뮬레이터의 잘못을 찾아 고치고, 그 경험으로 나만의 시뮬레이터(모델)를 만들었습니다. 소개를 읽고 돌려 본 뒤, 서로 평가해 주세요.</p>
-    <div class="cta"><a class="btn primary" href="#/me">내 모델 올리기</a><button class="btn" data-act="browse">둘러보기 ›</button></div>
+    <h1>${U.h1}</h1>
+    <p class="lead">${U.lead}</p>
+    <div class="cta"><a class="btn primary" href="#/me">${esc(U.mine)} 올리기</a><button class="btn" data-act="browse">둘러보기 ›</button></div>
+    <p class="other"><a href="${otherTask.href}">${otherTask.key === 'boyle' ? '🔬' : '🧪'} ${esc(otherTask.name)} ›</a></p>
     <p class="stat" id="stat"></p>
   </div></section>
   <section class="browse" id="browse"><div class="wrap">
@@ -680,13 +741,9 @@ function viewList(back) {
   </div></section>
   <section class="dark"><div class="wrap">
     <p class="eyebrow">이렇게 만듭니다</p>
-    <h2>고치고, 소개하고, 서로 평가합니다</h2>
-    <div class="steps3">
-      <div><b>1 고치기 · 만들기 — 수업 페이지</b><p>불량 시뮬레이터에 숨은 잘못을 찾아 교과서로 판단하고 고칩니다. 마지막에 나만의 기체 시뮬레이터를 만듭니다.</p></div>
-      <div><b>2 소개하며 올리기 — 여기</b><p>무엇을 보여 주는 모델인지, 어떻게 써 보면 되는지, 실제 기체와 무엇이 다른지 소개와 함께 올립니다.</p></div>
-      <div><b>3 서로 평가 — 여기</b><p>친구 모델의 소개를 읽고 돌려 본 뒤, 과학이 맞는지·소개대로 돌아가는지 까닭을 들어 평가합니다.</p></div>
-    </div>
-    <a class="btn primary" href="#/me">내 모델 올리기</a>
+    <h2>${U.darkH2}</h2>
+    <div class="steps3">${U.dark.map(([b, p]) => `<div><b>${b}</b><p>${p}</p></div>`).join('')}</div>
+    <a class="btn primary" href="#/me">${esc(U.mine)} 올리기</a>
   </div></section>`;
   view.onclick = e => {
     if (e.target.closest('[data-act="browse"]')) { $('#browse').scrollIntoView({ behavior: 'smooth' }); return; }
@@ -705,7 +762,7 @@ function viewList(back) {
 function renderResults() {
   const box = $('#results'), fb = $('#filters'); if (!box) return;
   const g = S.gallery || [];
-  if (!g.length) { fb.innerHTML = ''; box.innerHTML = `<div class="notice"><b>아직 공개된 앱이 없습니다.</b><p>올린 모델은 선생님 확인을 거쳐 이곳에 보입니다.</p><a class="btn primary" href="#/me">내 모델 올리기</a></div>`; return; }
+  if (!g.length) { fb.innerHTML = ''; box.innerHTML = `<div class="notice"><b>아직 공개된 앱이 없습니다.</b><p>올린 ${esc(U.noun)}은 선생님 확인을 거쳐 이곳에 보입니다.</p><a class="btn primary" href="#/me">${esc(U.mine)} 올리기</a></div>`; return; }
   const by = {}; g.forEach(x => { if (x.cls) by[x.cls] = (by[x.cls] || 0) + 1; });
   const cl = Object.keys(by).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
   fb.innerHTML = (cl.length > 1 ? `<div class="frow"><span class="fl">반</span><div class="chips"><button class="chip" data-f="cls" data-v="" aria-pressed="${!S.f.cls}">전체</button>${cl.map(c => `<button class="chip" data-f="cls" data-v="${esc(c)}" aria-pressed="${S.f.cls === c}">${esc(clsName(c))}<span class="n">${by[c]}</span></button>`).join('')}</div></div>` : '') +
@@ -768,7 +825,7 @@ async function viewWork(id) {
   const box = $('#rform');
   if (!S.me) box.innerHTML = `<p class="note">평가하려면 <a href="#/in">학번으로 들어가</a> 주세요.</p>`;
   else if (!S.task || !S.task.review_open) box.innerHTML = `<p class="note">선생님이 서로 평가를 열면 여기서 평가할 수 있습니다.</p>`;
-  else if (w.nick === S.me.student.nick) box.innerHTML = `<p class="note">내 모델입니다. 친구들의 평가는 「내 모델 → 서로 평가」에서도 볼 수 있습니다.</p>`;
+  else if (w.nick === S.me.student.nick) box.innerHTML = `<p class="note">내 ${esc(U.noun)}입니다. 친구들의 평가는 「${esc(U.mine)} → 서로 평가」에서도 볼 수 있습니다.</p>`;
   else reviewForm(box, id, () => drawReviews(id));
 }
 async function drawReviews(id) {
@@ -834,7 +891,7 @@ function viewEnter() {
         const r = await API.enter(sid, nick);
         S.tok = r.token; store(TOKK, r.token);
         await loadMe();
-        toast(r.is_new ? `반가워요! 학번 ${sid} — 내 모델 공간이 만들어졌습니다.` : `돌아온 걸 환영해요! 하던 곳부터 이어 갑니다.`);
+        toast(r.is_new ? `반가워요! 학번 ${sid} — 자리가 만들어졌습니다.` : `돌아온 걸 환영해요! 하던 곳부터 이어 갑니다.`);
         location.hash = '#/me';
       } catch (err) {
         if (err.needNick) { $('#nickRow').style.display = ''; $('#nick').focus(); $('#eerr').textContent = '선생님이 서버를 바꾸기 전이라, 이번에만 처음에 쓴 별명도 넣어 주세요.'; }
@@ -866,7 +923,7 @@ function drawStepNav() {
   $('#progt').textContent = `${STEPS.length}단계 중 ${n}단계 마침`;
 }
 async function viewMe(step) {
-  document.title = '내 모델 · Studentgithub';
+  document.title = U.mine + ' · Studentgithub';
   view.innerHTML = `<div class="wrap"><p class="empty">불러오는 중입니다…</p></div>`;
   await loadTask();
   if (S.notReady) { view.innerHTML = `<div class="wrap pad narrow">${notReadyBox()}</div>`; return; }
@@ -884,7 +941,8 @@ async function viewMe(step) {
       <div class="prog"><i id="progi"></i></div><p class="progt" id="progt"></p>
       <ul class="stepnav" id="stepnav"></ul>
       ${lesson ? `<a class="btn line sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 열기 ↗</a>` : ''}
-      <p class="hint sidenote">고치기·만들기·질문에 답하기는 <b>수업 페이지</b>에서 합니다. 이곳에서는 내 모델을 <b>소개하며 올리고</b>, 친구 모델을 평가합니다.</p>
+      <p class="hint sidenote">${U.side}</p>
+      <p class="hint sidenote"><a href="${otherTask.href}">${otherTask.key === 'boyle' ? '🔬' : '🧪'} ${esc(otherTask.name)} ›</a></p>
     </aside>
     <section id="panel"></section></div>`;
   drawStepNav();
@@ -902,13 +960,13 @@ function introHTML(o) {
 }
 function introCards(it) {                                   // 작품 보기 — 무대 위에 「이렇게 써 보세요」·「한계」
   if (!it || !(it.how || it.lim)) return '';
-  return `<div class="intro">${it.how ? `<div><b>🕹 이렇게 써 보세요</b><p>${esc(it.how)}</p></div>` : ''}${it.lim ? `<div><b>🧩 실제 기체와 다른 점</b><p>${esc(it.lim)}</p></div>` : ''}</div>`;
+  return `<div class="intro">${it.how ? `<div><b>🕹 이렇게 써 보세요</b><p>${esc(it.how)}</p></div>` : ''}${it.lim ? `<div><b>🧩 ${esc(U.limLabel)}</b><p>${esc(it.lim)}</p></div>` : ''}</div>`;
 }
 const hasOld = rf => !!rf && D.oldReflect.some(q => String(rf[q.id] || '').trim());
 function oldHTML(rf) { return hasOld(rf) ? `<dl class="kv">${D.oldReflect.filter(q => String(rf[q.id] || '').trim()).map(q => `<dt>${esc(q.t)}</dt><dd>${esc(rf[q.id])}</dd>`).join('')}</dl>` : ''; }
 function verDetails(w, open) {
   const a = introHTML(introOf(w)), b = oldHTML(w.reflect || {});
-  return (a ? `<details class="rf"${open ? ' open' : ''}><summary>모델 소개</summary>${a}</details>` : '') +
+  return (a ? `<details class="rf"${open ? ' open' : ''}><summary>${esc(U.noun)} 소개</summary>${a}</details>` : '') +
     (b ? `<details class="rf"${open ? ' open' : ''}><summary>이번 판 돌아보기 (10-12 전에 쓴 것)</summary>${b}</details>` : '');
 }
 /* 수업 페이지(같은 주소·같은 기기)에 적어 둔 것을 빈 칸에 미리 넣는다 — 같은 것을 두 번 쓰지 않게 */
@@ -925,12 +983,12 @@ async function panelSubmit(root) {
   const t = S.task || {}, dr = load('sgh:draft:' + TASK, {}) || {};
   const works = S.me.works || [], moved = S.moved, lesson = lessonUrl(); S.moved = '';
   root.innerHTML = `
-    ${moved ? `<div class="notice movednote"><b>「${esc(moved)}」 단계는 이제 수업 페이지에서 합니다.</b><p>찾은 잘못·고칠 방법·만들기·확인하기·자기평가·돌아보기는 수업 페이지에서 쓰고, 이곳에서는 내 모델을 소개하며 올립니다.</p>${lesson ? `<a class="btn line sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 열기 ↗</a>` : ''}</div>` : ''}
+    ${moved ? `<div class="notice movednote"><b>「${esc(moved)}」 단계는 이제 수업 페이지에서 합니다.</b><p>찾은 잘못·고칠 방법·만들기·확인하기·자기평가·돌아보기는 수업 페이지에서 쓰고, 이곳에서는 내 ${esc(U.noun)}을 소개하며 올립니다.</p>${lesson ? `<a class="btn line sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 열기 ↗</a>` : ''}</div>` : ''}
     ${t.submit_open ? '' : `<div class="notice" style="margin:0 0 20px"><b>지금은 올리기 기간이 아닙니다.</b><p>선생님이 열면 올릴 수 있습니다. 그동안 수업 페이지에서 준비해 두세요.</p></div>`}
-    <p class="lead2">수업 페이지에서 고치거나 만든 시뮬레이터(모델)를 올리고 친구들에게 소개합니다. 고쳐서 다시 올리면 <b>새 판</b>이 쌓이고, 전시관에는 가장 새 판이 보입니다. 올린 모델은 선생님 확인 뒤 전시관에 나옵니다.</p>
+    <p class="lead2">${U.submitLead} 고쳐서 다시 올리면 <b>새 판</b>이 쌓이고, 전시관에는 가장 새 판이 보입니다. 올린 ${esc(U.noun)}은 선생님 확인 뒤 전시관에 나옵니다.</p>
     <form id="sf" class="box" autocomplete="off">
       <div class="field"><label for="fkind">무엇을 올리나요?</label><select id="fkind">${D.uploads.map(u => `<option value="${u.id}"${u.stage > OPEN() ? ' disabled' : ''}>${u.stage > OPEN() ? '🔒 ' : ''}${esc(u.t)}</option>`).join('')}</select></div>
-      <div class="field"><label for="ftitle">모델 이름</label><input type="text" id="ftitle" maxlength="60" required></div>
+      <div class="field"><label for="ftitle">${esc(U.noun)} 이름</label><input type="text" id="ftitle" maxlength="60" required></div>
       <div class="lb">앱 코드</div>
       <p style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn line sm" data-act="file">HTML 파일 열기</button><input type="file" id="ffile" accept=".html,.htm,.txt,text/html,text/plain" hidden></p>
       <div class="field"><textarea id="fsrc" class="code" placeholder="수업 페이지 실행실의 📋 내 코드 복사, 또는 제미나이 캔버스의 공유 → 콘텐츠 복사로 복사한 코드를 붙여넣으세요 (설명 글이 섞여도 코드만 골라 냅니다)"></textarea></div>
@@ -938,7 +996,7 @@ async function panelSubmit(root) {
       <div class="stage small" id="fstage" hidden></div>
       <div class="lb" style="margin-top:14px">대표 화면 <small>(없어도 됩니다 — 캡처해서 여기 누르고 Ctrl+V)</small></div>
       <div class="drop" id="fthumb" tabindex="0"><span class="hint">눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
-      <div class="lb" style="margin-top:18px">모델 소개 <small>(전시관에서 친구들에게 보여요 — 친구가 이 소개를 읽고 돌려 봅니다)</small></div>
+      <div class="lb" style="margin-top:18px">${esc(U.noun)} 소개 <small>(전시관에서 친구들에게 보여요 — 친구가 이 소개를 읽고 돌려 봅니다)</small></div>
       ${D.intro.map((q, i) => `<div class="field"><label for="fi-${q.id}">${i + 1}. ${esc(q.t)}${q.req ? '' : ' <small>(골라서)</small>'}</label><textarea id="fi-${q.id}" rows="2" maxlength="${q.max}"></textarea>${q.id === 'lim' ? `<div class="limpick">${D.limits.map((l, j) => `<button type="button" class="btn line sm" data-limadd="${j}">＋ ${esc(l)}</button>`).join('')}</div>` : ''}</div>`).join('')}
       <label class="check" style="margin-top:16px"><input type="checkbox" id="fpriv"> 앱 안에 내 실명·사진·연락처가 없습니다.</label>
       <p style="margin:0 0 16px"><button class="btn primary" type="submit"${t.submit_open ? '' : ' disabled'}>올리기</button></p>
@@ -1020,11 +1078,11 @@ function statusBadge(s) { return s === 'public' ? '<span class="badge ok">공개
 async function panelReview(root) {
   const t = S.task || {}, got = S.me.got || [], gave = S.me.gave || [];
   root.innerHTML = `
-    ${t.review_open ? `<p class="lead2">친구 모델 <b>2개 이상</b>을 골라 <b>소개를 읽고 직접 돌려 본 뒤</b> 평가합니다. 같은 반 친구 중 평가를 덜 받은 모델부터 나옵니다.</p>
-      <p style="margin:0 0 18px"><button class="btn primary" data-act="assign">평가할 모델 받기</button> <a class="btn" href="#/">전시관에서 골라 평가하기 ›</a></p>
+    ${t.review_open ? `<p class="lead2">친구 ${esc(U.noun)} <b>2개 이상</b>을 골라 <b>소개를 읽고 직접 돌려 본 뒤</b> 평가합니다. 같은 반 친구 중 평가를 덜 받은 ${esc(U.noun)}부터 나옵니다.</p>
+      <p style="margin:0 0 18px"><button class="btn primary" data-act="assign">평가할 ${esc(U.noun)} 받기</button> <a class="btn" href="#/">전시관에서 골라 평가하기 ›</a></p>
       <div id="asg"></div>` : `<div class="notice" style="margin:0 0 22px"><b>선생님이 서로 평가를 열면 할 수 있습니다.</b><p>그동안 받은 평가와 한 평가를 여기서 볼 수 있습니다.</p></div>`}
     <h3 style="margin-top:26px">내가 한 평가 (${gave.length})</h3>
-    <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>친구 모델 · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
+    <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>친구 ${esc(U.noun)} · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
     <h3 style="margin-top:26px">내가 받은 평가 (${got.length})</h3>
     <ul class="rlist">${got.length ? got.map(r => reviewLi({ ...r, who: `친구 · ${r.v}판` })).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
     ${got.length ? `<p class="hint">받은 평가를 읽고, 수업 페이지 「평가 기준」 탭에서 내 생각과 견주어 보세요.</p>` : ''}`;
@@ -1033,7 +1091,7 @@ async function panelReview(root) {
       a.disabled = true;
       try {
         const list = await API.assign(S.tok, TASK);
-        $('#asg').innerHTML = list.length ? `<div class="grid" style="margin:0 0 10px">${list.map(cardHtml).join('')}</div><p class="hint">모델을 눌러 소개를 읽고 돌려 본 뒤, 아래에 평가를 남기세요.</p>` : `<p class="empty">지금 평가할 새 모델이 없습니다. 친구들이 더 올리면 다시 눌러 보세요.</p>`;
+        $('#asg').innerHTML = list.length ? `<div class="grid" style="margin:0 0 10px">${list.map(cardHtml).join('')}</div><p class="hint">${esc(U.noun)}을(를) 눌러 소개를 읽고 돌려 본 뒤, 아래에 평가를 남기세요.</p>` : `<p class="empty">지금 평가할 새 ${esc(U.noun)}이(가) 없습니다. 친구들이 더 올리면 다시 눌러 보세요.</p>`;
         $$('.thumb[data-has="1"]', $('#asg')).forEach(el => thumbIO && thumbIO.observe(el));
       } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
       finally { a.disabled = false; }
@@ -1104,7 +1162,7 @@ async function studentModal(id, after) {
   const latest = {}; x.notes.forEach(n => { if (!latest[n.step]) latest[n.step] = n; });
   const olds = Object.keys(latest);
   const m = modal(`<h3>학번 ${esc(x.student.sid)} <span class="hint">${esc(clsName(x.student.cls))} · 마지막 접속 ${ago(x.student.last_seen)}</span></h3>
-    <h4 style="margin:18px 0 8px">올린 판 · 모델 소개</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${kindOf(w.reflect) ? `<span class="kd">${esc(kindOf(w.reflect).k)}</span>` : ''}${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span>${verDetails(w, true)}</div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
+    <h4 style="margin:18px 0 8px">올린 판 · ${esc(U.noun)} 소개</h4><ul class="vlist">${x.works.length ? x.works.map(w => `<li><div class="vi"><b>${kindOf(w.reflect) ? `<span class="kd">${esc(kindOf(w.reflect).k)}</span>` : ''}${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span>${verDetails(w, true)}</div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-aw="${w.id}">돌려 보기</button></div></li>`).join('') : '<li class="hint">없음</li>'}</ul>
     <h4 style="margin:18px 0 8px">받은 평가</h4><ul class="rlist">${x.got.length ? x.got.map(r => reviewLi({ ...r, who: r.nick + ` → ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
     <h4 style="margin:18px 0 8px">한 평가</h4><ul class="rlist">${x.gave.length ? x.gave.map(r => reviewLi({ ...r, who: '→ ' + r.to + ` ${r.v}판` + (r.hidden ? ' (숨김)' : '') })).join('') : '<li class="hint">없음</li>'}</ul>
     ${olds.length ? `<h4 style="margin:22px 0 4px">10-12 전 작업실에 쓴 기록</h4><p class="hint" style="margin:0 0 8px">지금은 수업 페이지에서 쓰는 것들입니다(찾은 잘못·돌아보기는 기체 단원 교사 대시보드).</p>` +
@@ -1122,7 +1180,7 @@ async function exportCsv() {
   const vk = w => `${w.v}판${kindOf(w.reflect) ? '(' + kindOf(w.reflect).k + ')' : ''}`;
   const anyOld = rows.some(r => (r.works || []).some(w => hasOld(w.reflect)));
   const anyFix = rows.some(r => r.notes && r.notes.fix);
-  const head = ['학번', '반', '올린 것(판별)', ...D.intro.map(x => '모델 소개: ' + x.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안'];
+  const head = ['학번', '반', '올린 것(판별)', ...D.intro.map(x => U.noun + ' 소개: ' + x.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안'];
   if (anyOld) head.push(...D.oldReflect.map(x => '옛 돌아보기: ' + x.k + '(판별)'));
   if (anyFix) { D.missions.forEach(m => head.push('옛 고치기 기록: ' + m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나')); head.push('옛 고치기 기록: AI가 엉뚱하게'); }
   const out = [head.map(q).join(',')];
@@ -1166,14 +1224,14 @@ async function aTask(box) {
   const ST = [[1, '1단계까지 — 압력 (미션 1)'], [2, '2단계까지 — 압력과 부피 (미션 2)'], [3, '3단계까지 — 온도와 부피 (미션 3)'], [4, '4단계 모두 — 최종본']];
   box.innerHTML = `<form class="sform" id="tf"><div class="field"><label>과제 이름</label><input type="text" id="tt" maxlength="60" value="${esc(t.title)}"></div>
     <div class="field"><label>수업 페이지 주소 <small>(https://… — 학생의 「내 모델」 화면에 「수업 페이지 열기」로 나옵니다)</small></label><input type="url" id="tl" value="${esc(t.lesson_url || '')}" placeholder="https://scienceisjo.github.io/…"></div>
-    <div class="field"><label for="to">열린 단계 <small>(학생에게 열리는 곳 — 수업 페이지 「따라 하기」·미션 3·만들기 탭과 이 사이트의 「무엇을 올리나요?」(미션 3·최종본)가 함께 따릅니다)</small></label><select id="to">${ST.map(([v, lb]) => `<option value="${v}"${(+t.open_stage || 2) === v ? ' selected' : ''}>${lb}</option>`).join('')}</select></div>
+    ${TASK !== 'gas' ? '' : `<div class="field"><label for="to">열린 단계 <small>(학생에게 열리는 곳 — 수업 페이지 「따라 하기」·미션 3·만들기 탭과 이 사이트의 「무엇을 올리나요?」(미션 3·최종본)가 함께 따릅니다)</small></label><select id="to">${ST.map(([v, lb]) => `<option value="${v}"${(+t.open_stage || 2) === v ? ' selected' : ''}>${lb}</option>`).join('')}</select></div>`}
     <label class="check"><input type="checkbox" id="ts"${t.submit_open ? ' checked' : ''}> 올리기 받기</label>
     <label class="check"><input type="checkbox" id="tr"${t.review_open ? ' checked' : ''}> 서로 평가 열기</label>
     <label class="check"><input type="checkbox" id="ta"${t.auto_public ? ' checked' : ''}> 올리자마자 공개(선생님 확인 건너뛰기)</label>
     <button class="btn primary" type="submit">저장</button></form>
     <p class="hint">학생용 주소: <b>${esc(location.origin + location.pathname)}</b>${TASK !== 'gas' ? '?t=' + esc(TASK) : ''}</p>`;
   $('#tf').onsubmit = async e => { e.preventDefault();
-    const nt = { code: TASK, title: $('#tt').value.trim() || D.title, lesson_url: $('#tl').value.trim(), submit_open: $('#ts').checked, review_open: $('#tr').checked, auto_public: $('#ta').checked, open_stage: +$('#to').value };
+    const nt = { code: TASK, title: $('#tt').value.trim() || D.title, lesson_url: $('#tl').value.trim(), submit_open: $('#ts').checked, review_open: $('#tr').checked, auto_public: $('#ta').checked, open_stage: $('#to') ? +$('#to').value : (+t.open_stage || 4) };
     if (nt.lesson_url && !/^https:\/\/\S+$/.test(nt.lesson_url)) return toast('수업 페이지 주소는 https:// 로 시작해야 합니다.', true);
     try { await API.aTaskSave(AP(), nt); S.task = null; toast('저장했습니다.'); } catch (err) { aFail(err); } };
 }
@@ -1185,6 +1243,7 @@ function aPass(box) {
 /* ════════ 시작 ════════ */
 if (LOCAL) $('#localbar').hidden = false;
 drawWho();
+$('#swtask').href = otherTask.href; $('#swtask').textContent = (otherTask.key === 'boyle' ? '🔬 ' : '🧪 ') + otherTask.name;
 (async () => { try { await loadTask(); if (S.tok) await loadMe(); } catch (e) {} route(); })();
 </script>
 </body>
