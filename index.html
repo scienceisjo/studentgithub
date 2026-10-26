@@ -1082,7 +1082,8 @@ async function panelSubmit(root) {
       <div class="lb" style="margin-top:14px">대표 화면 <small>(전시관 카드에 보이는 그림 — 안 만들어도 올릴 때 앱 화면으로 저절로 만들어요. 내가 고른 화면이 있으면 캡처해서 여기 누르고 Ctrl+V)</small></div>
       <div class="drop" id="fthumb" tabindex="0"><span class="hint">올릴 때 앱 화면으로 자동으로 만들어요 · 바꾸려면 눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
       <div class="lb" style="margin-top:18px">${esc(U.noun)} 소개 <small>(전시관에서 친구들에게 보여요 — 친구가 이 소개를 읽고 돌려 봅니다)</small></div>
-      ${D.intro.map((q, i) => `<div class="field"><label for="fi-${q.id}">${i + 1}. ${esc(q.t)}${q.req ? '' : ' <small>(골라서)</small>'}</label><textarea id="fi-${q.id}" rows="2" maxlength="${q.max}"></textarea>${q.id === 'lim' ? `<div class="limpick">${D.limits.map((l, j) => `<button type="button" class="btn line sm" data-limadd="${j}">＋ ${esc(l)}</button>`).join('')}</div>` : ''}</div>`).join('')}
+      <p class="hint" id="introNote" style="margin:0 0 10px" hidden></p>
+      ${D.intro.map((q, i) => `<div class="field"><label for="fi-${q.id}">${i + 1}. ${esc(q.t)}<small class="opt"></small></label><textarea id="fi-${q.id}" rows="2" maxlength="${q.max}"></textarea>${q.id === 'lim' ? `<div class="limpick">${D.limits.map((l, j) => `<button type="button" class="btn line sm" data-limadd="${j}">＋ ${esc(l)}</button>`).join('')}</div>` : ''}</div>`).join('')}
       <label class="check" style="margin-top:16px"><input type="checkbox" id="fpriv"> 앱 안에 내 실명·사진·연락처가 없습니다.</label>
       <p style="margin:0 0 16px"><button class="btn primary" type="submit"${t.submit_open ? '' : ' disabled'}>올리기</button></p>
     </form>
@@ -1097,8 +1098,17 @@ async function panelSubmit(root) {
   if (dr.html) $('#fsrc').value = dr.html;
   D.intro.forEach(q => { $('#fi-' + q.id).value = dr[q.id] || ''; });
   const pre = {};                                          // 미리 넣은 글 — 학생이 고쳤으면 다시 덮지 않는다
+  // 소개는 최종본(과 가상실험실)에서만 꼭 쓴다 — 미션 1·2·3 고친 판은 코드만 올려도 된다(비우면 아래 기본 문장으로 채워 보낸다)
+  const needIntro = (q, kind) => q.req && (TASK !== 'gas' || kind === 'final');
+  const lite = kind => TASK === 'gas' && kind !== 'final';
+  function paintIntro(kind) {
+    D.intro.forEach(q => { const o = document.querySelector('label[for="fi-' + q.id + '"] .opt'); if (o) o.textContent = needIntro(q, kind) ? '' : ' (골라서)'; });
+    const n = $('#introNote'); n.hidden = !lite(kind);
+    n.textContent = lite(kind) ? '고친 시뮬레이터는 소개를 안 써도 올릴 수 있어요. 비워 두면 「' + kindTitle(kind) + '」 한 줄로 올라갑니다. 소개는 최종본을 올릴 때 꼭 써 주세요.' : '';
+  }
   function fill() {
     const kind = $('#fkind').value, p = lessonPre(kind);
+    paintIntro(kind);
     D.intro.forEach(q => { $('#fi-' + q.id).placeholder = typeof q.ph === 'string' ? q.ph : (q.ph[kind] || q.ph.m1); });
     const ti = $('#ftitle'), all = D.uploads.map(u => u.t);
     if (!ti.value.trim() || all.includes(ti.value.trim()) || ti.value === pre.title) { ti.value = p.title || kindTitle(kind); pre.title = ti.value; }
@@ -1156,8 +1166,13 @@ async function panelSubmit(root) {
     if (!html) return toast('앱 코드를 붙여넣어 주세요(<!DOCTYPE html> 부터 </html> 까지).', true);
     if (bytes(html) > MAX_HTML) return toast('코드가 2MB보다 큽니다. 넣은 그림을 줄여 주세요.', true);
     const it = introNow();
-    const miss = D.intro.findIndex(q => q.req && it[q.id].length < 8);
+    const kind = $('#fkind').value;
+    const miss = D.intro.findIndex(q => needIntro(q, kind) && it[q.id].length < 8);
     if (miss >= 0) { $('#fi-' + D.intro[miss].id).focus(); return toast(`「모델 소개」 ${miss + 1}번을 한 문장 이상 써 주세요.`, true); }
+    if (lite(kind)) {                                              // 미션 판: 소개를 안 썼으면 기본 문장(서버는 두 칸이 비면 받지 않는다)
+      if (it.summary.length < 2) it.summary = kindTitle(kind) + ' — 고친 판입니다.';
+      if (it.how.length < 2) it.how = '직접 조작해 보며 어떻게 바뀌는지 살펴보세요.';
+    }
     if (!$('#fpriv').checked) return toast('실명·사진·연락처가 없는지 확인하고 체크해 주세요.', true);
     const b = $('#sf button[type=submit]'); b.disabled = true;
     if (!thumb) {                                                  // 대표 화면을 안 정했으면 앱 화면으로 저절로 만든다(실패해도 그냥 올린다)
