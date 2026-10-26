@@ -458,13 +458,98 @@ const filled = (v, n = 1) => String(v == null ? '' : v).trim().length >= n;
 /* 남의 HTML 을 안전하게 돌리기 (GiteacherHub 와 같은 방식)
    sandbox 에 allow-same-origin 을 주지 않아 이 사이트·기록에 손을 못 댄다. localStorage 는 메모리로 대신한다. */
 const SHIM = '<script>(function(){function M(){var d={};return{getItem:function(k){k=String(k);return Object.prototype.hasOwnProperty.call(d,k)?d[k]:null},setItem:function(k,v){d[String(k)]=String(v)},removeItem:function(k){delete d[String(k)]},clear:function(){d={}},key:function(i){var a=Object.keys(d);return i<a.length?a[i]:null},get length(){return Object.keys(d).length}}}["localStorage","sessionStorage"].forEach(function(n){try{window[n].getItem("__t")}catch(e){try{Object.defineProperty(window,n,{value:M(),configurable:true})}catch(e2){}}});try{document.cookie}catch(e){try{Object.defineProperty(document,"cookie",{get:function(){return""},set:function(){},configurable:true})}catch(e2){}}document.addEventListener("click",function(e){var a=e.target&&e.target.closest&&e.target.closest("a[href^=\'#\']");if(!a)return;e.preventDefault();var id=decodeURIComponent(a.getAttribute("href").slice(1));if(!id)return;try{location.hash=id}catch(e3){}var t=document.getElementById(id)||document.getElementsByName(id)[0];if(t&&t.scrollIntoView)t.scrollIntoView({behavior:"smooth"});},true);})();<\/script>';
-function withShim(html) { const m = /^\s*<!doctype[^>]*>/i.exec(html); return m ? m[0] + SHIM + html.slice(m[0].length) : SHIM + html; }
-function runIn(stage, html, title) {
+function withShim(html, cap) { const add = SHIM + (cap ? CAP : ''), m = /^\s*<!doctype[^>]*>/i.exec(html); return m ? m[0] + add + html.slice(m[0].length) : add + html; }
+function runIn(stage, html, title, cap) {
   stage.innerHTML = '';
   const f = document.createElement('iframe');
   f.setAttribute('sandbox', 'allow-scripts allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-downloads');
   f.setAttribute('allow', 'fullscreen; clipboard-write'); f.setAttribute('referrerpolicy', 'no-referrer');
-  f.title = title || '앱 미리보기'; f.srcdoc = withShim(html); stage.appendChild(f);
+  f.title = title || '앱 미리보기'; f.srcdoc = withShim(html, cap); stage.appendChild(f);
+  return f;
+}
+/* 대표 화면 자동 만들기 (2026-10-26)
+   미리보기 틀은 sandbox(allow-same-origin 없음)라 밖에서는 앱 화면을 읽을 수 없다. 그래서 «올리는 중인 앱» 안에만 이 작은 도우미를 끼워 넣고,
+   부모가 postMessage 로 «지금 화면을 그림으로» 라고 부르면 도우미가 화면을 SVG(foreignObject)로 옮겨 그림 한 장(JPEG)으로 돌려준다. 외부 도구 없음.
+   - 모든 요소의 계산된 스타일을 그대로 붙여 같은 모습으로 그린다. 캔버스는 그림으로 바꾸고, 안 그려졌거나 실패하면 가장 큰 캔버스 하나를 쓴다.
+   - 웹 글꼴·밖의 그림 주소는 그림 안에서 불러올 수 없어 기본 글꼴로 나올 수 있다. 앱 모습을 그대로 찍는 사진이 아니라 «소개용 화면»이다.
+   - 학생이 직접 붙여 넣은 캡처가 있으면 그것이 우선이다. */
+function capAgent() {
+  if (window.__sghCap) return; window.__sghCap = 1;
+  function same(c) {                                    // 거의 한 가지 색이면(아직 안 그려졌거나 실패) 쓰지 않는다
+    try { var s = document.createElement('canvas'); s.width = 24; s.height = 24; var x = s.getContext('2d'); x.drawImage(c, 0, 0, 24, 24);
+      var d = x.getImageData(0, 0, 24, 24).data, n = {}, k = 0;
+      for (var i = 0; i < d.length; i += 4) { var key = (d[i] >> 4) + ',' + (d[i + 1] >> 4) + ',' + (d[i + 2] >> 4); if (!n[key]) { n[key] = 1; k++; } if (k > 3) return false; }
+      return true; } catch (e) { return false; }
+  }
+  function shrink(c, w) {
+    var sc = Math.min(1, w / c.width), o = document.createElement('canvas');
+    o.width = Math.max(1, Math.round(c.width * sc)); o.height = Math.max(1, Math.round(c.height * sc));
+    var x = o.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, o.width, o.height); x.drawImage(c, 0, 0, o.width, o.height);
+    var d = o.toDataURL('image/jpeg', .8); if (d.length > 380000) d = o.toDataURL('image/jpeg', .55); return d;
+  }
+  function bigCanvas(w) {                               // 마지막 수단: 가장 큰 <canvas> 하나
+    var cs = [].slice.call(document.querySelectorAll('canvas')).filter(function (c) { return c.width > 80 && c.height > 80; }).sort(function (a, b) { return b.width * b.height - a.width * a.height; });
+    for (var i = 0; i < cs.length; i++) { try { if (!same(cs[i])) return shrink(cs[i], w); } catch (e) {} }
+    return null;
+  }
+  function screen() {                                   // 지금 보이는 화면을 SVG(foreignObject)로 옮겨 그림 한 장으로 — 외부 도구 없이
+    return new Promise(function (ok, no) {
+      var W = Math.max(1, window.innerWidth), H = Math.max(1, window.innerHeight), root = document.documentElement;
+      var src = root.querySelectorAll('*'); if (src.length > 3000) return no(new Error('too big'));
+      var clone = root.cloneNode(true), dst = clone.querySelectorAll('*');
+      for (var i = 0; i < src.length; i++) {
+        var s = src[i], d = dst[i], t = s.tagName;
+        if (t === 'SCRIPT' || t === 'LINK' || t === 'NOSCRIPT') { d.setAttribute('data-x', '1'); continue; }
+        var cs = getComputedStyle(s), txt = '';
+        for (var j = 0; j < cs.length; j++) txt += cs[j] + ':' + cs.getPropertyValue(cs[j]) + ';';
+        d.setAttribute('style', txt);
+        if (t === 'CANVAS') {
+          try { var im = document.createElement('img'); im.setAttribute('src', s.toDataURL('image/png')); im.setAttribute('style', txt); d.parentNode.replaceChild(im, d); } catch (e) {}
+        } else if (t === 'INPUT') {
+          if (s.type === 'checkbox' || s.type === 'radio') { if (s.checked) d.setAttribute('checked', 'checked'); else d.removeAttribute('checked'); } else d.setAttribute('value', s.value);
+        } else if (t === 'TEXTAREA') { d.textContent = s.value; }
+        else if (t === 'OPTION') { if (s.selected) d.setAttribute('selected', 'selected'); else d.removeAttribute('selected'); }
+      }
+      [].slice.call(clone.querySelectorAll('[data-x]')).forEach(function (n) { n.parentNode && n.parentNode.removeChild(n); });
+      var body = clone.querySelector('body');
+      if (body) body.setAttribute('style', (body.getAttribute('style') || '') + ';margin:0;position:absolute;left:' + (-window.scrollX) + 'px;top:' + (-window.scrollY) + 'px;');
+      var xml = new XMLSerializer().serializeToString(clone);
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '"><foreignObject x="0" y="0" width="' + W + '" height="' + H + '">' + xml + '</foreignObject></svg>';
+      var img = new Image(); img.onload = function () {
+        try { var c = document.createElement('canvas'); c.width = W; c.height = H; var x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H); x.drawImage(img, 0, 0, W, H); ok(c); } catch (e) { no(e); }
+      }; img.onerror = function () { no(new Error('svg load')); };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    });
+  }
+  function reply(id, url) { try { parent.postMessage({ sgh: 'cap-res', id: id, ok: !!url, url: url || '' }, '*'); } catch (e) {} }
+  addEventListener('message', function (e) {
+    var m = e.data; if (e.source !== parent || !m || m.sgh !== 'cap') return;
+    var w = m.w || 640;
+    screen().then(function (c) { reply(m.id, same(c) ? bigCanvas(w) : shrink(c, w)); }, function () { reply(m.id, bigCanvas(w)); });
+  });
+}
+
+const CAP = '<script>(' + capAgent.toString() + ')();<\/script>';
+const wait = ms => new Promise(r => setTimeout(r, ms));
+function captureFrom(frame, timeout) {
+  return new Promise(res => {
+    const id = Math.random().toString(36).slice(2); let done = false;
+    const fin = v => { if (done) return; done = true; removeEventListener('message', on); clearTimeout(t); res(v); };
+    const on = e => { if (e.source !== frame.contentWindow || !e.data || e.data.sgh !== 'cap-res' || e.data.id !== id) return; const u = String(e.data.url || ''); fin(e.data.ok && /^data:image\/jpeg;base64,/.test(u) && u.length < 390000 ? u : null); };
+    addEventListener('message', on); const t = setTimeout(() => fin(null), timeout || 8000);
+    try { frame.contentWindow.postMessage({ sgh: 'cap', id, w: 640 }, '*'); } catch (e) { fin(null); }
+  });
+}
+async function autoThumb(html) {                       // 미리보기를 안 눌렀을 때: 화면 밖(투명)에서 1100×700 으로 잠깐 돌려 찍는다
+  const host = document.createElement('div');
+  host.setAttribute('aria-hidden', 'true'); host.style.cssText = 'position:fixed;left:0;top:0;width:1100px;height:700px;opacity:.01;pointer-events:none;z-index:-1;overflow:hidden';
+  document.body.appendChild(host);
+  try {
+    const f = runIn(host, html, '대표 화면 만드는 중', true); f.style.cssText = 'width:1100px;height:700px;border:0;display:block'; f.tabIndex = -1;
+    await Promise.race([new Promise(r => f.addEventListener('load', r, { once: true })), wait(5000)]);
+    await wait(1800);
+    return await captureFrom(f, 7000);
+  } catch (e) { return null; } finally { host.remove(); }
 }
 function extractHtml(raw) {
   if (!raw) return null;
@@ -992,10 +1077,10 @@ async function panelSubmit(root) {
       <div class="lb">앱 코드</div>
       <p style="margin:0 0 8px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn line sm" data-act="file">HTML 파일 열기</button><input type="file" id="ffile" accept=".html,.htm,.txt,text/html,text/plain" hidden></p>
       <div class="field"><textarea id="fsrc" class="code" placeholder="수업 페이지 실행실의 📋 내 코드 복사, 또는 제미나이 캔버스의 공유 → 콘텐츠 복사로 복사한 코드를 붙여넣으세요 (설명 글이 섞여도 코드만 골라 냅니다)"></textarea></div>
-      <p style="margin:0 0 12px"><button type="button" class="btn line sm" data-act="prev">미리보기</button> <span class="hint" id="fsize"></span></p>
+      <p style="margin:0 0 12px"><button type="button" class="btn line sm" data-act="prev">미리보기</button> <button type="button" class="btn line sm" data-act="snap" id="fsnap" hidden>📸 지금 화면을 대표 화면으로</button> <span class="hint" id="fsize"></span></p>
       <div class="stage small" id="fstage" hidden></div>
-      <div class="lb" style="margin-top:14px">대표 화면 <small>(없어도 됩니다 — 캡처해서 여기 누르고 Ctrl+V)</small></div>
-      <div class="drop" id="fthumb" tabindex="0"><span class="hint">눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
+      <div class="lb" style="margin-top:14px">대표 화면 <small>(전시관 카드에 보이는 그림 — 안 만들어도 올릴 때 앱 화면으로 저절로 만들어요. 내가 고른 화면이 있으면 캡처해서 여기 누르고 Ctrl+V)</small></div>
+      <div class="drop" id="fthumb" tabindex="0"><span class="hint">올릴 때 앱 화면으로 자동으로 만들어요 · 바꾸려면 눌러서 그림 고르기 또는 Ctrl+V</span></div><input type="file" id="fimg" accept="image/*" hidden>
       <div class="lb" style="margin-top:18px">${esc(U.noun)} 소개 <small>(전시관에서 친구들에게 보여요 — 친구가 이 소개를 읽고 돌려 봅니다)</small></div>
       ${D.intro.map((q, i) => `<div class="field"><label for="fi-${q.id}">${i + 1}. ${esc(q.t)}${q.req ? '' : ' <small>(골라서)</small>'}</label><textarea id="fi-${q.id}" rows="2" maxlength="${q.max}"></textarea>${q.id === 'lim' ? `<div class="limpick">${D.limits.map((l, j) => `<button type="button" class="btn line sm" data-limadd="${j}">＋ ${esc(l)}</button>`).join('')}</div>` : ''}</div>`).join('')}
       <label class="check" style="margin-top:16px"><input type="checkbox" id="fpriv"> 앱 안에 내 실명·사진·연락처가 없습니다.</label>
@@ -1023,12 +1108,28 @@ async function panelSubmit(root) {
   fill();
   $('#fkind').onchange = () => { fill(); keep(); };
   const introNow = () => Object.fromEntries(D.intro.map(q => [q.id, $('#fi-' + q.id).value.trim()]));
-  let thumb = null;
+  let thumb = null, thumbAuto = false, thumbBusy = 0;
   const size = () => { const h = extractHtml($('#fsrc').value); $('#fsize').textContent = h ? `${Math.round(bytes(h) / 1024)}KB` : ''; };
   size();
   const keep = () => store('sgh:draft:' + TASK, { html: $('#fsrc').value, title: $('#ftitle').value, kind: $('#fkind').value, ...introNow() });
-  root.addEventListener('input', e => { if (['fsrc', 'ftitle'].includes(e.target.id) || e.target.id.startsWith('fi-')) { keep(); size(); } });
-  const setThumb = async blob => { thumb = await imageToThumb(blob); if (!thumb) return toast('그림이 너무 큽니다.', true); $('#fthumb').className = 'drop ok'; $('#fthumb').innerHTML = `<img src="${thumb}" alt="대표 화면">`; };
+  root.addEventListener('input', e => { if (['fsrc', 'ftitle'].includes(e.target.id) || e.target.id.startsWith('fi-')) { keep(); size(); }
+    if (e.target.id === 'fsrc') { thumbBusy++; if (thumbAuto) showThumb(null); $('#fsnap').hidden = true; } });          // 코드를 고치면 자동으로 만든 그림은 지운다
+  const showThumb = (url, auto) => { thumb = url; thumbAuto = !!auto;
+    if (!url) { $('#fthumb').className = 'drop'; $('#fthumb').innerHTML = '<span class="hint">올릴 때 앱 화면으로 자동으로 만들어요 · 바꾸려면 눌러서 그림 고르기 또는 Ctrl+V</span>'; return; }
+    $('#fthumb').className = 'drop ok'; $('#fthumb').innerHTML = `<img src="${url}" alt="대표 화면">` + (auto ? '<span class="hint">앱 화면으로 자동으로 만든 대표 화면 — 바꾸려면 캡처를 붙여 넣거나 「📸 지금 화면을」을 누르세요</span>' : ''); };
+  const setThumb = async blob => { const d = await imageToThumb(blob); if (!d) return toast('그림이 너무 큽니다.', true); showThumb(d, false); };
+  // 앱 화면으로 대표 화면 만들기 — 직접 고른 그림(캡처)이 있으면 건드리지 않는다
+  const snapFrom = async frame => {                               // 「📸 지금 화면을」 — 미리보기 틀에서 지금 모습 그대로
+    const my = ++thumbBusy, u = await captureFrom(frame, 7000);
+    if (my !== thumbBusy) return;                                   // 그 사이 코드를 고쳤거나 다시 눌렀다
+    if (u) { showThumb(u, false); toast('지금 화면을 대표 화면으로 정했습니다.'); }
+    else toast('이 앱 화면은 그림으로 만들지 못했습니다. 캡처해서 붙여 넣어 주세요.', true);
+  };
+  const snapAuto = async h => {                                   // 미리보기를 누르면 뒤에서 저절로 — 직접 고른 그림이 있으면 건드리지 않는다
+    const my = ++thumbBusy, u = await autoThumb(h);
+    if (my !== thumbBusy) return;
+    if (u && (!thumb || thumbAuto)) showThumb(u, true);
+  };
   $('#fthumb').onclick = () => $('#fimg').click();
   $('#fimg').onchange = e => { const f = e.target.files[0]; if (f) setThumb(f); };
   root.addEventListener('paste', e => { const it = [...(e.clipboardData || {}).items || []].find(i => i.type.startsWith('image/')); if (it && (document.activeElement === $('#fthumb') || e.target.closest('#fthumb'))) { e.preventDefault(); setThumb(it.getAsFile()); } });
@@ -1044,7 +1145,10 @@ async function panelSubmit(root) {
     if (see) { try { const h = await API.myHtml(S.tok, see.dataset.see); const m = modal(`<h3>내가 올린 판</h3><div class="stage" id="mstage"></div>`, true); runIn($('#mstage', m.box), h || '<p>없음</p>', '내 모델'); } catch (err) { toast(err.message, true); } return; }
     const a = e.target.closest('[data-act]'); if (!a) return;
     if (a.dataset.act === 'file') $('#ffile').click();
-    if (a.dataset.act === 'prev') { const h = extractHtml($('#fsrc').value); if (!h) return toast('HTML 코드가 보이지 않습니다.', true); $('#fstage').hidden = false; runIn($('#fstage'), h, '미리보기'); }
+    if (a.dataset.act === 'prev') { const h = extractHtml($('#fsrc').value); if (!h) return toast('HTML 코드가 보이지 않습니다.', true); $('#fstage').hidden = false;
+      runIn($('#fstage'), h, '미리보기', true); $('#fsnap').hidden = false;
+      if (!thumb || thumbAuto) snapAuto(h); }
+    if (a.dataset.act === 'snap') { const f = $('#fstage iframe'); if (!f) return toast('먼저 「미리보기」를 눌러 주세요.', true); snapFrom(f); }
   });
   $('#sf').onsubmit = async e => {
     e.preventDefault();
@@ -1056,6 +1160,11 @@ async function panelSubmit(root) {
     if (miss >= 0) { $('#fi-' + D.intro[miss].id).focus(); return toast(`「모델 소개」 ${miss + 1}번을 한 문장 이상 써 주세요.`, true); }
     if (!$('#fpriv').checked) return toast('실명·사진·연락처가 없는지 확인하고 체크해 주세요.', true);
     const b = $('#sf button[type=submit]'); b.disabled = true;
+    if (!thumb) {                                                  // 대표 화면을 안 정했으면 앱 화면으로 저절로 만든다(실패해도 그냥 올린다)
+      toast('대표 화면을 만드는 중…');
+      const u = await autoThumb(html);
+      if (u && !thumb) showThumb(u, true);
+    }
     const art = { title: $('#ftitle').value.trim(), summary: it.summary, html, thumb, reflect: { kind: $('#fkind').value, how: it.how, lim: it.lim } };
     try {
       let r;
