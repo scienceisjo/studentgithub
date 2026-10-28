@@ -256,6 +256,78 @@ details.rf dl.kv{margin:6px 0 0}
   .kv{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){ .card{transition:none} .card:hover{transform:none} }
+/* ════════ 해누리 웹툰 공모전 (?t=webtoon) — 웹툰 사이트처럼 ════════ */
+html.toon{--blue:#00a35a;--blue-h:#00b865;--blue-dark:#2ee07f;--tint:rgba(0,163,90,.09)}
+html.toon body{background:#fafafa}
+html.toon .nav{background:rgba(17,17,17,.95);border-bottom:0}
+html.toon .nav .nl,html.toon .logo,html.toon .who .me{color:#f5f5f7}
+html.toon .logo .t{color:#2ee07f}
+html.toon .who .btn:not(.primary){color:#c8f5dc}
+html.toon .back{color:var(--blue)}
+.thero{background:#111;background-image:radial-gradient(900px 420px at 88% -12%,rgba(46,224,127,.26),transparent 60%),radial-gradient(700px 360px at 0% 110%,rgba(217,102,31,.22),transparent 60%);color:#fff;padding:52px 0 44px}
+.tkick{display:inline-block;font-size:13px;font-weight:800;color:#111;background:#2ee07f;border-radius:6px;padding:4px 10px;margin:0 0 14px}
+.thero h1{font-size:clamp(36px,6.4vw,62px);line-height:1.04;font-weight:800;letter-spacing:-.045em}
+.tlead{font-size:clamp(16px,2vw,19px);color:#c9c9cf;max-width:640px;margin:16px 0 0;line-height:1.5}
+.thero .cta{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 0}
+.btn.tline{border-color:#4a4a4f;color:#fff;background:transparent}
+.btn.tline:hover{border-color:#8a8a90;text-decoration:none}
+.trules{list-style:none;padding:0;margin:22px 0 0;display:flex;gap:8px;flex-wrap:wrap}
+.trules li{font-size:14px;color:#dcdce0;border:1px solid #333;border-radius:999px;padding:6px 13px}
+.trules b{color:#2ee07f;font-weight:700}
+.thero .stat{color:#9a9aa0;margin:16px 0 0;font-size:14px}.thero .stat b{color:#fff}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:22px 14px;margin:22px 0 0}
+.tcard{display:flex;flex-direction:column;text-decoration:none;color:inherit;min-width:0}
+.tcard .tw{position:relative;border-radius:10px;overflow:hidden;background:#ececec;box-shadow:0 1px 0 rgba(0,0,0,.05)}
+.tcard .thumb{aspect-ratio:3/4;border:0;background:#f0f0f0}
+.tcard .thumb img{transition:transform .25s ease}
+.tcard:hover .thumb img{transform:scale(1.035)}
+.tcard:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:10px}
+.tk{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:5px;color:#fff;background:#3f64b5;letter-spacing:0}
+.tk.tv{background:#d9661f}
+.tcard .tw .tk{position:absolute;left:8px;top:8px;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.tb{padding:9px 2px 0}
+.tb h3{font-size:16px;line-height:1.3;margin:0;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tb .pen{font-size:13px;color:var(--muted);margin:3px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb .tm{display:flex;gap:10px;font-size:12.5px;color:var(--muted2);margin:4px 0 0;flex-wrap:wrap}
+.hrt{color:#e0245e;font-weight:700}.hrt.on::after{content:' · 내 추천';font-weight:600}
+/* 회차 보기 */
+.tview{background:#fafafa;padding:18px 0 40px}
+.ephead{max-width:720px;margin:0 auto;padding:4px 18px 16px}
+.ephead h1{font-size:clamp(26px,4vw,36px);margin:8px 0 6px;font-weight:800;letter-spacing:-.035em}
+.ephead .by{color:var(--muted);font-size:14.5px;margin:0}
+.strip{max-width:720px;margin:0 auto;background:#fff;box-shadow:0 1px 18px rgba(0,0,0,.07)}
+.strip img{display:block;width:100%;height:auto}
+.strip .stage{border-radius:0;border:0}
+.epinfo{max-width:720px;margin:0 auto;padding:18px}
+.ebox{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 12px}
+.ebox h3{font-size:16px;margin:0 0 6px}.ebox p{margin:0;white-space:pre-wrap;font-size:16px}
+.ebox.sci{background:#effbf4;border-color:#bfe8cf}
+.likebar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0 6px}
+.likebtn{min-height:48px;padding:0 22px;border-radius:999px;border:2px solid #e0245e;background:#fff;color:#e0245e;font-size:17px;font-weight:700;cursor:pointer}
+.likebtn.on{background:#e0245e;color:#fff}
+.likebtn:disabled{opacity:.45;cursor:default}
+.ainote{font-size:12.5px;color:var(--muted2);margin:10px 0 0}
+.epcom{max-width:720px;margin:24px auto 0;padding:24px 18px 0;border-top:1px solid var(--line)}
+.rtable{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0 14px;background:#fff}
+.rtable th,.rtable td{border:1px solid var(--line);padding:7px 8px;vertical-align:top;text-align:left;line-height:1.45}
+.rtable th small{display:block;font-weight:400;color:var(--muted)}
+details.rubric{margin:0 0 6px}
+details.rubric summary{cursor:pointer;color:var(--blue);font-weight:700;font-size:14px}
+fieldset.rq{border:0;margin:0 0 10px}
+.rub legend{font-size:14.5px;margin:0 0 8px;padding:0}
+.rub .lv{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rub label{display:flex;gap:7px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:8px 9px;font-size:13.5px;line-height:1.4;cursor:pointer;background:#fff}
+.rub label input{accent-color:var(--blue);margin:3px 0 0;flex:none}
+.rub label:has(input:checked){border-color:var(--blue);background:var(--tint)}
+.rub label b{display:block;color:#d9a400;font-size:13px;letter-spacing:1px}
+.chips2{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+.chips2 .chip{font-size:12.5px;min-height:30px;white-space:normal;text-align:left;line-height:1.35;padding:5px 10px}
+em.req{color:var(--bad);font-style:normal}
+.tdrop{min-height:150px}.tdrop img{max-height:380px;border:1px solid var(--line)}
+.tpick{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.modal .strip{box-shadow:none;max-height:76vh;overflow:auto}
+@media(max-width:760px){.rub .lv{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.thero{padding:40px 0 34px}}
+
 </style>
 </head>
 <body>
@@ -270,7 +342,7 @@ details.rf dl.kv{margin:6px 0 0}
 
 <main id="view" tabindex="-1"></main>
 
-<footer id="app-credit" style="width:100%;box-sizing:border-box;margin:2.5rem 0 0;padding:14px 12px;text-align:center;font-size:12.5px;line-height:1.6;color:#8a8f98;font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;border-top:1px solid rgba(128,128,128,.25);">© 2026 조승재(과학이조선생) · 해누리중학교 · All rights reserved<br><span style="font-size:11px;opacity:.85;">최종 업데이트: 2026-10-01 · <a href="#/admin" style="color:inherit">관리</a></span></footer>
+<footer id="app-credit" style="width:100%;box-sizing:border-box;margin:2.5rem 0 0;padding:14px 12px;text-align:center;font-size:12.5px;line-height:1.6;color:#8a8f98;font-family:system-ui,-apple-system,'Segoe UI','Malgun Gothic',sans-serif;border-top:1px solid rgba(128,128,128,.25);">© 2026 조승재(과학이조선생) · 해누리중학교 · All rights reserved<br><span style="font-size:11px;opacity:.85;">최종 업데이트: 2026-10-29 · <a href="#/admin" style="color:inherit">관리</a></span></footer>
 <div id="toast" class="toast" role="status" hidden></div>
 
 <script>
@@ -391,13 +463,48 @@ const DEF = {
       { id: 'run', k: '작동', t: '소개대로 조작해 보니 잘 돌아가나요? 오류 없이 조작할 수 있나요?' },
       { id: 'match', k: '실험과 견주기', t: '내가 한 실험의 숫자와 견주어 보세요. 부피를 같게 맞추면 압력 숫자가 실험 결과와 비슷하게 나오나요?' }
     ]
+  },
+  /* 해누리 웹툰 공모전 — 실생활 속 기체의 부피 변화 예를 조사해 스토리보드를 짜고, 생성형 AI로 네 컷 만화를 만들어 올린다(?t=webtoon).
+     올리는 것은 앱이 아니라 만화 그림 — 화면은 웹툰 사이트처럼 바뀐다(아래 「해누리 웹툰 공모전」 묶음). */
+  webtoon: {
+    title: '해누리 웹툰 공모전', unit: '기체의 성질', toon: true,
+    lesson: 'https://scienceisjo.github.io/gas-properties/webtoon-contest.html',
+    ui: {
+      noun: '만화', mine: '내 만화', limLabel: '작가의 말', limT: '작가의 말',
+      h1: '실생활 속<br>기체의 부피 변화', lead: '', darkH2: '', dark: [],
+      submitLead: '수업 페이지에서 만든 네 컷 만화를 올리고 친구들에게 소개합니다.',
+      side: '조사·원리·스토리보드·만화 만들기·자기평가는 <b>수업 페이지</b>에서 합니다. 이곳에서는 완성한 만화를 <b>올리고</b>, 친구 만화를 <b>과학으로 평가하고</b>, 과학실 전시 후보를 <b>추천</b>합니다.',
+      steps: [{ id: 'submit', t: '내 만화 올리기', s: '줄거리·과학 원리와 함께', k: '올리기' },
+              { id: 'review', t: '서로 평가 · 추천', s: '친구 만화 2편 이상 · ♥ 3장', k: '서로 평가' }]
+    },
+    missions: [],
+    uploads: [{ id: 'toon', k: '웹툰', t: '네 컷 만화', stage: 1 }],
+    limits: [],
+    intro: [
+      { id: 'summary', k: '줄거리', t: '줄거리', req: true, max: 200, ph: '' },
+      { id: 'how', k: '과학 원리', t: '이 만화에 들어간 과학 원리', req: true, max: 400, ph: '' },
+      { id: 'lim', k: '작가의 말', t: '작가의 말', req: false, max: 200, ph: '' }
+    ],
+    oldReflect: [],
+    reviewQs: [],
+    // 동료 평가·자기평가 루브릭(수업 페이지 자기평가와 같은 표) — 1 노력 · 2 잘함 · 3 매우 잘함
+    rubric: [
+      { id: 'sci', k: '과학 정확성', t: '기체 입자와 부피 변화를 배운 대로 맞게 나타냈나요?',
+        lv: ['입자의 수나 크기가 바뀌는 등 배운 내용과 다른 곳이 있어요', '대체로 맞지만 헷갈리게 그리거나 쓴 곳이 있어요', '입자 수·크기는 그대로, 입자의 운동(또는 간격)과 부피 변화가 정확해요'] },
+      { id: 'msg', k: '원리 전달', t: '만화만 보고도 부피가 왜 변했는지 알 수 있나요?',
+        lv: ['현상만 있고 까닭이 보이지 않아요', '까닭이 나오지만 한 번에 이해되지는 않아요', '입자 모습과 대사로 까닭이 한눈에 보여요'] },
+      { id: 'idea', k: '참신성', t: '예나 이야기가 새롭고 기발한가요?',
+        lv: ['교과서 예와 장면을 그대로 옮겼어요', '익숙한 예에 나만의 장면이나 인물을 더했어요', '새로운 예를 찾았거나 기발한 이야기로 풀었어요'] },
+      { id: 'fun', k: '흥미', t: '네 컷이 자연스럽고 재미있게 읽히나요?',
+        lv: ['컷이 이어지지 않아 읽기 어려워요', '읽을 만하지만 밋밋한 곳이 있어요', '네 컷이 자연스럽게 이어지고 마지막 컷이 기억에 남아요'] }
+    ]
   }
 };
-const TASKS = { gas: '나만의 기체 시뮬레이터', boyle: '보일의 법칙 가상실험실' };
+const TASKS = { gas: '나만의 기체 시뮬레이터', boyle: '보일의 법칙 가상실험실', webtoon: '해누리 웹툰 공모전' };
 const D = DEF[TASK] || DEF.gas;
 const U = D.ui;
 // 같은 사이트의 다른 과제로 가는 주소 — 학번으로 들어와 있으면 그대로 이어진다(들어온 정보는 과제와 상관없이 같은 기기에 저장)
-const otherTask = (() => { const k = TASK === 'boyle' ? 'gas' : 'boyle'; const u = new URL(location.href); u.hash = '#/';
+const otherTask = (() => { if (D.toon) return { key: '', name: '', href: '#/' }; const k = TASK === 'boyle' ? 'gas' : 'boyle'; const u = new URL(location.href); u.hash = '#/';
   if (k === 'gas') u.searchParams.delete('t'); else u.searchParams.set('t', k); return { key: k, name: TASKS[k], href: u.pathname + u.search + u.hash }; })();
 const OPEN = () => (S.task && +S.task.open_stage) || 2;        // 열린 단계(선생님이 관리 → 과제 설정에서 정함) — 올릴 수 있는 것(미션 3·최종본)
 const kindOf = rf => D.uploads.find(u => u.id === (rf || {}).kind);
@@ -618,7 +725,9 @@ const Remote = {
   aRename: (p, id, nick) => rpc('sgh_admin_rename', { p_pass: p, p_student: id, p_nick: nick }),
   aDelete: (p, id) => rpc('sgh_admin_delete_student', { p_pass: p, p_student: id }),
   aExport: (p, task) => rpc('sgh_admin_export', { p_pass: p, p_task: task }),
-  setPass: (o, n) => rpc('sgh_setpass', { p_old: o, p_new: n })
+  setPass: (o, n) => rpc('sgh_setpass', { p_old: o, p_new: n }),
+  like: (tok, work, on) => rpc('sgh_like', { p_token: tok, p_work: work, p_on: on }),
+  toonMeta: (task, tok) => rpc('sgh_toon_meta', tok ? { p_task: task, p_token: tok } : { p_task: task })
 };
 
 /* ════════ 체험 모드: 같은 약속을 이 기기 저장소로 흉내 ════════ */
@@ -626,8 +735,9 @@ const Local = (() => {
   const K = 'sgh-local';
   const fresh = () => ({ students: [], tokens: {}, notes: [], works: [], reviews: [], seq: 1, admin: '1234',
     tasks: { gas: { code: 'gas', title: '나만의 기체 시뮬레이터', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 2 },
-             boyle: { code: 'boyle', title: '보일의 법칙 가상실험실', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 4 } } });
-  const db = () => { const d = load(K, null) || fresh(); if (!d.tasks.boyle) d.tasks.boyle = fresh().tasks.boyle; return d; };
+             boyle: { code: 'boyle', title: '보일의 법칙 가상실험실', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 4 },
+             webtoon: { code: 'webtoon', title: '해누리 웹툰 공모전', lesson_url: '', submit_open: true, review_open: true, auto_public: true, open_stage: 4 } }, likes: [] });
+  const db = () => { const d = load(K, null) || fresh(); if (!d.tasks.boyle) d.tasks.boyle = fresh().tasks.boyle; if (!d.tasks.webtoon) d.tasks.webtoon = fresh().tasks.webtoon; if (!d.likes) d.likes = []; return d; };
   const save = d => { try { localStorage.setItem(K, JSON.stringify(d)); } catch (e) { throw fail('이 기기 저장 공간이 가득 찼습니다. 체험 자료를 지워 주세요'); } };
   const now = () => new Date().toISOString();
   const uid = () => (crypto.randomUUID ? crypto.randomUUID() : 'x' + Math.random().toString(16).slice(2) + Date.now());
@@ -709,6 +819,7 @@ const Local = (() => {
       const d = db(), me = who(d, tok), w = d.works.find(x => x.id === work && x.status === 'public');
       if (!w) throw fail('공개된 작품이 아닙니다'); if (!d.tasks[w.task].review_open) throw fail('지금은 서로 평가 기간이 아닙니다');
       if (w.student_id === me) throw fail('내 작품은 평가할 수 없어요'); if (!filled(praise, 2)) throw fail('칭찬을 한 가지 써 주세요');
+      if (w.task === 'webtoon' && !filled(suggest, 10)) throw fail('과학 피드백을 한 문장 이상(10자 이상) 써 주세요');
       let r = d.reviews.find(x => x.work_id === work && x.reviewer_id === me);
       if (r) Object.assign(r, { checks, praise: praise.trim(), suggest: (suggest || '').trim(), updated_at: now() });
       else d.reviews.push({ id: d.seq++, work_id: work, reviewer_id: me, checks, praise: praise.trim(), suggest: (suggest || '').trim(), hidden: false, created_at: now(), updated_at: now() });
@@ -759,7 +870,21 @@ const Local = (() => {
         return { sid: s.sid, nick: null, cls: cls(s.sid), notes, works: ws.map(w => ({ v: w.v, title: w.title, summary: w.summary || '', status: w.status, reflect: w.reflect || {} })),
           got: d.reviews.filter(r => !r.hidden && ws.some(w => w.id === r.work_id)).map(r => ({ from: stu(d, r.reviewer_id).sid, checks: r.checks, praise: r.praise, suggest: r.suggest })) }; });
     },
-    async setPass(o, n) { const d = db(); need(d, o); if (String(n || '').length < 6) throw fail('새 비밀번호는 6자 이상으로 정해 주세요'); d.admin = n; save(d); return true; }
+    async setPass(o, n) { const d = db(); need(d, o); if (String(n || '').length < 6) throw fail('새 비밀번호는 6자 이상으로 정해 주세요'); d.admin = n; save(d); return true; },
+    async like(tok, work, on) {                          // 서버 sgh_like 와 같은 규칙: 작가에게 붙고, 한 과제에 3장까지
+      const d = db(), me = who(d, tok), w = d.works.find(x => x.id === work && x.status === 'public');
+      if (!w) throw fail('공개된 작품이 아닙니다'); if (w.student_id === me) throw fail('내 작품은 추천할 수 없어요');
+      const has = d.likes.find(l => l.task === w.task && l.author === w.student_id && l.by === me);
+      if (on !== false) { if (!has) { if (d.likes.filter(l => l.by === me && l.task === w.task).length >= 3) throw fail('추천은 3장까지예요. 다른 작품의 추천을 거두고 주세요'); d.likes.push({ task: w.task, author: w.student_id, by: me }); } }
+      else d.likes = d.likes.filter(l => l !== has);
+      save(d);
+      return { on: on !== false, n: d.likes.filter(l => l.task === w.task && l.author === w.student_id).length, used: d.likes.filter(l => l.by === me && l.task === w.task).length };
+    },
+    async toonMeta(task, tok) {
+      const d = db(); let me = null; try { me = tok ? who(d, tok) : null; } catch (e) {}
+      return (await A.gallery(task)).map(g => { const w = d.works.find(x => x.id === g.id), rf = w.reflect || {};
+        return { id: g.id, kind: rf.kind || null, pen: rf.pen || '', style: rf.style || '', likes: d.likes.filter(l => l.task === task && l.author === w.student_id).length, mine: !!me && d.likes.some(l => l.task === task && l.author === w.student_id && l.by === me) }; });
+    }
   };
   return A;
 })();
@@ -767,7 +892,7 @@ const API = LOCAL ? Local : Remote;
 
 /* ════════ 상태 ════════ */
 const TOKK = LOCAL ? 'sgh:ltok' : 'sgh:tok';
-const S = { tok: load(TOKK, ''), me: null, task: null, notReady: false, gallery: null, page: '', f: { cls: '', sort: 'new' }, listY: 0, tab: 'progress', moved: '' };
+const S = { tok: load(TOKK, ''), me: null, task: null, notReady: false, gallery: null, meta: null, page: '', f: { cls: '', sort: 'new', kind: '' }, listY: 0, tab: 'progress', moved: '' };
 function signOut() { S.tok = ''; S.me = null; store(TOKK, ''); drawWho(); }
 function relogin(msg) { signOut(); toast(msg || '다시 들어와 주세요.', true); location.hash = '#/in'; }
 function drawWho() {
@@ -810,6 +935,7 @@ function notReadyBox() {
   return `<div class="notice"><b>선생님이 전시관을 준비하고 있습니다.</b><p>서버가 준비되면 이곳에 친구들의 앱이 모입니다. 그전에는 이 기기에서 체험해 볼 수 있습니다.</p><a class="btn line" href="?local=1${QS.get('t') ? '&t=' + encodeURIComponent(TASK) : ''}">이 기기에서 체험하기</a></div>`;
 }
 function viewList(back) {
+  if (D.toon) return toonList(back);
   document.title = 'Studentgithub · 우리가 만든 과학 앱';
   view.innerHTML = `
   <section class="hero"><div class="wrap">
@@ -887,6 +1013,7 @@ function wireStage(root, html, title) {
   });
 }
 async function viewWork(id) {
+  if (D.toon) return toonWork(id);
   view.innerHTML = `<div class="wrap pad"><a class="back" href="#/">‹ 전시관</a><div id="wbody"><p class="empty">불러오는 중입니다…</p></div></div>`;
   let w;
   try { await loadTask(); w = await API.work(id); } catch (e) { $('#wbody').innerHTML = `<p class="empty">불러오지 못했습니다. (${esc(e.message)})</p>`; return; }
@@ -921,14 +1048,17 @@ async function drawReviews(id) {
   } catch (e) { ul.innerHTML = `<li class="empty">평가를 불러오지 못했습니다.</li>`; }
 }
 function checkBadges(c) {
+  if (D.toon) return `<span class="badges">${RUBRIC.map(q => c && c[q.id] ? `<span class="badge ok">${esc(q.k)} ${stars(c[q.id])}</span>` : '').join('')}</span>`;
   return `<span class="badges">${D.reviewQs.map(q => { const v = c && c[q.id]; return v ? `<span class="badge ${v === 'ok' ? 'ok' : 'warn'}">${esc(q.k)} ${v === 'ok' ? '👍' : '🤔'}</span>` : ''; }).join('')}</span>`;
 }
 function reviewLi(r) {
+  if (D.toon) return toonReviewLi(r);
   const why = D.reviewQs.map(q => r.checks && r.checks[q.id + '_why'] ? `<br><span class="hint">${esc(q.k)}: ${esc(r.checks[q.id + '_why'])}</span>` : '').join('');
   return `<li><div class="rh"><b>${esc(r.who || '친구')}</b><span>${ago(r.ts)}</span>${checkBadges(r.checks)}</div>
     <p class="rb"><b>칭찬</b> ${esc(r.praise)}${r.suggest ? `<br><b>제안</b> ${esc(r.suggest)}` : ''}${why}</p></li>`;
 }
 function reviewForm(box, workId, after) {
+  if (D.toon) return toonReviewForm(box, workId, after);
   box.innerHTML = `<form class="rform" autocomplete="off">
     <h3>이 앱 평가하기</h3>
     ${D.reviewQs.map(q => `<div class="rq"><p>${esc(q.t)}</p>
@@ -1027,14 +1157,14 @@ async function viewMe(step) {
       <ul class="stepnav" id="stepnav"></ul>
       ${lesson ? `<a class="btn line sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 열기 ↗</a>` : ''}
       <p class="hint sidenote">${U.side}</p>
-      <p class="hint sidenote"><a href="${otherTask.href}">${otherTask.key === 'boyle' ? '🔬' : '🧪'} ${esc(otherTask.name)} ›</a></p>
+      ${otherTask.key ? `<p class="hint sidenote"><a href="${otherTask.href}">${otherTask.key === 'boyle' ? '🔬' : '🧪'} ${esc(otherTask.name)} ›</a></p>` : ''}
     </aside>
     <section id="panel"></section></div>`;
   drawStepNav();
   const idx = STEPS.findIndex(s => s.id === step);
   $('#panel').innerHTML = `<div class="stephead"><div><p class="eyebrow" style="margin:0 0 4px">${idx + 1}단계</p><h2>${STEPS[idx].t}</h2></div></div>`;
   const body = document.createElement('div'); $('#panel').appendChild(body);
-  await ({ submit: panelSubmit, review: panelReview })[step](body);
+  await ({ submit: D.toon ? panelToon : panelSubmit, review: panelReview })[step](body);
 }
 
 /* ── 모델 소개 보이기 ── */
@@ -1202,20 +1332,21 @@ function statusBadge(s) { return s === 'public' ? '<span class="badge ok">공개
 async function panelReview(root) {
   const t = S.task || {}, got = S.me.got || [], gave = S.me.gave || [];
   root.innerHTML = `
-    ${t.review_open ? `<p class="lead2">친구 ${esc(U.noun)} <b>2개 이상</b>을 골라 <b>소개를 읽고 직접 돌려 본 뒤</b> 평가합니다. 같은 반 친구 중 평가를 덜 받은 ${esc(U.noun)}부터 나옵니다.</p>
+    ${t.review_open ? `<p class="lead2">${D.toon ? `친구 만화 <b>2편 이상</b>을 끝까지 읽고 <b>루브릭과 과학 피드백</b>으로 평가합니다. 같은 반 친구 중 평가를 덜 받은 만화부터 나옵니다. 과학실 <b>전시 추천 ♥</b>은 만화 화면에서 <b>3장까지</b> 줄 수 있어요 — <span id="likeUsed"></span>` : `친구 ${esc(U.noun)} <b>2개 이상</b>을 골라 <b>소개를 읽고 직접 돌려 본 뒤</b> 평가합니다. 같은 반 친구 중 평가를 덜 받은 ${esc(U.noun)}부터 나옵니다.`}</p>
       <p style="margin:0 0 18px"><button class="btn primary" data-act="assign">평가할 ${esc(U.noun)} 받기</button> <a class="btn" href="#/">전시관에서 골라 평가하기 ›</a></p>
       <div id="asg"></div>` : `<div class="notice" style="margin:0 0 22px"><b>선생님이 서로 평가를 열면 할 수 있습니다.</b><p>그동안 받은 평가와 한 평가를 여기서 볼 수 있습니다.</p></div>`}
     <h3 style="margin-top:26px">내가 한 평가 (${gave.length})</h3>
     <ul class="vlist">${gave.length ? gave.map(g => `<li><div class="vi"><b>${esc(g.title)}</b><span>친구 ${esc(U.noun)} · ${ago(g.ts)}</span></div><a class="btn sm" href="#/w/${g.work}">보기 ›</a></li>`).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
     <h3 style="margin-top:26px">내가 받은 평가 (${got.length})</h3>
     <ul class="rlist">${got.length ? got.map(r => reviewLi({ ...r, who: `친구 · ${r.v}판` })).join('') : '<li class="hint">아직 없습니다.</li>'}</ul>
-    ${got.length ? `<p class="hint">받은 평가를 읽고, 수업 페이지 「평가 기준」 탭에서 내 생각과 견주어 보세요.</p>` : ''}`;
+    ${got.length ? `<p class="hint">${D.toon ? '받은 평가를 읽고, 수업 페이지 「자기평가」에서 내 평가와 견주어 보세요.' : '받은 평가를 읽고, 수업 페이지 「평가 기준」 탭에서 내 생각과 견주어 보세요.'}</p>` : ''}`;
+  if (D.toon) loadMeta().then(() => { const e = $('#likeUsed'); if (e) e.textContent = `지금 ${myLikes()}장 줬어요.`; });
   root.addEventListener('click', async e => {
     const a = e.target.closest('[data-act="assign"]'); if (a) {
       a.disabled = true;
       try {
         const list = await API.assign(S.tok, TASK);
-        $('#asg').innerHTML = list.length ? `<div class="grid" style="margin:0 0 10px">${list.map(cardHtml).join('')}</div><p class="hint">${esc(U.noun)}을(를) 눌러 소개를 읽고 돌려 본 뒤, 아래에 평가를 남기세요.</p>` : `<p class="empty">지금 평가할 새 ${esc(U.noun)}이(가) 없습니다. 친구들이 더 올리면 다시 눌러 보세요.</p>`;
+        $('#asg').innerHTML = list.length ? `<div class="${D.toon ? 'tgrid' : 'grid'}" style="margin:0 0 10px">${list.map(a => D.toon ? toonCard(a) : cardHtml(a)).join('')}</div><p class="hint">${esc(U.noun)}을(를) 눌러 소개를 읽고 돌려 본 뒤, 아래에 평가를 남기세요.</p>` : `<p class="empty">지금 평가할 새 ${esc(U.noun)}이(가) 없습니다. 친구들이 더 올리면 다시 눌러 보세요.</p>`;
         $$('.thumb[data-has="1"]', $('#asg')).forEach(el => thumbIO && thumbIO.observe(el));
       } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
       finally { a.disabled = false; }
@@ -1234,14 +1365,14 @@ function viewAdmin() {
       catch (err) { toast(/function|schema/i.test(err.message) ? '서버에 SETUP SQL 을 먼저 실행해 주세요.' : err.message, true); } };
     return;
   }
-  const tabs = [['progress', '진행 현황'], ['works', '올린 판 확인'], ['reviews', '서로 평가'], ['task', '과제 설정'], ['pass', '비밀번호']];
+  const tabs = [['progress', '진행 현황'], ['works', '올린 판 확인'], ['reviews', '서로 평가'], ...(D.toon ? [['print', '🖨 과학실 전시 인쇄']] : []), ['task', '과제 설정'], ['pass', '비밀번호']];
   view.innerHTML = `<div class="wrap pad"><div class="ah"><h1 style="margin:0">관리</h1><button class="btn sm" data-act="aout">관리 나가기</button></div>
     <div class="atabs">${tabs.map(([k, t]) => `<button data-tab="${k}" aria-pressed="${S.tab === k}">${t}</button>`).join('')}</div><div id="apanel"></div></div>`;
   view.onclick = e => {
     const tb = e.target.closest('[data-tab]'); if (tb) { S.tab = tb.dataset.tab; viewAdmin(); return; }
     if (e.target.closest('[data-act="aout"]')) { sset('sgh:ap', ''); viewAdmin(); }
   };
-  ({ progress: aProgress, works: aWorks, reviews: aReviews, task: aTask, pass: aPass })[S.tab]($('#apanel'));
+  ({ progress: aProgress, works: aWorks, reviews: aReviews, print: D.toon ? aPrint : aProgress, task: aTask, pass: aPass })[S.tab]($('#apanel'));
 }
 const aFail = err => { if (/관리자 비밀번호/.test(err.message)) { sset('sgh:ap', ''); viewAdmin(); } toast(err.message, true); };
 async function aProgress(box) {
@@ -1255,7 +1386,7 @@ async function aProgress(box) {
     box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 12px">
         <div class="chips">${['', ...cl].map(c => `<button class="chip" data-cls="${c}" aria-pressed="${cur === c}">${c ? clsName(c) : '전체'}<span class="n">${rows.filter(r => !c || r.cls === c).length}</span></button>`).join('')}</div>
         <button class="btn line sm" data-act="csv">CSV 내려받기</button></div>
-      <p class="hint" style="margin:0 0 10px">올린 판 수 · 최근 판 상태 · 서로 평가(한 개수 2개 이상 초록). 줄을 누르면 그 학생이 올린 판과 모델 소개, 평가가 열립니다. 찾은 잘못·돌아보기·기획서는 수업 페이지에서 보내 <b>기체 단원 교사 대시보드</b>에 모입니다. 📝 = 10-12 전 작업실에 쓴 기록이 있음.</p>
+      <p class="hint" style="margin:0 0 10px">${D.toon ? '올린 판 수 · 최근 판 상태 · 서로 평가(한 개수 2개 이상 초록). 줄을 누르면 그 학생이 올린 만화와 평가가 열립니다. 조사·원리·스토리보드·자기평가는 수업 페이지에서 보내 <b>교사 대시보드</b>(electricity/04-ohm-teacher.html → 기체의 성질 → gas-webtoon)에 모입니다.' : '올린 판 수 · 최근 판 상태 · 서로 평가(한 개수 2개 이상 초록). 줄을 누르면 그 학생이 올린 판과 모델 소개, 평가가 열립니다. 찾은 잘못·돌아보기·기획서는 수업 페이지에서 보내 <b>기체 단원 교사 대시보드</b>에 모입니다. 📝 = 10-12 전 작업실에 쓴 기록이 있음.'}</p>
       <div class="tscroll"><table class="ptable"><tr><th>학번</th><th class="c">올린 판</th><th>상태</th><th class="c">한 평가</th><th class="c">받은 평가</th><th>마지막 접속</th></tr>
       ${list.length ? list.map(r => `<tr class="row" data-sid="${r.student_id}"><td>${esc(r.sid)}${old(r)}</td><td class="c">${r.works ? `<span class="ok1">${r.works}</span>` : ''}</td><td>${r.latest_status ? statusBadge(r.latest_status) : ''}</td><td class="c">${r.gave ? (r.gave >= 2 ? `<span class="ok1">${r.gave}</span>` : `<span class="st1">${r.gave}</span>`) : ''}</td><td class="c">${r.got || ''}</td><td class="hint">${ago(r.last_seen)}</td></tr>`).join('') : `<tr><td colspan="6" class="empty">아직 들어온 학생이 없습니다.</td></tr>`}</table></div>`;
   };
@@ -1304,7 +1435,8 @@ async function exportCsv() {
   const vk = w => `${w.v}판${kindOf(w.reflect) ? '(' + kindOf(w.reflect).k + ')' : ''}`;
   const anyOld = rows.some(r => (r.works || []).some(w => hasOld(w.reflect)));
   const anyFix = rows.some(r => r.notes && r.notes.fix);
-  const head = ['학번', '반', '올린 것(판별)', ...D.intro.map(x => U.noun + ' 소개: ' + x.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', '받은 칭찬·제안'];
+  const head = ['학번', '반', '올린 것(판별)', ...D.intro.map(x => U.noun + ' 소개: ' + x.k + '(판별)'), '판 수', '최근 상태', '받은 평가 수', D.toon ? '받은 평가(좋았던 점·과학 피드백)' : '받은 칭찬·제안'];
+  if (D.toon) head.push('필명', '관계', '그림체', ...RUBRIC.map(q => '받은 평균: ' + q.k));
   if (anyOld) head.push(...D.oldReflect.map(x => '옛 돌아보기: ' + x.k + '(판별)'));
   if (anyFix) { D.missions.forEach(m => head.push('옛 고치기 기록: ' + m.name + ' 찾은 잘못', m.name + ' 보인 것', m.name + ' 왜 틀렸나', m.name + ' 어떻게 고쳤나')); head.push('옛 고치기 기록: AI가 엉뚱하게'); }
   const out = [head.map(q).join(',')];
@@ -1314,6 +1446,8 @@ async function exportCsv() {
       ...D.intro.map(x => ws.map(w => [vk(w), introOf(w)[x.id]]).filter(p => String(p[1] || '').trim()).map(p => p[0] + ': ' + p[1]).join(' / ')),
       ws.length, ws.slice(-1).map(w => ({ public: '공개', pending: '확인 대기', hidden: '내려감' }[w.status])).join(''),
       (r.got || []).length, (r.got || []).map(g => `${g.from}: ${g.praise}${g.suggest ? ' / 제안: ' + g.suggest : ''}`).join(' // ')];
+    if (D.toon) { const lw = (ws.slice(-1)[0] || {}).reflect || {}, g = r.got || [];
+      line.push(lw.pen || '', KIND[lw.kind] || '', lw.style || '', ...RUBRIC.map(q => { const xs = g.map(x => +((x.checks || {})[q.id]) || 0).filter(Boolean); return xs.length ? (xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : ''; })); }
     if (anyOld) line.push(...D.oldReflect.map(x => ws.filter(w => String((w.reflect || {})[x.id] || '').trim()).map(w => vk(w) + ': ' + w.reflect[x.id]).join(' / ')));
     if (anyFix) { const fx = (r.notes || {}).fix || {}; D.missions.forEach(m => { const x = fx[m.id] || {}; line.push((x.found || []).map((v, i) => v ? CIRC[i] : '').join(''), x.see, x.why, x.fix); }); line.push(fx.aiWrong); }
     out.push(line.map(q).join(','));
@@ -1326,9 +1460,9 @@ async function aWorks(box) {
   const pend = rows.filter(r => r.status === 'pending');
   box.innerHTML = `<div class="abar" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 10px"><p class="hint" style="margin:0">확인 대기 ${pend.length} · 모두 ${rows.length}</p>${pend.length ? `<button class="btn primary sm" data-allpub>확인 대기 모두 공개</button>` : ''}</div>
     <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${kindOf(r.reflect) ? `<span class="kd">${esc(kindOf(r.reflect).k)}</span>` : ''}${esc(r.title)} · ${r.v}판</b><span>학번 ${esc(r.sid)} · ${ago(r.ts)}</span>${verDetails(r)}</div>
-      <div class="ab">${statusBadge(r.status)}<button class="btn line sm" data-aw="${r.id}">돌려 보기</button>${r.status !== 'public' ? `<button class="btn primary sm" data-st="public" data-id="${r.id}">공개</button>` : ''}${r.status !== 'hidden' ? `<button class="btn sm danger" data-st="hidden" data-id="${r.id}">내리기</button>` : ''}</div></li>`).join('') : '<li class="empty">아직 올라온 앱이 없습니다.</li>'}</ul>`;
+      <div class="ab">${statusBadge(r.status)}<button class="btn line sm" data-aw="${r.id}">${D.toon ? '보기' : '돌려 보기'}</button>${r.status !== 'public' ? `<button class="btn primary sm" data-st="public" data-id="${r.id}">공개</button>` : ''}${r.status !== 'hidden' ? `<button class="btn sm danger" data-st="hidden" data-id="${r.id}">내리기</button>` : ''}</div></li>`).join('') : '<li class="empty">아직 올라온 앱이 없습니다.</li>'}</ul>`;
   box.onclick = async e => {
-    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">학번 ${esc(w.sid)}</span></h3><div class="stage" id="mst"></div>`, true); runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
+    const aw = e.target.closest('[data-aw]'); if (aw) { try { const w = await API.aWork(AP(), aw.dataset.aw); const src = D.toon ? toonImg(w.html) : ''; const mm = modal(`<h3>${esc(w.title)} · ${w.v}판 <span class="hint">학번 ${esc(w.sid)}</span></h3>${src ? `<div class="strip"><img src="${src}" alt=""></div>` : '<div class="stage" id="mst"></div>'}`, true); if (!src) runIn($('#mst', mm.box), w.html, w.title); } catch (err) { aFail(err); } return; }
     const st = e.target.closest('[data-st]'); if (st) { try { await API.aStatus(AP(), [st.dataset.id], st.dataset.st); toast(st.dataset.st === 'public' ? '공개했습니다.' : '내렸습니다.'); aWorks(box); } catch (err) { aFail(err); } return; }
     if (e.target.closest('[data-allpub]')) { try { const n = await API.aStatus(AP(), pend.map(r => r.id), 'public'); toast(n + '개를 공개했습니다.'); aWorks(box); } catch (err) { aFail(err); } }
   };
@@ -1337,7 +1471,7 @@ async function aReviews(box) {
   box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
   let rows; try { rows = await API.aReviews(AP(), TASK); } catch (e) { return aFail(e); }
   box.innerHTML = `<p class="hint" style="margin:0 0 10px">서로 평가 ${rows.length}개. 부적절한 평가는 숨기면 학생들에게 보이지 않습니다.</p>
-    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${esc(r.reviewer)} → ${esc(r.author)} ${r.v}판</b><span>${ago(r.ts)}</span><p>${checkBadges(r.checks)}</p><p><b>칭찬</b> ${esc(r.praise)}${r.suggest ? `<br><b>제안</b> ${esc(r.suggest)}` : ''}</p></div>
+    <ul class="alist">${rows.length ? rows.map(r => `<li><div class="ai"><b>${esc(r.reviewer)} → ${esc(r.author)} ${r.v}판</b><span>${ago(r.ts)}</span><p>${checkBadges(r.checks)}</p><p><b>${D.toon ? '👍 좋았던 점' : '칭찬'}</b> ${esc(r.praise)}${r.suggest ? `<br><b>${D.toon ? '🔬 과학 피드백' : '제안'}</b> ${esc(r.suggest)}` : ''}</p></div>
       <div class="ab">${r.hidden ? '<span class="badge mute">숨김</span>' : ''}<button class="btn line sm" data-hide="${r.id}" data-h="${r.hidden ? 0 : 1}">${r.hidden ? '다시 보이기' : '숨기기'}</button></div></li>`).join('') : '<li class="empty">아직 평가가 없습니다.</li>'}</ul>`;
   box.onclick = async e => { const b = e.target.closest('[data-hide]'); if (!b) return; try { await API.aReviewHide(AP(), +b.dataset.hide, b.dataset.h === '1'); aReviews(box); } catch (err) { aFail(err); } };
 }
@@ -1364,10 +1498,368 @@ function aPass(box) {
   $('#pf').onsubmit = async e => { e.preventDefault(); try { await API.setPass($('#po').value, $('#pn').value); sset('sgh:ap', $('#pn').value); toast('비밀번호를 바꿨습니다.'); } catch (err) { toast(err.message, true); } };
 }
 
+/* ════════ 해누리 웹툰 공모전 (?t=webtoon, 2026-10-29) ════════
+   올리는 것 = 네 컷 만화 그림(세로로 이어 붙인 한 장). 그림은 작은 웹툰 페이지(HTML)에 담아 sgh_works.html 에 넣는다 — 표 모양은 그대로.
+   전시관 = 웹툰 사이트처럼(관계·반·추천순 카드), 작품 보기 = 세로로 읽는 만화 + 줄거리·과학 원리·작가의 말 + 전시 추천(♥ 3장) + 루브릭 평가.
+   수업 페이지(webtoon-contest.html, 같은 주소)가 만든 만화는 IndexedDB 'haenuri-webtoon'·localStorage 'gastoon:pack' 에서 불러온다. */
+const KIND = { pv: '압력과 부피', tv: '온도와 부피' };
+const RUBRIC = D.rubric || [];
+const SCI_WORDS = /입자|부피|압력|온도|충돌|운동|기체|공기|늘어|줄어|커지|작아|커져|작아져|빠르|느리|활발|둔하|간격|거리|팽창|수축|부풀|찌그러/;
+const RUDE = /바보|멍청|노잼|쓰레기|최악|못생|구려|구리다|별로임|ㅂㅅ|ㅄ|병신|시발|씨발|ㅅㅂ|꺼져|짜증나|극혐|토나와|재미없어/;
+const STARTERS = ['○컷에서 ~ 장면은 과학적으로 맞아요. 왜냐하면 ~', '○컷에서 입자의 수(크기)가 바뀐 것처럼 보여요. 입자의 수와 크기는 그대로여야 해요.',
+  '부피가 변한 까닭이 압력 때문인지 온도 때문인지 대사로 더 드러나면 좋겠어요.', '입자의 움직임(빠르기·충돌)을 그림으로 보여 주면 원리가 더 잘 보일 것 같아요.'];
+const toonImg = html => { const m = /<img[^>]*\bid="toon"[^>]*\bsrc="(data:image\/[a-z]+;base64,[A-Za-z0-9+/=]+)"/.exec(html || ''); return m ? m[1] : ''; };
+const toonMetaOf = html => { const m = /<script type="application\/json" id="toon-meta">([\s\S]*?)<\/script>/.exec(html || ''); try { return m ? JSON.parse(m[1]) : {}; } catch (e) { return {}; } };
+async function loadMeta() {
+  try { const r = await API.toonMeta(TASK, S.tok || null); S.meta = Object.fromEntries((r || []).map(x => [x.id, x])); }
+  catch (e) { S.meta = S.meta || {}; }
+  return S.meta;
+}
+const myLikes = () => Object.values(S.meta || {}).filter(x => x.mine).length;
+const stars = n => '★'.repeat(+n || 0) + '☆'.repeat(3 - (+n || 0));
+
+/* ── 전시관 ── */
+function toonList(back) {
+  document.title = '해누리 웹툰 공모전 · 실생활 속 기체의 부피 변화';
+  view.innerHTML = `
+  <section class="thero"><div class="wrap">
+    <p class="tkick">제1회 해누리 웹툰 공모전 · ${esc(D.unit)}</p>
+    <h1>실생활 속<br>기체의 부피 변화</h1>
+    <p class="tlead">우리 주변에서 기체의 부피가 변하는 장면을 찾아, 기체 입자의 움직임이 보이는 네 컷 만화로 그렸습니다. 읽고, 과학으로 평가하고, 과학실 전시 후보를 추천해 주세요.</p>
+    <div class="cta"><a class="btn primary" href="#/me">내 만화 올리기</a><a class="btn tline" href="#/me/review">서로 평가 · 추천</a>${lessonUrl() ? `<a class="btn tline" href="${esc(lessonUrl())}" target="_blank" rel="noopener">수업 페이지 ↗</a>` : ''}</div>
+    <ul class="trules"><li><b>1인 1편</b> 네 컷 만화</li><li><b>과학 피드백</b> 친구 만화 2편 이상</li><li><b>전시 추천 ♥</b> 한 사람 3장까지</li><li><b>우수작</b> 과학실 전시</li></ul>
+    <p class="stat" id="stat"></p>
+  </div></section>
+  <section class="browse" id="browse"><div class="wrap"><div class="filters" id="filters"></div><div id="results"><p class="empty">불러오는 중입니다…</p></div></div></section>`;
+  view.onclick = e => { const c = e.target.closest('.chip[data-f]'); if (!c) return; S.f[c.dataset.f] = c.dataset.v; toonResults(); };
+  (async () => {
+    await loadTask();
+    if (S.notReady) { $('#results').innerHTML = notReadyBox(); return; }
+    try { S.gallery = await API.gallery(TASK); } catch (e) { $('#results').innerHTML = `<p class="empty">목록을 불러오지 못했습니다. 잠시 뒤 새로고침해 주세요. (${esc(e.message)})</p>`; return; }
+    await loadMeta();
+    const n = S.gallery.length, rv = S.gallery.reduce((a, g) => a + g.reviews, 0), lk = Object.values(S.meta).reduce((a, m) => a + (m.likes || 0), 0);
+    $('#stat').innerHTML = n ? `작품 <b>${n}</b>편 · 과학 평가 <b>${rv}</b>개 · 전시 추천 <b>${lk}</b>개` : '';
+    toonResults(); if (back) scrollTo(0, S.listY);
+  })();
+}
+function toonResults() {
+  const box = $('#results'), fb = $('#filters'); if (!box) return;
+  const g = S.gallery || [], M = S.meta || {};
+  if (!g.length) { fb.innerHTML = ''; box.innerHTML = `<div class="notice"><b>아직 공개된 만화가 없습니다.</b><p>올린 만화는 선생님 확인을 거쳐 이곳에 보입니다.</p><a class="btn primary" href="#/me">내 만화 올리기</a></div>`; return; }
+  const kc = k => g.filter(x => (M[x.id] || {}).kind === k).length;
+  const by = {}; g.forEach(x => { if (x.cls) by[x.cls] = (by[x.cls] || 0) + 1; });
+  const cl = Object.keys(by).sort((a, b) => a.localeCompare(b, 'ko', { numeric: true }));
+  const chip = (f, v, t, n) => `<button class="chip" data-f="${f}" data-v="${esc(v)}" aria-pressed="${(S.f[f] || '') === v}">${t}${n !== undefined ? `<span class="n">${n}</span>` : ''}</button>`;
+  fb.innerHTML = `<div class="frow"><span class="fl">관계</span><div class="chips">${chip('kind', '', '전체', g.length)}${chip('kind', 'pv', '🔵 압력과 부피', kc('pv'))}${chip('kind', 'tv', '🟠 온도와 부피', kc('tv'))}</div></div>` +
+    (cl.length > 1 ? `<div class="frow"><span class="fl">반</span><div class="chips">${chip('cls', '', '전체')}${cl.map(c => chip('cls', c, esc(clsName(c)), by[c])).join('')}</div></div>` : '') +
+    `<div class="frow"><span class="fl">순서</span><div class="chips">${chip('sort', 'new', '새 작품')}${chip('sort', 'like', '♥ 추천 많은 순')}${chip('sort', 'few', '평가가 적은 순')}</div></div>`;
+  let list = g.filter(x => (!S.f.cls || x.cls === S.f.cls) && (!S.f.kind || (M[x.id] || {}).kind === S.f.kind));
+  if (S.f.sort === 'few') list = [...list].sort((a, b) => a.reviews - b.reviews);
+  if (S.f.sort === 'like') list = [...list].sort((a, b) => ((M[b.id] || {}).likes || 0) - ((M[a.id] || {}).likes || 0));
+  box.innerHTML = list.length ? `<div class="tgrid">${list.map(a => toonCard(a)).join('')}</div>` : `<p class="empty">고른 조건의 만화가 없습니다.</p>`;
+  $$('.thumb[data-has="1"]', box).forEach(el => thumbIO ? thumbIO.observe(el) : 0);
+}
+function toonCard(a, m) {
+  m = m || (S.meta || {})[a.id] || {};
+  return `<a class="tcard" href="#/w/${a.id}"><div class="tw">
+      <div class="thumb" data-id="${a.id}" data-has="${a.has_thumb ? 1 : 0}"><span class="tile" aria-hidden="true">${esc(firstChar(a.title))}</span></div>
+      ${m.kind ? `<span class="tk ${esc(m.kind)}">${esc(KIND[m.kind] || '')}</span>` : ''}</div>
+    <div class="tb"><h3>${esc(a.title)}</h3><p class="pen">${esc(m.pen || '이름 없는 작가')}${a.cls ? ' · ' + esc(clsName(a.cls)) : ''}</p>
+      <p class="tm"><span class="hrt${m.mine ? ' on' : ''}" title="전시 추천">♥ ${m.likes || 0}</span><span title="과학 평가">💬 ${a.reviews}</span><span>${ago(a.ts)}</span></p></div></a>`;
+}
+
+/* ── 작품(회차) 보기 ── */
+function rubricTable() {
+  return `<table class="rtable"><tr><th>기준</th><th>★ 1</th><th>★★ 2</th><th>★★★ 3</th></tr>${RUBRIC.map(q => `<tr><th>${esc(q.k)}<small>${esc(q.t)}</small></th>${q.lv.map(l => `<td>${esc(l)}</td>`).join('')}</tr>`).join('')}</table>`;
+}
+async function toonWork(id) {
+  view.innerHTML = `<div class="tview"><div class="wrap"><a class="back" href="#/">‹ 해누리 웹툰</a></div><div id="wbody"><p class="empty">불러오는 중입니다…</p></div></div>`;
+  let w;
+  try { await loadTask(); w = await API.work(id); if (!S.meta) await loadMeta(); } catch (e) { $('#wbody').innerHTML = `<p class="empty">불러오지 못했습니다. (${esc(e.message)})</p>`; return; }
+  if (!w) { $('#wbody').innerHTML = `<p class="empty">이 만화는 지금 볼 수 없습니다. 선생님 확인을 기다리고 있거나 내려간 만화입니다.</p>`; return; }
+  const hm = toonMetaOf(w.html), m = (S.meta || {})[id] || { likes: 0, mine: false }, img = toonImg(w.html), it = w.intro || {};
+  const kind = it.kind || m.kind || hm.kind, pen = m.pen || hm.pen || '이름 없는 작가', style = m.style || hm.style || '';
+  document.title = w.title + ' · 해누리 웹툰';
+  $('#wbody').innerHTML = `
+    <header class="ephead">
+      ${kind ? `<span class="tk ${esc(kind)}">${esc(KIND[kind] || '')}</span>` : ''}
+      <h1>${esc(w.title)}</h1>
+      <p class="by">${esc(pen)}${w.cls ? ' · ' + esc(clsName(w.cls)) : ''} · ${w.v}판 · ${ago(w.ts)}${style ? ' · 그림체 ' + esc(style) : ''}</p>
+      ${w.latest > w.v ? `<p class="note">이 작가가 고친 새 판(${w.latest}판)이 있습니다.</p>` : ''}
+    </header>
+    <div class="strip">${img ? `<img src="${img}" alt="${esc(w.title)} — 네 컷 만화">` : `<div class="stage" id="stage"></div>`}</div>
+    <div class="epinfo">
+      ${w.summary ? `<section class="ebox"><h3>📖 줄거리</h3><p>${esc(w.summary)}</p></section>` : ''}
+      ${it.how ? `<section class="ebox sci"><h3>🔬 이 만화 속 과학</h3><p>${esc(it.how)}</p></section>` : ''}
+      ${it.lim ? `<section class="ebox"><h3>✏️ 작가의 말</h3><p>${esc(it.lim)}</p></section>` : ''}
+      <div class="likebar" id="likebar"></div>
+      <p class="ainote">그림은 생성형 AI(제미나이)로 만들고, 스토리·대사·과학 원리는 작가가 직접 썼습니다.</p>
+    </div>
+    <section class="epcom">
+      <h2>과학 평가 <span style="color:var(--muted);font-weight:500" id="rn"></span></h2>
+      <details class="rubric"><summary>평가 기준(루브릭) 보기</summary>${rubricTable()}</details>
+      <ul class="rlist" id="rlist"><li class="empty" style="text-align:left">불러오는 중입니다…</li></ul>
+      <div id="rform"></div>
+    </section>`;
+  if (!img) runIn($('#stage'), w.html, w.title);
+  drawLike(id, w, m);
+  drawReviews(id);
+  const box = $('#rform');
+  if (!S.me) box.innerHTML = `<p class="note">평가하려면 <a href="#/in">학번으로 들어가</a> 주세요.</p>`;
+  else if (!S.task || !S.task.review_open) box.innerHTML = `<p class="note">선생님이 서로 평가를 열면 여기서 평가할 수 있습니다.</p>`;
+  else if (w.nick === S.me.student.nick) box.innerHTML = `<p class="note">내 만화입니다. 친구들의 평가는 「내 만화 → 서로 평가 · 추천」에서도 볼 수 있습니다.</p>`;
+  else toonReviewForm(box, id, () => drawReviews(id));
+}
+function drawLike(id, w, m) {
+  const box = $('#likebar'); if (!box) return;
+  const own = S.me && w.nick === S.me.student.nick;
+  box.innerHTML = `<button type="button" class="likebtn${m.mine ? ' on' : ''}" data-like${(!S.me || own) ? ' disabled' : ''}>♥ <b>${m.likes || 0}</b> ${m.mine ? '추천했어요' : '전시 추천'}</button>
+    <span class="hint">${!S.me ? '<a href="#/in">학번으로 들어가면</a> 과학실 전시 후보로 추천할 수 있어요' : own ? '내 만화는 추천할 수 없어요' : `과학실 전시 후보로 추천해요 · 내 추천 ${myLikes()}/3장 · 다시 누르면 거둡니다`}</span>`;
+  box.onclick = async e => {
+    const b = e.target.closest('[data-like]'); if (!b || b.disabled) return;
+    b.disabled = true;
+    try {
+      const r = await API.like(S.tok, id, !m.mine);
+      m.mine = !m.mine; m.likes = r.n; (S.meta || (S.meta = {}))[id] = Object.assign((S.meta || {})[id] || {}, m);
+      toast(m.mine ? '전시 후보로 추천했어요 ♥' : '추천을 거뒀어요');
+    } catch (err) {
+      if (err.hint === 'login') return relogin();
+      toast(/function|schema|PGRST|404/i.test(err.message) ? '선생님이 추천 기능을 아직 켜지 않았어요.' : err.message, true);
+    }
+    drawLike(id, w, m);
+  };
+}
+function toonReviewLi(r) {
+  const c = r.checks || {};
+  const b = RUBRIC.map(q => c[q.id] ? `<span class="badge ok">${esc(q.k)} ${stars(c[q.id])}</span>` : '').join('');
+  return `<li><div class="rh"><b>${esc(r.who || '친구')}</b><span>${ago(r.ts)}</span><span class="badges">${b}</span></div>
+    <p class="rb">${r.suggest ? `<b>🔬 과학 피드백</b> ${esc(r.suggest)}` : ''}${r.praise ? `${r.suggest ? '<br>' : ''}<b>👍 좋았던 점</b> ${esc(r.praise)}` : ''}</p></li>`;
+}
+function toonReviewForm(box, workId, after) {
+  box.innerHTML = `<form class="rform tform" autocomplete="off">
+    <h3>이 만화 평가하기</h3>
+    <p class="hint" style="margin:0 0 12px">기준마다 알맞은 칸을 고르세요. 평가는 이름 없이 「친구」로 보입니다. 친구를 깎아내리는 말이 아니라, <b>과학으로 돕는 말</b>을 씁니다.</p>
+    ${RUBRIC.map(q => `<fieldset class="rq rub"><legend><b>${esc(q.k)}</b> — ${esc(q.t)}</legend><div class="lv">${q.lv.map((l, i) => `<label><input type="radio" name="${q.id}" value="${i + 1}"><span><b>${stars(i + 1)}</b>${esc(l)}</span></label>`).join('')}</div></fieldset>`).join('')}
+    <div class="field"><label for="tsug">🔬 과학 피드백 <em class="req">*</em> <small>몇 번째 컷의 무엇이 과학적으로 맞는지, 어떻게 고치면 더 정확한지 — 「재밌다」「별로다」만 쓰면 안 돼요</small></label>
+      <textarea id="tsug" name="suggest" maxlength="300" rows="3" placeholder="예: 3컷에서 온도가 높아질 때 입자 수가 그대로라서 정확해요. 입자가 더 빠르게 움직이는 표시가 있으면 원리가 더 잘 보일 것 같아요."></textarea>
+      <div class="chips2">${STARTERS.map((s, i) => `<button type="button" class="chip" data-st="${i}">${esc(s)}</button>`).join('')}</div></div>
+    <div class="field"><label for="tpr">👍 좋았던 점 <em class="req">*</em></label><textarea id="tpr" name="praise" maxlength="300" rows="2" placeholder="예: 마지막 컷의 반전 덕분에 원리가 오래 기억에 남아요."></textarea></div>
+    <p style="margin:0 0 14px"><button class="btn primary" type="submit">평가 보내기</button></p></form>`;
+  const f = box.querySelector('form');
+  f.addEventListener('click', e => { const s = e.target.closest('[data-st]'); if (!s) return; const ta = f.querySelector('#tsug'); ta.value = (ta.value.trim() ? ta.value.trim() + ' ' : '') + STARTERS[+s.dataset.st]; ta.focus(); });
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const fd = new FormData(f), checks = {};
+    for (const q of RUBRIC) { const v = fd.get(q.id); if (!v) { toast(`「${q.k}」 기준의 칸을 골라 주세요.`, true); return; } checks[q.id] = +v; }
+    const sug = String(fd.get('suggest') || '').trim(), pr = String(fd.get('praise') || '').trim();
+    if (sug.length < 15) { f.querySelector('#tsug').focus(); return toast('과학 피드백을 한 문장 이상(15자 이상) 써 주세요.', true); }
+    if (!SCI_WORDS.test(sug)) { f.querySelector('#tsug').focus(); return toast('과학 피드백에 과학 낱말(입자·부피·압력·온도·충돌…)을 넣어 까닭을 써 주세요.', true); }
+    if (pr.length < 5) { f.querySelector('#tpr').focus(); return toast('좋았던 점을 한 가지 써 주세요.', true); }
+    if (RUDE.test(sug + ' ' + pr)) return toast('친구가 기분 좋게 고칠 수 있는 말로 바꿔 주세요.', true);
+    const b = f.querySelector('button[type=submit]'); b.disabled = true;
+    try { await API.reviewSave(S.tok, workId, checks, pr, sug); toast('평가를 보냈습니다. 고마워요!'); f.reset(); if (after) after(); await loadMe(); }
+    catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
+    finally { b.disabled = false; }
+  };
+}
+
+/* ── 내 만화 올리기 ── */
+function idbGet(key) {
+  return new Promise(res => {
+    try {
+      const rq = indexedDB.open('haenuri-webtoon', 1);
+      rq.onupgradeneeded = () => { try { rq.result.createObjectStore('kv'); } catch (e) {} };
+      rq.onsuccess = () => { try { const g = rq.result.transaction('kv', 'readonly').objectStore('kv').get(key); g.onsuccess = () => res(g.result || null); g.onerror = () => res(null); } catch (e) { res(null); } };
+      rq.onerror = () => res(null);
+    } catch (e) { res(null); }
+  });
+}
+async function blobImage(b) { const u = URL.createObjectURL(b); try { const im = new Image(); im.src = u; await im.decode(); return im; } finally { setTimeout(() => URL.revokeObjectURL(u), 4000); } }
+async function stackImages(blobs) {                     // 여러 장이면 위에서 아래로 이어 붙인다(컷 경계도 기억)
+  const ims = []; for (const b of blobs) ims.push(await blobImage(b));
+  const W = Math.min(1000, Math.max(...ims.map(i => i.naturalWidth))), gap = ims.length > 1 ? 14 : 0;
+  const hs = ims.map(i => Math.round(i.naturalHeight * W / i.naturalWidth));
+  const H = Math.min(16000, hs.reduce((a, b) => a + b, 0) + gap * (ims.length - 1));
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+  let y = 0; const cuts = [];
+  ims.forEach((im, i) => { x.drawImage(im, 0, y, W, hs[i]); y += hs[i]; if (i < ims.length - 1) { cuts.push(+(y / H).toFixed(4)); y += gap; } });
+  return { c, cuts };
+}
+function encodeComic(c) {                               // 2MB 안에 들어가게 — 웹툰 페이지 전체가 2MB 를 넘지 않도록 그림은 1.7MB 안
+  const enc = (cv, q) => { let d = cv.toDataURL('image/webp', q); if (!d.startsWith('data:image/webp')) d = cv.toDataURL('image/jpeg', q); return d; };
+  let cv = c, q = .9, d = enc(cv, q);
+  while (d.length > 1700000 && q > .55) { q -= .1; d = enc(cv, q); }
+  while (d.length > 1700000 && cv.width > 480) { const s = document.createElement('canvas'); s.width = Math.round(cv.width * .82); s.height = Math.round(cv.height * .82); s.getContext('2d').drawImage(cv, 0, 0, s.width, s.height); cv = s; d = enc(cv, .72); }
+  return d.length > 1750000 ? null : d;
+}
+function thumbOfComic(c) {                              // 전시관 카드(3:4) — 만화 맨 위(첫 컷)를 잘라 쓴다
+  const tw = 480, sc = tw / c.width, sh = Math.min(c.height, Math.round(640 / sc));
+  const o = document.createElement('canvas'); o.width = tw; o.height = Math.max(1, Math.round(sh * sc));
+  const x = o.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, o.width, o.height); x.drawImage(c, 0, 0, c.width, sh, 0, 0, o.width, o.height);
+  let d = o.toDataURL('image/jpeg', .84); if (d.length > 380000) d = o.toDataURL('image/jpeg', .6); return d;
+}
+function toonPage(o) {                                  // 만화 한 편 = 그림을 품은 작은 웹툰 페이지(새 창·내려받기에서도 그대로 보임)
+  const meta = JSON.stringify({ v: 1, title: o.title, pen: o.pen, kind: o.kind, style: o.style, cuts: o.cuts || [] }).replace(/</g, '\\u003c');
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(o.title)} · 해누리 웹툰</title>`
+    + `<style>body{margin:0;background:#f2f2f2;color:#1d1d1f;font-family:system-ui,-apple-system,'Malgun Gothic',sans-serif;word-break:keep-all}main{max-width:760px;margin:0 auto;background:#fff}header{padding:18px 18px 12px}`
+    + `.k{display:inline-block;margin:0;font-size:12px;font-weight:700;color:#fff;background:${o.kind === 'tv' ? '#d9661f' : '#3f64b5'};border-radius:5px;padding:2px 8px}h1{font-size:24px;margin:8px 0 4px}.by{margin:0;color:#6e6e73;font-size:14px}`
+    + `img{display:block;width:100%;height:auto}section{padding:16px 18px 22px;background:#effbf4;border-top:1px solid #bfe8cf}h2{font-size:16px;margin:0 0 6px}section p{margin:0;line-height:1.6}</style></head>`
+    + `<body><main><header><p class="k">해누리 웹툰 공모전 · ${esc(KIND[o.kind] || '')}</p><h1>${esc(o.title)}</h1><p class="by">${esc(o.pen)}</p></header>`
+    + `<img id="toon" alt="${esc(o.title)}" src="${o.img}"><section><h2>🔬 이 만화 속 과학</h2><p>${esc(o.how)}</p></section></main>`
+    + `<script type="application/json" id="toon-meta">${meta}<\/script></body></html>`;
+}
+const lessonPack = () => { try { return JSON.parse(localStorage.getItem('gastoon:pack') || 'null') || {}; } catch (e) { return {}; } };
+async function panelToon(root) {
+  const t = S.task || {}, dr = load('sgh:draft:' + TASK, {}) || {}, pk = lessonPack();
+  const works = S.me.works || [], lesson = lessonUrl();
+  root.innerHTML = `
+    ${t.submit_open ? '' : `<div class="notice" style="margin:0 0 20px"><b>지금은 올리기 기간이 아닙니다.</b><p>선생님이 열면 올릴 수 있습니다. 그동안 수업 페이지에서 만화를 완성해 두세요.</p></div>`}
+    <p class="lead2">수업 페이지에서 만든 네 컷 만화를 올리고 소개합니다. 고쳐서 다시 올리면 <b>새 판</b>이 쌓이고(받은 추천은 그대로), 전시관에는 가장 새 판이 보입니다. 올린 만화는 선생님 확인 뒤 전시관에 나옵니다.</p>
+    <form id="sf" class="box" autocomplete="off">
+      <div class="lb">만화 그림</div>
+      <div class="tpick"><button type="button" class="btn primary sm" data-act="fromlesson">📥 수업 페이지에서 만든 만화 불러오기</button><button type="button" class="btn line sm" data-act="files">그림 파일 고르기 (1~4장)</button><input type="file" id="fimgs" accept="image/*" multiple hidden>${lesson ? `<a class="btn sm" href="${esc(lesson)}" target="_blank" rel="noopener">수업 페이지 ↗</a>` : ''}</div>
+      <p class="hint" style="margin:0 0 8px">컷을 4장으로 따로 만들었다면 1컷부터 순서대로 한꺼번에 고르세요 — 위에서 아래로 이어 붙입니다. 화면 캡처는 아래 칸을 누르고 <b>Ctrl+V</b>.</p>
+      <div class="drop tdrop" id="tdrop" tabindex="0"><span class="hint">아직 그림이 없습니다 · 여기를 누르고 Ctrl+V 로 붙여 넣어도 됩니다</span></div>
+      <div class="field" style="margin-top:16px"><label for="ftitle">작품 제목</label><input type="text" id="ftitle" maxlength="40" placeholder="예: 산에서 부푼 과자 봉지의 비밀"></div>
+      <div class="grid2">
+        <div class="field"><label for="fpen">작가 이름(필명) <small>실명 말고 필명 — 전시회에도 이 이름이 나갑니다</small></label><input type="text" id="fpen" maxlength="12" placeholder="예: 부풀어작가"></div>
+        <div class="field"><label>어떤 관계를 그렸나요?</label><div class="radios" style="margin:0"><label><input type="radio" name="fkind" value="pv"> 🔵 압력과 부피</label><label><input type="radio" name="fkind" value="tv"> 🟠 온도와 부피</label></div></div>
+      </div>
+      <div class="field"><label for="fi-summary">줄거리 <small>어떤 이야기인가요? (한두 문장)</small></label><textarea id="fi-summary" maxlength="200" rows="2" placeholder="예: 등산을 간 지우가 산꼭대기에서 빵빵해진 과자 봉지를 보고 과자가 늘어난 줄 알지만, 친구가 봉지 속 기체의 비밀을 알려 준다."></textarea></div>
+      <div class="field"><label for="fi-how">이 만화에 들어간 과학 원리 <small>기체 입자의 움직임으로 — 전시관에서 「이 만화 속 과학」으로 보입니다</small></label><textarea id="fi-how" maxlength="400" rows="3" placeholder="예: 높은 산에서는 과자 봉지에 작용하는 공기의 압력이 작아진다. 그래서 봉지 속 기체 입자의 수와 크기는 그대로이지만 입자 사이의 거리가 멀어지며 부피가 늘어나 봉지가 부푼다."></textarea></div>
+      <div class="field"><label for="fi-lim">작가의 말 <small>(골라서)</small></label><textarea id="fi-lim" maxlength="200" rows="2" placeholder="예: 그림체는 따뜻한 색연필 동화풍으로 골랐고, 3컷에 입자를 확대해 그리는 데 가장 공을 들였어요."></textarea></div>
+      <div class="field"><label for="fstyle">그림체 <small>(골라서)</small></label><input type="text" id="fstyle" maxlength="40" placeholder="예: 따뜻한 색연필 동화풍 / 내가 찾은 그림체"></div>
+      <label class="check"><input type="checkbox" id="fpriv"> 만화에 내 실명·얼굴 사진·연락처가 없습니다.</label>
+      <label class="check"><input type="checkbox" id="fcopy"> 실제 웹툰·만화의 캐릭터를 그대로 따라 그리지 않았습니다(그림체만 참고).</label>
+      <p style="margin:0 0 16px"><button class="btn primary" type="submit"${t.submit_open ? '' : ' disabled'}>올리기</button></p>
+    </form>
+    <h3>내가 올린 판</h3>
+    <ul class="vlist">${works.length ? works.map(w => `<li><div class="vi"><b>${w.v}판 · ${esc(w.title)}</b><span>${ago(w.ts)}</span></div><div class="acts">${statusBadge(w.status)}<button class="btn line sm" data-see="${w.id}">보기</button>${w.status === 'public' ? `<a class="btn sm" href="#/w/${w.id}">전시관에서 ›</a>` : ''}</div></li>`).join('') : '<li class="hint">아직 올린 판이 없습니다.</li>'}</ul>`;
+  // 칸 채우기: 이 화면에 쓰다 만 것 → 수업 페이지에서 정리한 것
+  const pick = (a, b) => (a != null && String(a).trim()) ? a : (b || '');
+  $('#ftitle').value = pick(dr.title, pk.title); $('#fpen').value = pick(dr.pen, pk.pen);
+  $('#fi-summary').value = pick(dr.summary, pk.summary); $('#fi-how').value = pick(dr.how, pk.how); $('#fi-lim').value = pick(dr.lim, pk.lim);
+  $('#fstyle').value = pick(dr.style, pk.style);
+  const kv = pick(dr.kind, pk.kind); if (kv) { const r = root.querySelector(`input[name=fkind][value="${kv}"]`); if (r) r.checked = true; }
+  const keep = () => store('sgh:draft:' + TASK, { title: $('#ftitle').value, pen: $('#fpen').value, summary: $('#fi-summary').value, how: $('#fi-how').value, lim: $('#fi-lim').value, style: $('#fstyle').value, kind: (root.querySelector('input[name=fkind]:checked') || {}).value || '' });
+  root.addEventListener('input', keep); root.addEventListener('change', keep);
+  let comic = null;                                     // { c: canvas, cuts }
+  const show = (c, src) => { comic = c; const d = $('#tdrop'); d.className = 'drop tdrop ok'; d.innerHTML = `<img src="${c.c.toDataURL('image/jpeg', .7)}" alt="올릴 만화 미리 보기"><span class="hint">${src} · ${c.c.width}×${c.c.height} · 바꾸려면 다시 고르거나 붙여 넣으세요</span>`; };
+  const useBlobs = async (blobs, src) => { try { show(await stackImages(blobs.slice(0, 4)), src); } catch (e) { toast('그림을 열지 못했습니다. 다른 파일로 해 보세요.', true); } };
+  const fromLesson = async quiet => {
+    const v = await idbGet('comic');
+    if (!v || !v.blob) { if (!quiet) toast('이 기기에는 수업 페이지에서 만든 만화가 없습니다. 수업 페이지 「말풍선 넣기」에서 「만화 완성」을 누르거나, 그림 파일을 골라 주세요.', true); return; }
+    try { const im = await blobImage(v.blob); const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = im.naturalHeight; c.getContext('2d').drawImage(im, 0, 0);
+      show({ c, cuts: v.cuts || [] }, '수업 페이지에서 불러옴' + (v.at ? ' (' + ago(new Date(v.at).toISOString()) + ' 저장)' : ''));
+      if (!quiet) toast('수업 페이지에서 만든 만화를 불러왔습니다.'); } catch (e) { if (!quiet) toast('만화를 불러오지 못했습니다.', true); }
+  };
+  fromLesson(true);                                     // 같은 기기에 있으면 저절로
+  $('#fimgs').onchange = e => { const fs = [...e.target.files].filter(f => f.type.startsWith('image/')); if (fs.length) useBlobs(fs, fs.length > 1 ? fs.length + '장을 이어 붙임' : '고른 그림'); e.target.value = ''; };
+  $('#tdrop').onclick = () => $('#fimgs').click();
+  root.addEventListener('paste', e => { const it = [...((e.clipboardData || {}).items || [])].find(i => i.type.startsWith('image/')); if (it && (document.activeElement === $('#tdrop') || e.target.closest('#tdrop'))) { e.preventDefault(); useBlobs([it.getAsFile()], '붙여 넣은 그림'); } });
+  root.addEventListener('click', async e => {
+    const a = e.target.closest('[data-act]');
+    if (a && a.dataset.act === 'fromlesson') return fromLesson(false);
+    if (a && a.dataset.act === 'files') return $('#fimgs').click();
+    const see = e.target.closest('[data-see]');
+    if (see) { try { const h = await API.myHtml(S.tok, see.dataset.see); const src = toonImg(h); const m = modal(`<h3>내가 올린 판</h3>${src ? `<div class="strip"><img src="${src}" alt=""></div>` : '<div class="stage" id="mstage"></div>'}`, true); if (!src) runIn($('#mstage', m.box), h || '<p>없음</p>', '내 만화'); } catch (err) { toast(err.message, true); } }
+  });
+  $('#sf').onsubmit = async e => {
+    e.preventDefault();
+    const title = $('#ftitle').value.trim(), pen = $('#fpen').value.trim(), kind = (root.querySelector('input[name=fkind]:checked') || {}).value || '';
+    const summary = $('#fi-summary').value.trim(), how = $('#fi-how').value.trim(), lim = $('#fi-lim').value.trim(), style = $('#fstyle').value.trim();
+    if (!comic) return toast('만화 그림을 먼저 불러오거나 골라 주세요.', true);
+    if (title.length < 2) { $('#ftitle').focus(); return toast('작품 제목을 써 주세요.', true); }
+    if (!pen) { $('#fpen').focus(); return toast('작가 이름(필명)을 써 주세요. 실명이 아니어도 됩니다.', true); }
+    if (!kind) return toast('어떤 관계(압력과 부피 / 온도와 부피)를 그렸는지 골라 주세요.', true);
+    if (summary.length < 10) { $('#fi-summary').focus(); return toast('줄거리를 한 문장 이상 써 주세요.', true); }
+    if (how.length < 15 || !/입자/.test(how)) { $('#fi-how').focus(); return toast('과학 원리를 기체 입자의 움직임으로 한 문장 이상 써 주세요(「입자」가 들어가게).', true); }
+    if (!$('#fpriv').checked || !$('#fcopy').checked) return toast('아래 두 가지를 확인하고 체크해 주세요.', true);
+    const b = $('#sf button[type=submit]'); b.disabled = true; toast('만화를 올릴 모양으로 바꾸는 중…');
+    try {
+      const img = encodeComic(comic.c); if (!img) throw new Error('그림이 너무 큽니다. 컷 수를 줄이거나 작은 그림으로 해 주세요.');
+      const html = toonPage({ title, pen, kind, style, how, img, cuts: comic.cuts });
+      if (bytes(html) > MAX_HTML) throw new Error('그림이 너무 큽니다(2MB). 작은 그림으로 해 주세요.');
+      const art = { title, summary, html, thumb: thumbOfComic(comic.c), reflect: { kind, how, lim, pen, style, ai: 'gemini' } };
+      const r = await API.submit(S.tok, TASK, art);
+      store('sgh:draft:' + TASK, {});
+      toast(r.status === 'public' ? `${r.v}판을 올렸습니다. 전시관에 바로 나옵니다.` : `${r.v}판을 올렸습니다. 선생님 확인 뒤 전시관에 나옵니다.`);
+      await loadMe(); route();
+    } catch (err) { if (err.hint === 'login') return relogin(); toast(err.message, true); }
+    finally { b.disabled = false; }
+  };
+}
+
+/* ── 관리: 과학실 전시 인쇄 ── */
+async function aPrint(box) {
+  box.innerHTML = '<p class="empty">불러오는 중입니다…</p>';
+  let rows, meta, revs;
+  try { [rows, meta, revs] = await Promise.all([API.aWorks(AP(), TASK), API.toonMeta(TASK, null).catch(() => []), API.aReviews(AP(), TASK)]); } catch (e) { return aFail(e); }
+  const best = {}; rows.filter(r => r.status === 'public').forEach(r => { if (!best[r.sid] || best[r.sid].v < r.v) best[r.sid] = r; });
+  const M = Object.fromEntries((meta || []).map(m => [m.id, m]));
+  const byAuthor = {}; rows.forEach(r => { (byAuthor[r.sid] = byAuthor[r.sid] || []).push(r.id); });
+  const avg = sid => { const ids = new Set(byAuthor[sid] || []), rs = revs.filter(v => ids.has(v.work_id) && !v.hidden); const o = { n: rs.length };
+    RUBRIC.forEach(q => { const xs = rs.map(v => +((v.checks || {})[q.id]) || 0).filter(Boolean); o[q.id] = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0; }); return o; };
+  const list = Object.values(best).map(r => ({ r, m: M[r.id] || { likes: 0 }, a: avg(r.sid) }))
+    .sort((x, y) => (y.m.likes || 0) - (x.m.likes || 0) || (RUBRIC.reduce((s, q) => s + y.a[q.id], 0) - RUBRIC.reduce((s, q) => s + x.a[q.id], 0)));
+  box.innerHTML = `<p class="hint" style="margin:0 0 10px">공개된 만화(학생마다 가장 새 판) ${list.length}편 · <b>전시 추천 많은 순</b>(같으면 평가 평균 높은 순). 고른 만화를 A4 한 장에 한 편씩 인쇄합니다 — 세로로 긴 만화는 두 줄(1·2컷 | 3·4컷)로 나눠 크게 찍습니다.</p>
+    <div class="abar" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px">
+      <button class="btn line sm" data-top="6">추천 상위 6편 고르기</button><button class="btn line sm" data-top="12">상위 12편</button><button class="btn line sm" data-top="0">모두 풀기</button>
+      <button class="btn primary sm" data-print>🖨 고른 만화 인쇄</button></div>
+    <div class="tscroll"><table class="ptable"><tr><th></th><th>제목</th><th>필명</th><th>학번</th><th>관계</th><th class="c">♥ 추천</th><th class="c">평가</th>${RUBRIC.map(q => `<th class="c">${esc(q.k)}</th>`).join('')}</tr>
+    ${list.length ? list.map(({ r, m, a }) => `<tr><td><input type="checkbox" data-pid="${r.id}"></td><td>${esc(r.title)} <span class="hint">${r.v}판</span></td><td>${esc((r.reflect || {}).pen || m.pen || '')}</td><td>${esc(r.sid)}</td><td>${esc(KIND[(r.reflect || {}).kind] || '')}</td><td class="c">${m.likes || 0}</td><td class="c">${a.n}</td>${RUBRIC.map(q => `<td class="c">${a[q.id] ? a[q.id].toFixed(1) : ''}</td>`).join('')}</tr>`).join('') : `<tr><td colspan="${7 + RUBRIC.length}" class="empty">아직 공개된 만화가 없습니다. 「올린 판 확인」에서 공개해 주세요.</td></tr>`}</table></div>`;
+  box.onclick = async e => {
+    const tp = e.target.closest('[data-top]');
+    if (tp) { const n = +tp.dataset.top; $$('[data-pid]', box).forEach((c, i) => { c.checked = n > 0 && i < n; }); return; }
+    if (e.target.closest('[data-print]')) { const ids = $$('[data-pid]', box).filter(c => c.checked).map(c => c.dataset.pid); if (!ids.length) return toast('인쇄할 만화를 골라 주세요.', true); printToons(ids); }
+  };
+}
+async function printToons(ids) {
+  const win = window.open('', '_blank'); if (!win) return toast('새 창이 막혔습니다. 이 사이트의 팝업을 허용해 주세요.', true);
+  win.document.write('<p style="font-family:sans-serif;padding:20px">인쇄할 만화를 불러오는 중입니다…</p>');
+  const pages = [];
+  for (const id of ids) {
+    let x; try { x = await API.aWork(AP(), id); } catch (e) { continue; }
+    const src = toonImg(x.html), hm = toonMetaOf(x.html), rf = x.reflect || {};
+    if (!src) continue;
+    const im = await new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
+    let body = `<img class="one" src="${src}" alt="">`;
+    if (im && im.naturalHeight / im.naturalWidth > 1.6) {     // 세로로 긴 만화 → 가운데 컷 경계에서 둘로 나눠 나란히
+      const cuts = (hm.cuts || []).filter(v => v > 0 && v < 1);
+      const mid = cuts.length ? cuts.reduce((a, b) => Math.abs(b - .5) < Math.abs(a - .5) ? b : a) : .5;
+      const cut = (y0, y1) => { const c = document.createElement('canvas'); c.width = im.naturalWidth; c.height = Math.round((y1 - y0) * im.naturalHeight); c.getContext('2d').drawImage(im, 0, Math.round(y0 * im.naturalHeight), c.width, c.height, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .92); };
+      body = `<div class="two"><img src="${cut(0, mid)}" alt=""><img src="${cut(mid, 1)}" alt=""></div>`;
+    }
+    pages.push(`<section class="pg"><header><p class="k">해누리 웹툰 공모전 · 실생활 속 기체의 부피 변화${KIND[rf.kind] ? ' · ' + esc(KIND[rf.kind]) : ''}</p><h1>${esc(x.title)}</h1><p class="by">${esc(rf.pen || hm.pen || '')}${x.sid && /^\d{5}$/.test(x.sid) ? ' · ' + x.sid[0] + '학년 ' + (+x.sid.slice(1, 3)) + '반' : ''}</p></header>
+      <div class="art">${body}</div>
+      <div class="sci"><b>🔬 이 만화 속 과학</b> ${esc(rf.how || '')}</div>
+      ${x.summary ? `<p class="sum"><b>줄거리</b> ${esc(x.summary)}</p>` : ''}
+      <footer>해누리중학교 과학실 · 2026 해누리 웹툰 공모전 · 그림은 생성형 AI로 만들고 스토리·대사·과학 원리는 학생이 직접 썼습니다</footer></section>`);
+  }
+  win.document.open();
+  win.document.write(`<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>해누리 웹툰 공모전 — 과학실 전시</title><style>
+    @page{size:A4 portrait;margin:10mm}*{box-sizing:border-box}body{margin:0;font-family:'Malgun Gothic',system-ui,sans-serif;color:#1d1d1f;word-break:keep-all}
+    .pg{height:277mm;display:flex;flex-direction:column;gap:3mm;page-break-after:always;break-after:page;overflow:hidden}
+    header .k{margin:0;font-size:9pt;color:#555}header h1{margin:1mm 0 0;font-size:20pt}header .by{margin:0;font-size:11pt;color:#444}
+    .art{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}.art img.one{max-width:100%;max-height:100%;object-fit:contain}
+    .two{display:flex;gap:4mm;height:100%;width:100%;justify-content:center}.two img{height:100%;max-width:49%;object-fit:contain}
+    .sci{border:1.5px solid #2c9b5a;background:#effbf4;border-radius:3mm;padding:3mm 4mm;font-size:11pt;line-height:1.5}
+    .sum{margin:0;font-size:10pt;color:#333;line-height:1.5}footer{font-size:8pt;color:#888;text-align:right}
+    @media screen{body{background:#ddd}.pg{background:#fff;width:190mm;margin:8mm auto;padding:6mm;box-shadow:0 2px 10px rgba(0,0,0,.2)}}
+  </style></head><body>${pages.join('') || '<p>인쇄할 만화가 없습니다.</p>'}<script>window.onload=()=>setTimeout(()=>print(),400);<\/script></body></html>`);
+  win.document.close();
+}
+
 /* ════════ 시작 ════════ */
 if (LOCAL) $('#localbar').hidden = false;
+if (D.toon) {                                            // 웹툰 공모전: 머리 이름·색을 바꾼다
+  document.documentElement.classList.add('toon');
+  $('.logo span').innerHTML = '<span class="t">해누리</span> 웹툰'; $('.logo').setAttribute('aria-label', '해누리 웹툰 처음으로');
+  document.querySelector('meta[name=theme-color]').setAttribute('content', '#111111');
+}
 drawWho();
-$('#swtask').href = otherTask.href; $('#swtask').textContent = (otherTask.key === 'boyle' ? '🔬 ' : '🧪 ') + otherTask.name;
+if (otherTask.key) { $('#swtask').href = otherTask.href; $('#swtask').textContent = (otherTask.key === 'boyle' ? '🔬 ' : '🧪 ') + otherTask.name; } else $('#swtask').hidden = true;
 (async () => { try { await loadTask(); if (S.tok) await loadMe(); } catch (e) {} route(); })();
 </script>
 </body>
