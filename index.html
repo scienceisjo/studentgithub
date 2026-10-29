@@ -1689,11 +1689,11 @@ function toonCard(a, m) {
 function rubricTable() {
   return `<table class="rtable"><tr><th>기준</th><th>★ 1</th><th>★★ 2</th><th>★★★ 3</th></tr>${RUBRIC.map(q => `<tr><th>${esc(q.k)}<small>${esc(q.t)}</small></th>${q.lv.map(l => `<td>${esc(l)}</td>`).join('')}</tr>`).join('')}</table>`;
 }
-async function toonWork(id) {
+async function toonWork(id) {                         // 한 번 본 만화(S.wc)는 다시 받지 않는다 — 전송량 아끼기
   paintTabs();
   view.innerHTML = `<div class="tvw"><div class="vbar"><div class="vin"><a class="vb" href="#/">☰ 목록</a><span class="vt" id="vt"><b>불러오는 중…</b></span><span class="sp"></span><span class="vlk" id="vlk"></span></div></div><div id="wbody"><p class="empty">불러오는 중입니다…</p></div></div>`;
   let w;
-  try { await loadTask(); w = await API.work(id); if (!S.meta) await loadMeta(); if (!S.gallery) { try { S.gallery = await API.gallery(TASK); } catch (e) { S.gallery = []; } } } catch (e) { $('#wbody').innerHTML = `<p class="empty">불러오지 못했습니다. (${esc(e.message)})</p>`; return; }
+  try { await loadTask(); const wc = S.wc || (S.wc = new Map()); w = wc.get(id) || await API.work(id); if (w) wc.set(id, w); if (!S.meta) await loadMeta(); if (!S.gallery) { try { S.gallery = await API.gallery(TASK); } catch (e) { S.gallery = []; } } } catch (e) { $('#wbody').innerHTML = `<p class="empty">불러오지 못했습니다. (${esc(e.message)})</p>`; return; }
   if (!w) { $('#wbody').innerHTML = `<p class="empty">이 만화는 지금 볼 수 없습니다. 선생님 확인을 기다리고 있거나 내려간 만화입니다.</p>`; return; }
   const hm = toonMetaOf(w.html), m = (S.meta || {})[id] || { likes: 0, mine: false }, img = toonImg(w.html), it = w.intro || {};
   const kind = it.kind || m.kind || hm.kind, pen = m.pen || hm.pen || '이름 없는 작가', style = m.style || hm.style || '';
@@ -1809,11 +1809,12 @@ async function stackImages(blobs) {                     // 여러 장이면 위�
   ims.forEach((im, i) => { x.drawImage(im, 0, y, W, hs[i]); y += hs[i]; if (i < ims.length - 1) { cuts.push(+(y / H).toFixed(4)); y += gap; } });
   return { c, cuts };
 }
-function encodeComic(c) {                               // 2MB 안에 들어가게 — 웹툰 페이지 전체가 2MB 를 넘지 않도록 그림은 1.7MB 안
+function encodeComic(c) {                               // 서버 공간·전송량을 아끼려고 한 편을 약 450KB 안으로(가로 760px · webp) — 화면에서는 충분히 선명하다
   const enc = (cv, q) => { let d = cv.toDataURL('image/webp', q); if (!d.startsWith('data:image/webp')) d = cv.toDataURL('image/jpeg', q); return d; };
-  let cv = c, q = .9, d = enc(cv, q);
-  while (d.length > 1700000 && q > .55) { q -= .1; d = enc(cv, q); }
-  while (d.length > 1700000 && cv.width > 480) { const s = document.createElement('canvas'); s.width = Math.round(cv.width * .82); s.height = Math.round(cv.height * .82); s.getContext('2d').drawImage(cv, 0, 0, s.width, s.height); cv = s; d = enc(cv, .72); }
+  const scale = (cv, f) => { const s = document.createElement('canvas'); s.width = Math.round(cv.width * f); s.height = Math.round(cv.height * f); const x = s.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(cv, 0, 0, s.width, s.height); return s; };
+  let cv = c.width > 760 ? scale(c, 760 / c.width) : c, q = .82, d = enc(cv, q);
+  while (d.length > 450000 && q > .56) { q -= .08; d = enc(cv, q); }
+  while (d.length > 450000 && cv.width > 480) { cv = scale(cv, .85); d = enc(cv, .7); }
   return d.length > 1750000 ? null : d;
 }
 function thumbOfComic(c) {                              // 전시관 카드(3:4) — 만화 맨 위(첫 컷)를 잘라 쓴다
