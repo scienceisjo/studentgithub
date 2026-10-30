@@ -1927,7 +1927,7 @@ async function aPrint(box) {
     RUBRIC.forEach(q => { const xs = rs.map(v => +((v.checks || {})[q.id]) || 0).filter(Boolean); o[q.id] = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : 0; }); return o; };
   const list = Object.values(best).map(r => ({ r, m: M[r.id] || { likes: 0 }, a: avg(r.sid) }))
     .sort((x, y) => (y.m.likes || 0) - (x.m.likes || 0) || (RUBRIC.reduce((s, q) => s + y.a[q.id], 0) - RUBRIC.reduce((s, q) => s + x.a[q.id], 0)));
-  box.innerHTML = `<p class="hint" style="margin:0 0 10px">공개된 만화(학생마다 가장 새 판) ${list.length}편 · <b>전시 추천 많은 순</b>(같으면 평가 평균 높은 순). 고른 만화를 A4 한 장에 한 편씩 인쇄합니다 — 세로로 긴 만화는 두 줄(1·2컷 | 3·4컷)로 나눠 크게 찍습니다.</p>
+  box.innerHTML = awardPanel(list, revs) + `<p class="hint" style="margin:0 0 10px">공개된 만화(학생마다 가장 새 판) ${list.length}편 · <b>전시 추천 많은 순</b>(같으면 평가 평균 높은 순). 고른 만화를 A4 한 장에 한 편씩 인쇄합니다 — 세로로 긴 만화는 두 줄(1·2컷 | 3·4컷)로 나눠 크게 찍습니다.</p>
     <div class="abar" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 12px">
       <button class="btn line sm" data-top="6">추천 상위 6편 고르기</button><button class="btn line sm" data-top="12">상위 12편</button><button class="btn line sm" data-top="0">모두 풀기</button>
       <button class="btn primary sm" data-print>🖨 고른 만화 인쇄</button></div>
@@ -1938,6 +1938,19 @@ async function aPrint(box) {
     if (tp) { const n = +tp.dataset.top; $$('[data-pid]', box).forEach((c, i) => { c.checked = n > 0 && i < n; }); return; }
     if (e.target.closest('[data-print]')) { const ids = $$('[data-pid]', box).filter(c => c.checked).map(c => c.dataset.pid); if (!ids.length) return toast('인쇄할 만화를 골라 주세요.', true); printToons(ids); }
   };
+}
+// 🏅 시상 후보 — 기준별 평균 1~3위(평가 2개 이상) · 관객 추천상 · 피드백왕 후보(과학 낱말이 든 20자 넘는 피드백 수 → 평균 길이)
+const AWARD_NAME = { sci: '🔬 과학 정확상', msg: '💡 원리 전달상', idea: '🌟 참신상', fun: '😂 흥미상' };
+function awardPanel(list, revs) {
+  const who = x => `${esc(x.r.title)} <span class="hint">· ${esc((x.r.reflect || {}).pen || x.m.pen || '')} · ${esc(x.r.sid)}</span>`;
+  const col = (t, items) => `<div class="awc" style="background:#fffaf0;border:1px solid #f0dcb4;border-radius:12px;padding:10px 12px"><b>${t}</b><ol style="margin:6px 0 0;padding-left:1.3em;font-size:13.5px">${items.length ? items.join('') : '<li class="hint">아직 후보가 없습니다</li>'}</ol></div>`;
+  const cols = RUBRIC.map(q => col(AWARD_NAME[q.id] || esc(q.k), list.filter(x => x.a.n >= 2 && x.a[q.id]).sort((a, b) => b.a[q.id] - a.a[q.id] || b.a.n - a.a.n).slice(0, 3).map(x => `<li>${who(x)} — <b>${x.a[q.id].toFixed(2)}</b> <span class="hint">(평가 ${x.a.n})</span></li>`)));
+  cols.push(col('♥ 관객 추천상', list.filter(x => (x.m.likes || 0) > 0).sort((a, b) => (b.m.likes || 0) - (a.m.likes || 0)).slice(0, 3).map(x => `<li>${who(x)} — <b>♥ ${x.m.likes}</b></li>`)));
+  const by = {}; (revs || []).filter(v => !v.hidden).forEach(v => { const s = v.suggest || '', o = by[v.reviewer] = by[v.reviewer] || { sid: v.reviewer, n: 0, sci: 0, len: 0, best: '' }; o.n++; o.len += s.length; if (s.length >= 20 && SCI_WORDS.test(s)) o.sci++; if (s.length > o.best.length) o.best = s; });
+  const fb = Object.values(by).sort((a, b) => b.sci - a.sci || b.len / b.n - a.len / a.n).slice(0, 5);
+  cols.push(col('✍️ 피드백왕 후보', fb.map(o => `<li><b>${esc(o.sid)}</b> — 평가 ${o.n}개 · 과학 피드백 ${o.sci}개 · 평균 ${Math.round(o.len / o.n)}자<br><span class="hint">「${esc(o.best.slice(0, 70))}${o.best.length > 70 ? '…' : ''}」</span></li>`)));
+  return `<details open class="awards" style="margin:0 0 14px"><summary style="cursor:pointer;font-weight:800;margin:0 0 8px">🏅 시상 후보 <span class="hint">— 기준별 평균은 평가 2개 이상인 작품만 · 피드백왕은 과학 낱말이 든 20자 넘는 피드백 수 순(평가 글을 읽고 정해 주세요) · 시상 카드는 수업 페이지 교사용 보기의 「🏆 시상 카드 만들기」</span></summary>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px">${cols.join('')}</div></details>`;
 }
 async function printToons(ids) {
   const win = window.open('', '_blank'); if (!win) return toast('새 창이 막혔습니다. 이 사이트의 팝업을 허용해 주세요.', true);
